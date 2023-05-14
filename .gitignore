@@ -961,3 +961,4 @@ yarn-error.log*
 # Additional files built by Visual Studio
 
 # End of https://www.toptal.com/developers/gitignore/api/csharp,rider,visualstudio,aspnetcore,react,node,dotenv
+.vscode/
