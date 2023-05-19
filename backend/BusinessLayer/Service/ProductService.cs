@@ -36,7 +36,20 @@ public class ProductService : IProductService
 
     public string AddProduct(Product product)
     {
-        _context.Products.Add(product);
+        var newProduct = new Product()
+        {
+            Name = product.Name,
+            Price = product.Price,
+            Description = product.Description
+        };
+        var category = _context.Categories.FirstOrDefault(c => c.Name == product.Category.Name);
+        if (category == null)
+        {
+            throw new KeyNotFoundException("Category was not found!");
+        }
+
+        newProduct.Category = category;
+        _context.Products.Add(newProduct);
         _context.SaveChanges();
         return "Successfully added new product!";
     }
@@ -49,9 +62,11 @@ public class ProductService : IProductService
             throw new KeyNotFoundException("The product id does not exist!");
         }
 
+        // _context.Update(productToUpdate);
         // Automapper to map class properties automatically
         _mapper.Map(product, productToUpdate);
 
+        
         _context.SaveChanges();
 
         return $"Successfully updated product with ID {productToUpdate.ID}";
