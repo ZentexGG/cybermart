@@ -1,27 +1,24 @@
 ﻿using AutoMapper;
 using BusinessLayer.Interfaces;
 using DataLayer.Data;
-using DataLayer.Models;
+using DataLayer.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace BusinessLayer.Service;
 
 public class ProductService : IProductService
 {
     private readonly CybermartContext _context;
-    private readonly IMapper _mapper;
     public ProductService(CybermartContext context)
     {
         _context = context;
-        var config = new MapperConfiguration(cfg =>
-        {
-            cfg.CreateMap<Product, Product>();
-        });
-        _mapper = config.CreateMapper();
     }
 
     public IEnumerable<Product> GetAllProducts()
     {
-        return _context.Products;
+        return _context.Products
+            .Include(p => p.ProductsSpecifications)
+            .Include(p=>p.Category);
     }
 
     public IEnumerable<Product> GetFirstNumberOfProducts(int productsNum)
@@ -36,23 +33,28 @@ public class ProductService : IProductService
 
     public string AddProduct(Product product)
     {
-        var newProduct = new Product()
+        var existentCategory = _context.Categories.FirstOrDefault(category => category.Id == product.Category.Id);
+        if (existentCategory != null)
         {
-            Name = product.Name,
-            Price = product.Price,
-            Description = product.Description
-        };
-        var category = _context.Categories.FirstOrDefault(c => c.Name == product.Category.Name);
-        if (category == null)
+            product.Category = existentCategory;
+        }
+        else
         {
-            throw new KeyNotFoundException("Category was not found!");
+            _context.Categories.Add(product.Category);
         }
 
-        newProduct.Category = category;
-        _context.Products.Add(newProduct);
+        _context.ProductsSpecifications.AddRange(product.ProductsSpecifications);
+        foreach (var productProductSpecification in product.ProductsSpecifications)
+        {
+            productProductSpecification.ProductId = product.ID;
+        }
+
+        _context.Products.Add(product);
         _context.SaveChanges();
-        return "Successfully added new product!";
+        return "Yes";
     }
+
+
 
     public string UpdateProduct(int id, Product product)
     {
@@ -62,11 +64,7 @@ public class ProductService : IProductService
             throw new KeyNotFoundException("The product id does not exist!");
         }
 
-        // _context.Update(productToUpdate);
-        // Automapper to map class properties automatically
-        _mapper.Map(product, productToUpdate);
-
-        
+        _context.Update(product);
         _context.SaveChanges();
 
         return $"Successfully updated product with ID {productToUpdate.ID}";

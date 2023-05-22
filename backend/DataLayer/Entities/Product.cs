@@ -10,8 +10,9 @@ namespace DataLayer.Entities
     public class Product
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        public int ID { get; set; }
         public string Name { get; set; }
+        public double Price { get;set; }
         public string Description { get; set; }
         public Category Category { get; set; }
         public ICollection<ProductsSpecifications> ProductsSpecifications{ get; set;}

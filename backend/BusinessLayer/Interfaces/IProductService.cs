@@ -1,4 +1,4 @@
-﻿using DataLayer.Models;
+﻿using DataLayer.Entities;
 
 namespace BusinessLayer.Interfaces;
 

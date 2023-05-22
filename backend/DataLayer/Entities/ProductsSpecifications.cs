@@ -12,9 +12,8 @@ namespace DataLayer.Entities
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public Product Product { get; set; }
-        public Specifications Specifications { get; set; }
-        public string SpecificationValue { get; set; }  
-
+        public int ProductId { get; set; }
+        public string Name { get; set; }
+        public string SpecificationValue { get; set; }
     }
 }

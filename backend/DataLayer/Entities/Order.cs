@@ -12,7 +12,7 @@ namespace DataLayer.Entities
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public List<Product> Products { get; set; }
+        public ICollection<Product> Products { get; set; }
         public string Address { get; set; }
         public string City { get; set; }    
         public string Region { get; set; }

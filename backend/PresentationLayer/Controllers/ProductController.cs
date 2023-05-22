@@ -1,5 +1,5 @@
 ﻿using BusinessLayer.Interfaces;
-using DataLayer.Models;
+using DataLayer.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace PresentationLayer.Controllers;
@@ -17,6 +17,7 @@ public class ProductController : ControllerBase
     [HttpGet("all")]
     public IEnumerable<Product> GetProducts()
     {
+        Console.WriteLine(_service.GetAllProducts());
         return _service.GetAllProducts();
     }
 
