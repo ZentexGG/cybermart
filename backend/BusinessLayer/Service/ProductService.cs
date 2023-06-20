@@ -1,6 +1,5 @@
-﻿using AutoMapper;
-using BusinessLayer.Interfaces;
-using DataLayer.Data;
+﻿using BusinessLayer.Interfaces;
+using DataLayer.ContextInterface;
 using DataLayer.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,79 +7,68 @@ namespace BusinessLayer.Service;
 
 public class ProductService : IProductService
 {
-    private readonly CybermartContext _context;
-    public ProductService(CybermartContext context)
+    private IDbContext _context;
+    public ProductService(IDbContext context)
     {
         _context = context;
     }
-
-    public IEnumerable<Product> GetAllProducts()
+    public async Task<IEnumerable<Product>> GetAllAsync()
     {
-        return _context.Products
-            .Include(p => p.ProductsSpecifications)
-            .Include(p=>p.Category);
+        return await _context.Products.ToListAsync();
     }
 
-    public IEnumerable<Product> GetFirstNumberOfProducts(int productsNum)
+    public async Task<Product> GetByIdAsync(int id)
     {
-        return _context.Products.Where(p => p.ID <= productsNum);
-    }
-
-    public Product? GetProductByID(int id)
-    {
-        return _context.Products.FirstOrDefault(p => p.ID == id);
-    }
-
-    public string AddProduct(Product product)
-    {
-        var existentCategory = _context.Categories.FirstOrDefault(category => category.Id == product.Category.Id);
-        if (existentCategory != null)
+        var product = await _context.Products.FirstOrDefaultAsync(p => p.ID == id);
+        if (product == null)
         {
-            product.Category = existentCategory;
-        }
-        else
-        {
-            _context.Categories.Add(product.Category);
+            throw new KeyNotFoundException("The specified ID was not found!");
         }
 
-        _context.ProductsSpecifications.AddRange(product.ProductsSpecifications);
-        foreach (var productProductSpecification in product.ProductsSpecifications)
-        {
-            productProductSpecification.ProductId = product.ID;
-        }
-
-        _context.Products.Add(product);
-        _context.SaveChanges();
-        return "Yes";
+        return product;
     }
 
-
-
-    public string UpdateProduct(int id, Product product)
+    public async Task CreateAsync(Product product)
     {
-        var productToUpdate = _context.Products.FirstOrDefault(p => p.ID == id);
+        try
+        {
+            _context.Products.Add(product);
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateException e)
+        {
+            throw new ApplicationException("Failed to save due to a database error.", e);
+        }
+    }
+
+    public async Task UpdateAsync(int id, Product product)
+    {
+        var productToUpdate = await _context.Products.FirstOrDefaultAsync(p => p.ID == id);
         if (productToUpdate == null)
         {
-            throw new KeyNotFoundException("The product id does not exist!");
+            throw new KeyNotFoundException("The specified ID was not found!");
         }
 
-        _context.Update(product);
-        _context.SaveChanges();
+        var properties = typeof(Product).GetProperties();
+        foreach (var property in properties)
+        {
+            var value = property.GetValue(product);
+            property.SetValue(productToUpdate, value);
+        }
 
-        return $"Successfully updated product with ID {productToUpdate.ID}";
+        _context.UpdateEntityState(productToUpdate, EntityState.Modified);
+        await _context.SaveChangesAsync();
     }
 
-    public string DeleteProduct(int id)
+    public async Task DeleteAsync(int id)
     {
-        var productToRemove = _context.Products.FirstOrDefault(p => p.ID == id);
-        if (productToRemove == null)
+        var productToDelete = await _context.Products.FirstOrDefaultAsync(p => p.ID == id);
+        if (productToDelete == null)
         {
-            throw new KeyNotFoundException("The product id does not exist!");
+            throw new KeyNotFoundException("The specified ID was not found!");
         }
 
-        _context.Products.Remove(productToRemove);
-        _context.SaveChanges();
-
-        return $"Successfully deleted product with ID {productToRemove.ID}";
+        _context.Products.Remove(productToDelete);
+        await _context.SaveChangesAsync();
     }
 }

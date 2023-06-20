@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataLayer.Entities
+namespace DataLayer.Entities;
+
+public class Product
 {
-    public class Product
-    {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int ID { get; set; }
-        public string Name { get; set; }
-        public double Price { get;set; }
-        public string Description { get; set; }
-        public Category Category { get; set; }
-        public ICollection<ProductsSpecifications> ProductsSpecifications{ get; set;}
-    }
+    [Key] public int ID { get; set; }
+    public string Name { get; set; }
+    public double Price { get;set; }
+    public string? Description { get; set; }
+    public int CategoryId { get; set; }
+    public Category Category { get; set; }
+    public List<Specification> Specifications { get; set; }
+    public List<ProductPhoto> Photos { get; set; }
 }
