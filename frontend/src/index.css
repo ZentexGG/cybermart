@@ -47,6 +47,13 @@ table {
 {
     margin:7.5px;
 }
-/*body{*/
-/*    background: black;*/
-/*}*/
+body{
+    height: 100vh;
+    width: 100%;
+}
+#root{
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    background: red;
+}
