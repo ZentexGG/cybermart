@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace PresentationLayer.Controllers;
 
-[ApiController, Route("/api/[controller]/")]
+[ApiController] 
+[Route("api/products")]
 public class ProductController : ControllerBase
 {
     private readonly IProductService _service;
@@ -14,41 +15,36 @@ public class ProductController : ControllerBase
         _service = service;
     }
 
-    [HttpGet("all")]
-    public IEnumerable<Product> GetProducts()
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
     {
-        Console.WriteLine(_service.GetAllProducts());
-        return _service.GetAllProducts();
+        try
+        {
+            var products = await _service.GetAllAsync();
+            return Ok(products);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new { message = $"A server error has occured!: {e.Message}" });
+        }
     }
 
     [HttpGet("{id}")]
-    public Product? GetProductById(int id)
+    public async Task<IActionResult> GetById(int id)
     {
-        return _service.GetProductByID(id);
-    }
-
-    // [HttpGet("limit/{number}")]
-    // public IEnumerable<Product> GetNumberOfProducts(int number)
-    // {
-    //     return _service.GetFirstNumberOfProducts(number);
-    // }
-
-    [HttpPost("create")]
-    public string AddProduct(Product product)
-    {
-        return _service.AddProduct(product);
-    }
-
-    [HttpPut("update/{id}")]
-    public string UpdateProduct(int id, Product product)
-    {
-        return _service.UpdateProduct(id, product);
-    }
-
-    [HttpDelete("remove/{id}")]
-    public string DeleteProduct(int id)
-    {
-        return _service.DeleteProduct(id);
+        try
+        {
+            var product = await _service.GetByIdAsync(id);
+            return Ok(product);
+        }
+        catch (KeyNotFoundException e)
+        {
+            return NotFound(new { message = e.Message });
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new { message = $"A server error has occured!: {e.Message}" });
+        }
     }
 
 }

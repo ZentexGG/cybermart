@@ -4,10 +4,9 @@ namespace BusinessLayer.Interfaces;
 
 public interface IProductService
 {
-    IEnumerable<Product> GetAllProducts();
-    IEnumerable<Product> GetFirstNumberOfProducts(int productsNum);
-    Product? GetProductByID(int id);
-    string AddProduct(Product product);
-    string UpdateProduct(int id, Product product);
-    string DeleteProduct(int id);
+    Task<IEnumerable<Product>> GetAllAsync();
+    Task<Product> GetByIdAsync(int id);
+    Task CreateAsync(Product product);
+    Task UpdateAsync(int id, Product product);
+    Task DeleteAsync(int id);
 }

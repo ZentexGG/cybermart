@@ -1,24 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace DataLayer.Entities
+namespace DataLayer.Entities;
+
+public class Order
 {
-    public class Order
-    {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-        public ICollection<Product> Products { get; set; }
-        public string Address { get; set; }
-        public string City { get; set; }    
-        public string Region { get; set; }
-        public string PostalCode { get; set; }
-        public string Country { get; set; }
-        public string PhoneNumber { get; set; }
+    [Key]
+    public int Id { get; set; }
+    [Required]
+    public List<Product> Products { get; set; }
+    [Required]
+    public string Address { get; set; }
+    [Required]
+    public string City { get; set; }
+    [Required]
+    public string Region { get; set; }
+        
+    public string? PostalCode { get; set; }
+    [Required]
+    public string Country { get; set; }
+    [Required]
+    public string PhoneNumber { get; set; }
        
-    }
 }
