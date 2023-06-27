@@ -10,6 +10,7 @@ import {CarouselComponent} from "./Components/Carousel/CarouselComponent";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {RegisterFormComponent} from "./Components/RegisterForm/RegisterFormComponent";
 import {LoginFormComponent} from "./Components/LoginForm/LoginFormComponent";
+import ResetPasswordPage from "./Pages/ResetPasswordPage/ResetPasswordPage";
 
 const router = createBrowserRouter([
     {
@@ -32,6 +33,12 @@ const router = createBrowserRouter([
                     </div>
                 ),
             },
+            {
+                path: "/reset-password",
+                element: (
+                    <ResetPasswordPage />
+                )
+            }
         ],
     },
 ]);
