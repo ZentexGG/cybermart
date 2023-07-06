@@ -1,4 +1,4 @@
-﻿namespace Authentication.Models;
+﻿namespace PresentationLayer.Model;
 
 public class Response
 {
