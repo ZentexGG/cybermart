@@ -7,11 +7,24 @@ namespace BusinessLayer.Service;
 
 public class ProductService : IProductService
 {
-    private IDbContext _context;
+    private readonly IDbContext _context;
+
     public ProductService(IDbContext context)
     {
         _context = context;
     }
+
+    public async Task<IEnumerable<Product>> GetProductsAsync(int page = 1, int limit = 10)
+    {
+        var offset = (page - 1) * limit;
+        var products = await _context.Products
+            .OrderBy(p => p.ID)
+            .Skip(offset)
+            .Take(limit)
+            .ToListAsync();
+        return products;
+    }
+
     public async Task<IEnumerable<Product>> GetAllAsync()
     {
         return await _context.Products.ToListAsync();
@@ -20,10 +33,7 @@ public class ProductService : IProductService
     public async Task<Product> GetByIdAsync(int id)
     {
         var product = await _context.Products.FirstOrDefaultAsync(p => p.ID == id);
-        if (product == null)
-        {
-            throw new KeyNotFoundException("The specified ID was not found!");
-        }
+        if (product == null) throw new KeyNotFoundException("The specified ID was not found!");
 
         return product;
     }
@@ -44,10 +54,7 @@ public class ProductService : IProductService
     public async Task UpdateAsync(int id, Product product)
     {
         var productToUpdate = await _context.Products.FirstOrDefaultAsync(p => p.ID == id);
-        if (productToUpdate == null)
-        {
-            throw new KeyNotFoundException("The specified ID was not found!");
-        }
+        if (productToUpdate == null) throw new KeyNotFoundException("The specified ID was not found!");
 
         var properties = typeof(Product).GetProperties();
         foreach (var property in properties)
@@ -63,10 +70,7 @@ public class ProductService : IProductService
     public async Task DeleteAsync(int id)
     {
         var productToDelete = await _context.Products.FirstOrDefaultAsync(p => p.ID == id);
-        if (productToDelete == null)
-        {
-            throw new KeyNotFoundException("The specified ID was not found!");
-        }
+        if (productToDelete == null) throw new KeyNotFoundException("The specified ID was not found!");
 
         _context.Products.Remove(productToDelete);
         await _context.SaveChangesAsync();
