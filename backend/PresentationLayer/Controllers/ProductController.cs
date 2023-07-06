@@ -18,8 +18,15 @@ public class ProductController : ControllerBase
     [HttpGet("page/{page}")]
     public async Task<IActionResult> GetProducts(int page)
     {
-       var products= await _service.GetProductsAsync(page);
-       return Ok(products);
+        try
+        {
+            var products= await _service.GetProductsAsync(page);
+            return Ok(products);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new { message = $"A server error has occured!: {e.Message}" });
+        }
     }
     [HttpGet]
     public async Task<IActionResult> GetAll()
