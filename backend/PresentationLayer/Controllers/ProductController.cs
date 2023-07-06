@@ -15,6 +15,12 @@ public class ProductController : ControllerBase
         _service = service;
     }
 
+    [HttpGet("page/{page}")]
+    public async Task<IActionResult> GetProducts(int page)
+    {
+       var products= await _service.GetProductsAsync(page);
+       return Ok(products);
+    }
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
