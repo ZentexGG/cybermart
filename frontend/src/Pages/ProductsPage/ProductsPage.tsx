@@ -11,40 +11,6 @@ interface CartItem {
 }
 
 export default function ProductsPage() {
-  const [products, setProducts] = useState<CartItem[]>([]);
-  const [cart, setCart] = useState<CartItem[]>([]);
-
-  const [activePrice, setActivePrice] = useState<string>("");
-  const [isShowCart, setIsShowCart] = useState<boolean>(false);
-
-  const handleAddToCart = (product: CartItem) => {
-    setCart((prev) => {
-      const findProductInCart = prev.find((item) => item.id === product.id);
-
-      if (findProductInCart) {
-        return prev.map((item) =>
-          item.id === product.id ? { ...item, amount: item.amount + 1 } : item
-        );
-      }
-
-      // First time adding the product to cart
-      return [...prev, { ...product, amount: 1 }];
-    });
-  };
-
-  const handleRemoveFromCart = (id: string) => {
-    setCart((prev) => {
-      return prev.reduce((cal, item) => {
-        if (item.id === id) {
-          if (item.amount === 1) return cal;
-
-          return [...cal, { ...item, amount: item.amount - 1 }];
-        }
-
-        return [...cal, { ...item }];
-      }, [] as CartItem[]);
-    });
-  };
 
   return (
     <>
@@ -58,14 +24,6 @@ export default function ProductsPage() {
         <ProductCarcComponent />
         <ProductCarcComponent />
       </div>
-      {isShowCart && (
-        <Cart
-          cart={cart}
-          handleRemoveFromCart={handleRemoveFromCart}
-          handleAddToCart={handleAddToCart}
-          setIsShowCart={setIsShowCart}
-        />
-      )}
       <PaginationComponent />
     </>
   );

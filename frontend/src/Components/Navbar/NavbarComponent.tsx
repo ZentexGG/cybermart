@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import CybermartLogo from "../../Img/cybermart-low-resolution-logo-color-on-transparent-background.png";
+import {BsCartCheckFill} from "react-icons/bs"
 
-export default function NavbarComponent() {
+export default function NavbarComponent({handleShowCart} : {handleShowCart:()=>void}) {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isUserDropdownOpen, setUserDropdownOpen] = useState(false);
 
@@ -84,6 +85,9 @@ export default function NavbarComponent() {
                 </a>
               </li>
             </ul>
+          </div>
+          <div className="ml-5">
+          <BsCartCheckFill size={25} onClick={handleShowCart}/>
           </div>
           {/* Mobile Menu Button */}
           <button
