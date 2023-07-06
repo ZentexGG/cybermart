@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Authentication.Models;
+namespace PresentationLayer.Model;
 
 public class ResetPasswordModel
 {

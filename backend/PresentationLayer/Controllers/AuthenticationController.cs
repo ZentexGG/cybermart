@@ -1,9 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
-using Authentication.Models;
-using Authentication.Models.Authentication.Login;
 using AuthenticationService.Models;
 using BusinessLayer.Interfaces;
 using DataLayer.Entities;
@@ -11,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using PresentationLayer.Model;
 
 namespace PresentationLayer.Controllers;
 [Route("/Auth")]
@@ -100,23 +100,24 @@ public class AuthController : ControllerBase
     [HttpPost("Login")]
     public async Task<IActionResult> Login(LoginUser loginUser)
     {
-        var user = await _userManager.FindByNameAsync(loginUser.UserName);
-        if (!user.EmailConfirmed)
-        {
-            return StatusCode(StatusCodes.Status401Unauthorized,
-                new Response { Status = "Error", Message = "The Email hasn't been verified" });
-        }
+        var user = await _userManager.FindByEmailAsync(loginUser.Email);
+        
         if (user == null)
         {
-            return Unauthorized();
+            return Unauthorized(new {message = "User does not exist!"});
         }
         if (!await _userManager.CheckPasswordAsync(user,loginUser.Password))
         {
             return Unauthorized();
         }
+        if (!user.EmailConfirmed)
+        {
+            return StatusCode(StatusCodes.Status401Unauthorized,
+                new Response { Status = "Error", Message = "The Email hasn't been verified" });
+        }
         var authClaims = new List<Claim>()
         {
-            new Claim(ClaimTypes.Name, user.UserName),
+            new Claim("name", user.UserName),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
 
@@ -124,10 +125,10 @@ public class AuthController : ControllerBase
 
         foreach (var userRole in userRoles)
         {
-            authClaims.Add(new Claim(ClaimTypes.Role,userRole));
+            authClaims.Add(new Claim("role",userRole));
         }
 
-        var jwtToken = GetToken(authClaims);
+        var jwtToken = GetToken(authClaims, loginUser.RememberMe);
 
         return Ok(new
         {
@@ -136,17 +137,26 @@ public class AuthController : ControllerBase
         });
     }
 
-    private JwtSecurityToken GetToken(List<Claim> authClaims)
+    private JwtSecurityToken GetToken(List<Claim> authClaims,bool rememberMe)
     {
-        var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
+        // var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
+        var authSigningKey = new byte[128 / 8]; // 128-bit key
+        using (var generator = RandomNumberGenerator.Create())
+        {
+            generator.GetBytes(authSigningKey);
+        }
 
+
+        var expireTime = rememberMe ? DateTime.Now.AddDays(30) : DateTime.Now.AddHours(3);
         JwtSecurityToken token = new JwtSecurityToken(
             issuer: _configuration["JWT:ValidIssuer"],
             audience: _configuration["JWT:ValidAudience"],
-            expires: DateTime.Now.AddHours(3),
+            expires: expireTime,
             claims: authClaims,
-            signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256));
-
+            // signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256));
+            signingCredentials: new SigningCredentials(
+                new SymmetricSecurityKey(authSigningKey),
+                SecurityAlgorithms.HmacSha256));
         return token;
     }
 

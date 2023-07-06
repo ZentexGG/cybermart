@@ -106,6 +106,17 @@ builder.Services.AddDbContext<CybermartContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddScoped<IDbContext>(provider => provider.GetService<CybermartContext>());
 
+builder.Services.AddCors(options =>
+{
+
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.WithOrigins("http://localhost:3000") // Replace with your React frontend URL
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 
 var app = builder.Build();
 
@@ -119,7 +130,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCors("AllowLocalOrigin");
+app.UseCors();
 
 app.MapControllers();
 app.Run();
