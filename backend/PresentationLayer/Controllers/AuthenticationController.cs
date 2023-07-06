@@ -101,11 +101,6 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Login(LoginUser loginUser)
     {
         var user = await _userManager.FindByNameAsync(loginUser.UserName);
-        if (!user.EmailConfirmed)
-        {
-            return StatusCode(StatusCodes.Status401Unauthorized,
-                new Response { Status = "Error", Message = "The Email hasn't been verified" });
-        }
         if (user == null)
         {
             return Unauthorized();
@@ -113,6 +108,11 @@ public class AuthController : ControllerBase
         if (!await _userManager.CheckPasswordAsync(user,loginUser.Password))
         {
             return Unauthorized();
+        }
+        if (!user.EmailConfirmed)
+        {
+            return StatusCode(StatusCodes.Status401Unauthorized,
+                new Response { Status = "Error", Message = "The Email hasn't been verified" });
         }
         var authClaims = new List<Claim>()
         {
