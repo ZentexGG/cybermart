@@ -104,7 +104,7 @@ public class AuthController : ControllerBase
         
         if (user == null)
         {
-            return Unauthorized();
+            return Unauthorized(new {message = "User does not exist!"});
         }
         if (!await _userManager.CheckPasswordAsync(user,loginUser.Password))
         {
