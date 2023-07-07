@@ -41,18 +41,14 @@ public class CybermartContext : IdentityDbContext<IdentityUser>,IDbContext
             .HasForeignKey(sp => sp.SpecificationTypeId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // Unique index on Specification's ProductId and SpecificationTypeId
         modelBuilder.Entity<Specification>()
             .HasIndex(sp => new { sp.ProductId, sp.SpecificationTypeId })
             .IsUnique();
 
-        // Configure ProductPhoto's Size property as decimal(18,2)
         modelBuilder.Entity<ProductPhoto>()
             .Property(pp => pp.Size)
             .HasColumnType("decimal(18,2)");
-
-        // Add any additional configurations for your entities
-
+        
         base.OnModelCreating(modelBuilder);
         SeedRoles(modelBuilder);
     }
