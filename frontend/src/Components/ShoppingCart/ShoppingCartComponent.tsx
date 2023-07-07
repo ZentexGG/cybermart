@@ -52,7 +52,7 @@ const Cart: React.FC<CartProps> = ({
       <div
         ref={cartRef}
         onClick={(e) => e.stopPropagation()}
-        className="bg-white w-[250px] h-full absolute right-0 overflow-y-scroll animate-bounce"
+        className="bg-white w-[250px] h-full absolute right-0 overflow-y-scroll"
       >
         <h1 className="bg-red-400 py-2 text-center text-white">Cart</h1>
         <div className="flex flex-col items-center px-2 py-4">

@@ -1,5 +1,5 @@
 import React from "react";
-import CybermartLogo from "../../Img/cybermart-low-resolution-logo-color-on-transparent-background.png"
+import CybermartLogo from "../../Img/cybermart-low-resolution-logo-color-on-transparent-background.png";
 
 export default function FooterComponent() {
   return (
@@ -20,16 +20,6 @@ export default function FooterComponent() {
             <li>
               <a href="#" className="mr-4 hover:underline md:mr-6">
                 About
-              </a>
-            </li>
-            <li>
-              <a href="#" className="mr-4 hover:underline md:mr-6">
-                Privacy Policy
-              </a>
-            </li>
-            <li>
-              <a href="#" className="mr-4 hover:underline md:mr-6">
-                Licensing
               </a>
             </li>
             <li>

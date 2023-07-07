@@ -17,8 +17,8 @@ export default function NavbarComponent({handleShowCart} : {handleShowCart:()=>v
   return (
     <nav className="bg-white border-gray-200 dark:bg-blue-100 z-50">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        <a href="https://flowbite.com/" className="flex items-center">
-          <img src={CybermartLogo} className="h-8 mr-2" alt="Flowbite Logo" />
+        <a href="/" className="flex items-center">
+          <img src={CybermartLogo} className="h-8 mr-2" alt="Cybermart Logo" />
         </a>
         <div className="flex items-center md:order-2 relative group z-10">
           {/* User Dropdown */}
@@ -45,21 +45,13 @@ export default function NavbarComponent({handleShowCart} : {handleShowCart:()=>v
           >
             <div className="px-4 py-3">
               <span className="block text-sm text-gray-900 dark:text-white">
-                Bonnie Green
+                Username Placeholder
               </span>
               <span className="block text-sm text-gray-500 truncate dark:text-gray-400">
-                name@flowbite.com
+                user@email.com
               </span>
             </div>
             <ul className="py-2" aria-labelledby="user-menu-button">
-              <li>
-                <a
-                  href="#"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                >
-                  Dashboard
-                </a>
-              </li>
               <li>
                 <a
                   href="#"
@@ -70,10 +62,10 @@ export default function NavbarComponent({handleShowCart} : {handleShowCart:()=>v
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/login"
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
                 >
-                  Earnings
+                  Login
                 </a>
               </li>
               <li>
@@ -133,26 +125,10 @@ export default function NavbarComponent({handleShowCart} : {handleShowCart:()=>v
             </li>
             <li>
               <a
-                href="#"
-                className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-red-900 md:dark:hover:text-blue-500 dark:hover:bg-red-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-red-700"
-              >
-                About
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
+                href="/products"
                 className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-red-900 md:dark:hover:text-blue-500 dark:hover:bg-red-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-red-700"
               >
                 Products
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-red-900 md:dark:hover:text-blue-500 dark:hover:bg-red-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-red-700"
-              >
-                Services
               </a>
             </li>
             <li>
