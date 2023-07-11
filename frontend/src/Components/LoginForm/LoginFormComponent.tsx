@@ -30,12 +30,11 @@ export default function LoginFormComponent() {
       setLoading(true); // Start loading
       setIncorrectCredentials(false);
       const response = await axios.post(
-        "https://localhost:7166/Auth/Login", // TODO: REPLACE WITH PROXY LINK
+        "/Auth/Login",
         data
       );
       const token = response.data.token;
-      const decodedToken: DecodedToken = jwt_decode(token);
-      console.log(decodedToken);
+      console.log(token);
     } catch (error) {
       console.log(error);
       setIncorrectCredentials(true);

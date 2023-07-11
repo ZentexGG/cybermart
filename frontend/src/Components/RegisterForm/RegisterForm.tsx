@@ -1,9 +1,8 @@
-import React, { useState } from "react";
-import axios, { AxiosError } from "axios";
+import { useState } from "react";
+import axios from "axios";
 import { useForm } from "react-hook-form";
 import { AiOutlineLogin } from "react-icons/ai";
 import { MdScreenshotMonitor } from "react-icons/md";
-import jwt_decode from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 
 interface FormData {
@@ -12,10 +11,6 @@ interface FormData {
   confirmPassword: string;
   firstName: string;
   lastName: string;
-}
-
-interface DecodedToken {
-  [key: string]: any;
 }
 
 export default function RegisterForm() {
@@ -31,11 +26,11 @@ export default function RegisterForm() {
   const [registrationError, setRegistrationError] = useState(false);
   const navigate = useNavigate();
 
-  const attemptLogin = async (data: FormData) => {
+  const attemptRegister = async (data: FormData) => {
     try {
       setLoading(true);
       const response = await axios.post(
-        "https://localhost:7166/Auth/register?role=User", // TODO: REPLACE WITH PROXY LINK
+        "/Auth/register?role=User",
         {
           username: `${data.firstName}${data.lastName}`,
           email: data.email,
@@ -57,7 +52,7 @@ export default function RegisterForm() {
   const onSubmit = (data: FormData) => {
     // Handle form submission logic here
     console.log(data);
-    attemptLogin(data);
+    attemptRegister(data);
     };
     
     const password = watch("password");
