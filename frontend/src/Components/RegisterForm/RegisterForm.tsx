@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import { AiOutlineLogin } from "react-icons/ai";
 import { MdScreenshotMonitor } from "react-icons/md";
 import jwt_decode from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 interface FormData {
   email: string;
@@ -26,22 +27,28 @@ export default function RegisterForm() {
   } = useForm<FormData>({ mode: "onChange" });
 
   const [loading, setLoading] = useState(false);
-  const [incorrectCredentials, setIncorrectCredentials] = useState(false);
+  const [statusMessage, setStatusMessage] = useState("");
+  const [registrationError, setRegistrationError] = useState(false);
+  const navigate = useNavigate();
 
   const attemptLogin = async (data: FormData) => {
     try {
-      setLoading(true); // Start loading
-      setIncorrectCredentials(false);
+      setLoading(true);
       const response = await axios.post(
-        "https://localhost:7166/Auth/register", // TODO: REPLACE WITH PROXY LINK
-        data
+        "https://localhost:7166/Auth/register?role=User", // TODO: REPLACE WITH PROXY LINK
+        {
+          username: `${data.firstName}${data.lastName}`,
+          email: data.email,
+          password: data.password
+        }
       );
-      const token = response.data.token;
-      const decodedToken: DecodedToken = jwt_decode(token);
-      console.log(decodedToken);
-    } catch (error) {
+      console.log(response.data.message);
+      navigate(`/register-success/${data.email}`)
+    } catch (error: any) {
       console.log(error);
-      setIncorrectCredentials(true);
+      
+      setRegistrationError(true);
+      setStatusMessage(error.response.data.message);
     } finally {
       setLoading(false);
     }
@@ -50,7 +57,7 @@ export default function RegisterForm() {
   const onSubmit = (data: FormData) => {
     // Handle form submission logic here
     console.log(data);
-    //   attemptLogin(data);
+    attemptLogin(data);
     };
     
     const password = watch("password");
@@ -252,8 +259,8 @@ export default function RegisterForm() {
           </div>
         </form>
         <p className="text-red-500 flex justify-center">
-          {!loading && incorrectCredentials
-            ? "Incorrect username or password!"
+          {!loading && registrationError
+            ? statusMessage
             : ""}
         </p>
       </div>
