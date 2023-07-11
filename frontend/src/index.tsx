@@ -8,6 +8,7 @@ import LoginPage from "./Pages/LoginPage/LoginPage";
 import "./index.css";
 import ProductsPage from "./Pages/ProductsPage/ProductsPage";
 import RegisterPage from "./Pages/RegisterPage/RegisterPage";
+import RegistrationSuccessPage from "./Pages/RegistrationSuccessPage/RegistrationSuccessPage";
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
       {
         path: "/register",
         element: <RegisterPage />
+      },
+      {
+        path: "/register-success/:email",
+        element: <RegistrationSuccessPage />
       }
     ],
   },
