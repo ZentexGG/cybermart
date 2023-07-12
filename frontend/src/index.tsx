@@ -9,6 +9,8 @@ import "./index.css";
 import ProductsPage from "./Pages/ProductsPage/ProductsPage";
 import RegisterPage from "./Pages/RegisterPage/RegisterPage";
 import RegistrationSuccessPage from "./Pages/RegistrationSuccessPage/RegistrationSuccessPage";
+import ForgotPasswordPage from "./Pages/ForgotPasswordPage/ForgotPasswordPage";
+import ResetPasswordPage from "./Pages/ResetPasswordPage/ResetPasswordPage";
 
 const router = createBrowserRouter([
   {
@@ -34,6 +36,14 @@ const router = createBrowserRouter([
       {
         path: "/register-success/:email",
         element: <RegistrationSuccessPage />
+      },
+      {
+        path:"/forgot-password",
+        element: <ForgotPasswordPage />
+      },
+      {
+        path:"/reset-password/:token",
+        element: <ResetPasswordPage/>
       }
     ],
   },
