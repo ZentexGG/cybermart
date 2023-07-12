@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { AiOutlineLogin } from "react-icons/ai";
 import { MdScreenshotMonitor } from "react-icons/md";
+import checkAuth from '../../authChecker';
 import jwt_decode from "jwt-decode";
+
 
 interface FormData {
   email: string;
@@ -16,6 +18,23 @@ interface DecodedToken {
 }
 
 export default function LoginFormComponent() {
+
+  useEffect(() => {
+    // const token = getCookie("token")
+    // if (token) {
+    //   const decodedCookie: DecodedToken = jwt_decode(token);
+    //   console.log(decodedCookie);
+    // }
+    checkAuth();
+  }, [])
+
+  // function getCookie(name: string) {
+  //   const cookieValue = document.cookie.match(
+  //     `(^|;)\\s*${name}\\s*=\\s*([^;]+)`
+  //   );
+  //   return cookieValue ? cookieValue.pop() : "";
+  // }
+
   const {
     register,
     handleSubmit,
@@ -34,6 +53,8 @@ export default function LoginFormComponent() {
         data
       );
       const token = response.data.token;
+      const decodedToken: DecodedToken = jwt_decode(token);
+      document.cookie = `token=${token}; expires=${new Date(decodedToken.expires * 1000).toUTCString()}; path=/`;
       console.log(token);
     } catch (error) {
       console.log(error);
