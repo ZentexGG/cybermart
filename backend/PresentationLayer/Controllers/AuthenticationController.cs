@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text.Json.Serialization;
 using AuthenticationService.Models;
 using BusinessLayer.Interfaces;
 using DataLayer.Entities;
@@ -59,7 +61,7 @@ public class AuthController : ControllerBase
 
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
         var confirmationLink = Url.ActionLink(nameof(ConfirmEmail), "Auth", new { token, email = newUser.Email },Request.Scheme);
-        var message = new Message(new string[] { newUser.Email! }, "Confirmation Email Link", $"<a href={confirmationLink!}>Da</a>");
+        var message = new Message(new string[] { newUser.Email! }, "Confirmation Email Link", $"<button href={confirmationLink!}>Da</button>");
         _emailService.SendEmail(message);
         
         return StatusCode(StatusCodes.Status201Created,
@@ -69,7 +71,7 @@ public class AuthController : ControllerBase
     [HttpGet("TestEmail")]
     public async Task<IActionResult> TestEmail()
     {
-        var message = new Message(new [] { "izabelacornea88@gmail.com" }, "Test", "<button>Dani e smecher<button>");
+        var message = new Message(new [] { "alexandrudanielaka47@gmail.com" }, "Test", "<button style='color:red'>Dani e smecher<button>");
         _emailService.SendEmail(message);
         return StatusCode(StatusCodes.Status201Created,
             new Response { Status = "Success", Message = "Email Sent Successfully" });
@@ -161,9 +163,10 @@ public class AuthController : ControllerBase
 
     [HttpPost("forgot-password")]
     [AllowAnonymous]
-    public async Task<IActionResult> ForgotPassword([Required] string email)
+    public async Task<IActionResult> ForgotPassword([Required][FromBody] ForgotPasswordModel forgotPassword)
     {
-        var user = await _userManager.FindByEmailAsync(email);
+        var user = await _userManager.FindByEmailAsync(forgotPassword.Email);
+        Console.WriteLine(user);
         if (user == null)
         {
             return StatusCode(StatusCodes.Status400BadRequest,
@@ -171,8 +174,10 @@ public class AuthController : ControllerBase
         }
 
         var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        token = WebUtility.UrlEncode(token);
         var forgotPasswordLink =
-            Url.Action(nameof(ResetPassword), "Auth", new { token, email = user.Email }, Request.Scheme);
+            $"http://localhost:3000/reset-password/{token}";
+        
         var message = new Message(new string[] { user.Email }, "Forgot password link", forgotPasswordLink!);
         _emailService.SendEmail(message);
 
