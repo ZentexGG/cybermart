@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { BsCartCheckFill } from "react-icons/bs";
 import { DecodedToken } from "../../types";
+import SignoutButton from "../SignoutButton/SignoutButton";
 
 export default function LoggedInUserDropdown({
   handleShowCart,
@@ -9,19 +10,13 @@ export default function LoggedInUserDropdown({
   handleShowCart: () => void;
   userInfo: DecodedToken;
 }) {
-  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isUserDropdownOpen, setUserDropdownOpen] = useState(false);
 
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!isMobileMenuOpen);
-  };
-
   const toggleUserDropdown = () => {
-      setUserDropdownOpen(!isUserDropdownOpen);
+    setUserDropdownOpen(!isUserDropdownOpen);
   };
   return (
     <>
-      {/* User Dropdown */}
       <button
         type="button"
         className="flex mr-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
@@ -48,7 +43,7 @@ export default function LoggedInUserDropdown({
             {userInfo.name}
           </span>
           <span className="block text-sm text-gray-500 truncate dark:text-gray-400">
-                      {userInfo.email}
+            {userInfo.email}
           </span>
         </div>
         <ul className="py-2" aria-labelledby="user-menu-button">
@@ -68,14 +63,7 @@ export default function LoggedInUserDropdown({
               Login
             </a>
           </li>
-          <li>
-            <a
-              href="#"
-              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-            >
-              Sign out
-            </a>
-          </li>
+          <SignoutButton />
         </ul>
       </div>
       <div className="ml-5">
