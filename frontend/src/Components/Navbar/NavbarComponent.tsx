@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import CybermartLogo from "../../Img/cybermart-low-resolution-logo-color-on-transparent-background.png";
 
 import LoggedInUserDropdown from "../LoggedInUserDropwdown/LoggedInUserDropdown";
