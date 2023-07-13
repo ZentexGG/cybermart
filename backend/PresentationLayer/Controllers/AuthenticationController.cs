@@ -22,25 +22,34 @@ public class AuthController : ControllerBase
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IEmailService _emailService ;
     private readonly IConfiguration _configuration;
+    private readonly IUserService _userService;
 
-    public AuthController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IEmailService emailService,IConfiguration configuration)
+
+    public AuthController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IEmailService emailService, IConfiguration configuration, IUserService userService)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _emailService = emailService;
         _configuration = configuration;
+        _userService = userService;
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] User user, string role)
+    public async Task<IActionResult> Register([FromBody] RegisterModel user, string role)
     {
         var userExists = await _userManager.FindByEmailAsync(user.Email);
+        var dbUser = new User()
+        {
+            Email = user.Email,
+            Username = user.Username
+        };
+        await _userService.CreateUser(dbUser);
         if (userExists!= null)
         {
             return StatusCode(StatusCodes.Status400BadRequest,
                 new Response { Status = "Error", Message = "User already exists!" });
         }
-        IdentityUser newUser = new()
+        IdentityUser identityUser = new()
         {
             Email = user.Email,
             SecurityStamp = Guid.NewGuid().ToString(),
@@ -51,17 +60,17 @@ public class AuthController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError,
                 new Response { Status = "Error", Message = "The Role Doesn't exist" });
         }
-        var result = await _userManager.CreateAsync(newUser, user.Password);
+        var result = await _userManager.CreateAsync(identityUser, user.Password);
         if (!result.Succeeded)
         {
             return StatusCode(StatusCodes.Status500InternalServerError,
             new Response { Status = "Error", Message = "User failed to create" });
         }
-        await _userManager.AddToRoleAsync(newUser,role);
+        await _userManager.AddToRoleAsync(identityUser,role);
 
-        var token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
-        var confirmationLink = Url.ActionLink(nameof(ConfirmEmail), "Auth", new { token, email = newUser.Email },Request.Scheme);
-        var message = new Message(new string[] { newUser.Email! }, "Confirmation Email Link", $"<button href={confirmationLink!}>Da</button>");
+        var token = await _userManager.GenerateEmailConfirmationTokenAsync(identityUser);
+        var confirmationLink = Url.ActionLink(nameof(ConfirmEmail), "Auth", new { token, email = identityUser.Email },Request.Scheme);
+        var message = new Message(new string[] { identityUser.Email! }, "Confirmation Email Link", $"<button href={confirmationLink!}>Da</button>");
         _emailService.SendEmail(message);
         
         return StatusCode(StatusCodes.Status201Created,
@@ -177,10 +186,9 @@ public class AuthController : ControllerBase
         token = WebUtility.UrlEncode(token);
         var forgotPasswordLink =
             $"http://localhost:3000/reset-password/{token}";
-        UriBuilder urlnebunie = new UriBuilder("http://localhost:3000");
-        urlnebunie.Path = $"/reset-password/{token}/{user.Email}";
-        forgotPasswordLink = urlnebunie.ToString();
-        Console.WriteLine(urlnebunie);
+        UriBuilder uriBuilder = new UriBuilder("http://localhost:3000");
+        uriBuilder.Path = $"/reset-password/{token}/{user.Email}";
+        forgotPasswordLink = uriBuilder.ToString();
         var message = new Message(new string[] { user.Email }, "Forgot password link", forgotPasswordLink!);
         _emailService.SendEmail(message);
 

@@ -4,6 +4,7 @@ using DataLayer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataLayer.Migrations
 {
     [DbContext(typeof(CybermartContext))]
-    partial class CybermartContextModelSnapshot : ModelSnapshot
+    [Migration("20230713100619_addedUserPhoto")]
+    partial class addedUserPhoto
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -208,6 +211,7 @@ namespace DataLayer.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("phoneNumber")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
@@ -274,14 +278,14 @@ namespace DataLayer.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a473f6da-cc6b-42c1-8068-940d19094211",
+                            Id = "a3251887-3d59-4a96-96eb-1b27124e4327",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "1f3d3d10-3dcb-4039-8bc7-cf5b8a955bc7",
+                            Id = "c14e3b6e-4bb0-4450-9e38-3a9dcdfd2b66",
                             ConcurrencyStamp = "2",
                             Name = "User",
                             NormalizedName = "USER"
