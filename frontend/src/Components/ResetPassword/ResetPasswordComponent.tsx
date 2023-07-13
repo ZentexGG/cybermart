@@ -10,7 +10,6 @@ interface FormData {
   email: string;
   password: string;
   confirmPassword: string;
-  token:string;
 }
 
 export default function ResetPasswordComponent() {
@@ -25,21 +24,19 @@ export default function ResetPasswordComponent() {
   const [statusMessage, setStatusMessage] = useState("");
   const [registrationError, setRegistrationError] = useState(false);
   const navigate = useNavigate();
-  const {token} = useParams();
+  const {token,email} = useParams();
 
-  const attemptRegister = async (data: FormData) => {
-
-    var decoded = jwtDecode(token ?? '')
-    console.log(decoded);
+  const attemptResetPassword = async (data: FormData) => {
     
     try {
       setLoading(true);
       const response = await axios.post(
-        "/Auth/register?role=User",
+        "/Auth/reset-password",
         {
-          email: data.email,
+          email: email,
           password: data.password,
           confirmPassword : data.confirmPassword,
+          token : token
         }
       );
       console.log(response.data.message);
@@ -57,7 +54,7 @@ export default function ResetPasswordComponent() {
   const onSubmit = (data: FormData) => {
     // Handle form submission logic here
     console.log(data);
-    attemptRegister(data);
+    attemptResetPassword(data);
     };
     
     const password = watch("password");

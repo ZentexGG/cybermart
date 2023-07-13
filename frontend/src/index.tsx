@@ -11,6 +11,8 @@ import RegisterPage from "./Pages/RegisterPage/RegisterPage";
 import RegistrationSuccessPage from "./Pages/RegistrationSuccessPage/RegistrationSuccessPage";
 import ForgotPasswordPage from "./Pages/ForgotPasswordPage/ForgotPasswordPage";
 import ResetPasswordPage from "./Pages/ResetPasswordPage/ResetPasswordPage";
+import ProductDetailsPage from "./Pages/ProductDetailsPage/ProductDetailsPage";
+import UserProfilePage from "./Pages/UserProfilePage/UserProfilePage";
 
 const router = createBrowserRouter([
   {
@@ -42,8 +44,16 @@ const router = createBrowserRouter([
         element: <ForgotPasswordPage />
       },
       {
-        path:"/reset-password/:token",
+        path:"/reset-password/:token/:email",
         element: <ResetPasswordPage/>
+      },
+      {
+        path:"/products/:id",
+        element:<ProductDetailsPage/>
+      },
+      {
+        path:"users/:id",
+        element:<UserProfilePage/>
       }
     ],
   },

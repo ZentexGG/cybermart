@@ -177,7 +177,10 @@ public class AuthController : ControllerBase
         token = WebUtility.UrlEncode(token);
         var forgotPasswordLink =
             $"http://localhost:3000/reset-password/{token}";
-        
+        UriBuilder urlnebunie = new UriBuilder("http://localhost:3000");
+        urlnebunie.Path = $"/reset-password/{token}/{user.Email}";
+        forgotPasswordLink = urlnebunie.ToString();
+        Console.WriteLine(urlnebunie);
         var message = new Message(new string[] { user.Email }, "Forgot password link", forgotPasswordLink!);
         _emailService.SendEmail(message);
 
