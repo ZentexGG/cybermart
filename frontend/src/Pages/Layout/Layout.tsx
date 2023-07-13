@@ -4,7 +4,7 @@ import NavbarComponent from "../../Components/Navbar/NavbarComponent";
 import { useEffect, useState } from "react";
 import Cart from "../../Components/ShoppingCart/ShoppingCartComponent";
 import { DecodedToken } from "../../types";
-import checkAuth from "../../authChecker";
+import { checkAuth } from "../../authChecker";
 
 interface CartItem {
   id: string;
@@ -14,19 +14,18 @@ interface CartItem {
   amount: number;
 }
 
-const Layout = () => {
-
+export default function Layout() {
   const [userInfo, setUserInfo] = useState<DecodedToken | boolean>(false);
   const location = useLocation();
 
   useEffect(() => {
     const fetchUserInfo = async () => {
       const user = await checkAuth();
-      setUserInfo(user)
+      setUserInfo(user);
     };
 
     fetchUserInfo();
-  }, [location])
+  }, [location]);
 
   const [products, setProducts] = useState<CartItem[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -85,6 +84,4 @@ const Layout = () => {
       </div>
     </div>
   );
-};
-
-export default Layout;
+}
