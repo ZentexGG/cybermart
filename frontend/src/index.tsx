@@ -14,6 +14,7 @@ import ResetPasswordPage from "./Pages/ResetPasswordPage/ResetPasswordPage";
 import ProductDetailsPage from "./Pages/ProductDetailsPage/ProductDetailsPage";
 import UserProfilePage from "./Pages/UserProfilePage/UserProfilePage";
 
+
 const router = createBrowserRouter([
   {
     path: "/",
