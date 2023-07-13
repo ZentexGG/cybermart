@@ -12,8 +12,9 @@ const checkAuth = () => {
   const token = getCookie("token");
   if (token) {
     const decodedCookie: DecodedToken = jwt_decode(token);
-    console.log(decodedCookie);
+    return decodedCookie;
   }
+  return false;
 };
 
 export default checkAuth;
