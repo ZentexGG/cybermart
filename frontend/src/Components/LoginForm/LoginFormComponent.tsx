@@ -22,9 +22,12 @@ export default function LoginFormComponent() {
     const navigate = useNavigate();
 
   useEffect(() => {
-    let userInfo: DecodedToken | boolean = checkAuth();
-    if (userInfo) {
-      navigate("/")
+    const fetchUserInfo = async () => {
+      let userInfo = await checkAuth();
+      if (userInfo) {
+        navigate("/")
+      }
+      fetchUserInfo();
     }
   }, [])
 

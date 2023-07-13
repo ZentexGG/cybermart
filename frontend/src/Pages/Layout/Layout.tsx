@@ -1,8 +1,10 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import FooterComponent from "../../Components/Footer/FooterComponent";
 import NavbarComponent from "../../Components/Navbar/NavbarComponent";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Cart from "../../Components/ShoppingCart/ShoppingCartComponent";
+import { DecodedToken } from "../../types";
+import checkAuth from "../../authChecker";
 
 interface CartItem {
   id: string;
@@ -13,6 +15,19 @@ interface CartItem {
 }
 
 const Layout = () => {
+
+  const [userInfo, setUserInfo] = useState<DecodedToken | boolean>(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      const user = await checkAuth();
+      setUserInfo(user)
+    };
+
+    fetchUserInfo();
+  }, [location])
+
   const [products, setProducts] = useState<CartItem[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [activePrice, setActivePrice] = useState<string>("");
@@ -54,7 +69,7 @@ const Layout = () => {
   return (
     <div className="flex flex-col h-screen">
       <div className="flex-grow">
-        <NavbarComponent handleShowCart={handleShowCart} />
+        <NavbarComponent handleShowCart={handleShowCart} userInfo={userInfo} />
         {isShowCart && (
           <Cart
             cart={cart}
