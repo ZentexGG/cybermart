@@ -6,7 +6,7 @@ const getCookie = (name: string) => {
   const cookieValue = document.cookie.match(`(^|;)\\s*${name}\\s*=\\s*([^;]+)`);
   return cookieValue ? cookieValue.pop() : "";
 };
-const checkAuth = async () => {
+export const checkAuth = async () => {
   const token = getCookie("token");
   if (token) {
     const decodedCookie: DecodedToken = await jwt_decode(token);
@@ -14,5 +14,3 @@ const checkAuth = async () => {
   }
   return false;
 };
-
-export default checkAuth;
