@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { AiOutlineLogin } from "react-icons/ai";
 import { MdScreenshotMonitor } from "react-icons/md";
+import { DecodedToken } from "../../types";
+import { checkAuth } from '../../authChecker';
 import jwt_decode from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 interface FormData {
   email: string;
@@ -11,11 +14,23 @@ interface FormData {
   rememberMe: boolean;
 }
 
-interface DecodedToken {
-  [key: string]: any;
-}
+
 
 export default function LoginFormComponent() {
+
+
+    const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      let userInfo = await checkAuth();
+      if (userInfo) {
+        navigate("/")
+      }
+      fetchUserInfo();
+    }
+  }, [])
+
   const {
     register,
     handleSubmit,
@@ -27,16 +42,17 @@ export default function LoginFormComponent() {
 
   const attemptLogin = async (data: FormData) => {
     try {
-      setLoading(true); // Start loading
+      setLoading(true);
       setIncorrectCredentials(false);
       const response = await axios.post(
         "/Auth/Login",
         data
       );
       const token = response.data.token;
-      console.log(token);
+      const decodedToken: DecodedToken = jwt_decode(token);
+      document.cookie = `token=${token}; expires=${new Date(decodedToken.expires * 1000).toUTCString()}; path=/`;
+      navigate("/")
     } catch (error) {
-      console.log(error);
       setIncorrectCredentials(true);
     } finally {
       setLoading(false); 

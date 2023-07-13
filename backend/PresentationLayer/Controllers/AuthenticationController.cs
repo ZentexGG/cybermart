@@ -116,8 +116,9 @@ public class AuthController : ControllerBase
         }
         var authClaims = new List<Claim>()
         {
-            new Claim("name", user.UserName),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new ("name", user.UserName),
+            new ("email", user.Email),
+            new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
 
         var userRoles = await _userManager.GetRolesAsync(user);

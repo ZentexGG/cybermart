@@ -1,19 +1,21 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import CybermartLogo from "../../Img/cybermart-low-resolution-logo-color-on-transparent-background.png";
-import {BsCartCheckFill} from "react-icons/bs"
 
-export default function NavbarComponent({handleShowCart} : {handleShowCart:()=>void}) {
+import LoggedInUserDropdown from "../LoggedInUserDropwdown/LoggedInUserDropdown";
+import { DecodedToken } from "../../types";
+import NotLoggedInUserDropdown from "../NotLoggedInUserDropdown/NotLoggedInUserDropdown";
+
+export default function NavbarComponent({
+  handleShowCart,
+  userInfo,
+}: {
+  handleShowCart: () => void;
+  userInfo: DecodedToken | boolean;
+}) {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isUserDropdownOpen, setUserDropdownOpen] = useState(false);
-
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!isMobileMenuOpen);
   };
-
-  const toggleUserDropdown = () => {
-    setUserDropdownOpen(!isUserDropdownOpen);
-  };
-
   return (
     <nav className="bg-white border-gray-200 dark:bg-blue-100 z-50">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
@@ -21,67 +23,15 @@ export default function NavbarComponent({handleShowCart} : {handleShowCart:()=>v
           <img src={CybermartLogo} className="h-8 mr-2" alt="Cybermart Logo" />
         </a>
         <div className="flex items-center md:order-2 relative group z-10">
-          {/* User Dropdown */}
-          <button
-            type="button"
-            className="flex mr-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
-            id="user-menu-button"
-            aria-expanded={isUserDropdownOpen ? "true" : "false"}
-            onClick={toggleUserDropdown}
-          >
-            <span className="sr-only">Open user menu</span>
-            <img
-              className="w-8 h-8 rounded-full"
-              src="/docs/images/people/profile-picture-3.jpg"
-              alt="user photo"
+          {userInfo && typeof userInfo !== "boolean" ? (
+            <LoggedInUserDropdown
+              handleShowCart={handleShowCart}
+              userInfo={userInfo}
             />
-          </button>
-          <div
-            className={`${
-              isUserDropdownOpen ? "block" : "hidden"
-            } absolute right-0 origin-top-right w-48 rounded-md shadow-lg bg-white divide-y divide-gray-100 dark:bg-red-900 dark:divide-red-800`}
-            id="user-dropdown"
-            style={{ top: "calc(100% + 0.9rem)", right: "0" }}
-          >
-            <div className="px-4 py-3">
-              <span className="block text-sm text-gray-900 dark:text-white">
-                Username Placeholder
-              </span>
-              <span className="block text-sm text-gray-500 truncate dark:text-gray-400">
-                user@email.com
-              </span>
-            </div>
-            <ul className="py-2" aria-labelledby="user-menu-button">
-              <li>
-                <a
-                  href="#"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                >
-                  Settings
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/login"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                >
-                  Login
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                >
-                  Sign out
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div className="ml-5">
-          <BsCartCheckFill size={25} onClick={handleShowCart}/>
-          </div>
-          {/* Mobile Menu Button */}
+          ) : (
+            <NotLoggedInUserDropdown />
+          )}
+
           <button
             data-collapse-toggle="mobile-menu-2"
             type="button"
