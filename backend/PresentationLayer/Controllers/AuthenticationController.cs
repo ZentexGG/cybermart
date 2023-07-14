@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json.Serialization;
 using AuthenticationService.Models;
 using BusinessLayer.Interfaces;
@@ -38,17 +39,17 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Register([FromBody] RegisterModel user, string role)
     {
         var userExists = await _userManager.FindByEmailAsync(user.Email);
-        var dbUser = new User()
-        {
-            Email = user.Email,
-            Username = user.Username
-        };
-        await _userService.CreateUser(dbUser);
         if (userExists!= null)
         {
-            return StatusCode(StatusCodes.Status400BadRequest,
-                new Response { Status = "Error", Message = "User already exists!" });
+            return StatusCode(StatusCodes.Status403Forbidden,
+                new Response { Status = "Error", Message = "User already exists" });
         }
+        var newUser = new User()
+        {
+            Username = user.Username,
+            Email = user.Email
+        };
+        await _userService.CreateUser(newUser);
         IdentityUser identityUser = new()
         {
             Email = user.Email,
@@ -64,19 +65,20 @@ public class AuthController : ControllerBase
         if (!result.Succeeded)
         {
             return StatusCode(StatusCodes.Status500InternalServerError,
-            new Response { Status = "Error", Message = "User failed to create" });
+                new Response { Status = "Error", Message = "User failed to create" });
         }
         await _userManager.AddToRoleAsync(identityUser,role);
 
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(identityUser);
         var confirmationLink = Url.ActionLink(nameof(ConfirmEmail), "Auth", new { token, email = identityUser.Email },Request.Scheme);
-        var message = new Message(new string[] { identityUser.Email! }, "Confirmation Email Link", $"<button href={confirmationLink!}>Da</button>");
+        var message = new Message(new string[] { identityUser.Email! }, "Confirmation Email Link", $"<a href={confirmationLink!}>Da</a>");
         _emailService.SendEmail(message);
         
         return StatusCode(StatusCodes.Status201Created,
             new Response { Status = "Success", Message = $"User created successfully & Confirmation Email to {user} Successfully    " });
     }
 
+    [Authorize(Roles = "User")]
     [HttpGet("TestEmail")]
     public async Task<IActionResult> TestEmail()
     {
@@ -138,7 +140,7 @@ public class AuthController : ControllerBase
             authClaims.Add(new Claim("role",userRole));
         }
 
-        var jwtToken = GetToken(authClaims, loginUser.RememberMe);
+        var jwtToken = GetToken(authClaims);
 
         return Ok(new
         {
@@ -147,26 +149,17 @@ public class AuthController : ControllerBase
         });
     }
 
-    private JwtSecurityToken GetToken(List<Claim> authClaims,bool rememberMe)
+    private JwtSecurityToken GetToken(List<Claim> authClaims)
     {
-        // var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
-        var authSigningKey = new byte[128 / 8]; // 128-bit key
-        using (var generator = RandomNumberGenerator.Create())
-        {
-            generator.GetBytes(authSigningKey);
-        }
+        var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
 
-
-        var expireTime = rememberMe ? DateTime.Now.AddDays(30) : DateTime.Now.AddHours(3);
         JwtSecurityToken token = new JwtSecurityToken(
             issuer: _configuration["JWT:ValidIssuer"],
             audience: _configuration["JWT:ValidAudience"],
-            expires: expireTime,
+            expires: DateTime.Now.AddHours(3),
             claims: authClaims,
-            // signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256));
-            signingCredentials: new SigningCredentials(
-                new SymmetricSecurityKey(authSigningKey),
-                SecurityAlgorithms.HmacSha256));
+            signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256));
+
         return token;
     }
 

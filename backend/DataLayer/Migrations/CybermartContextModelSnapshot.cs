@@ -207,9 +207,6 @@ namespace DataLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("phoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("ID");
 
                     b.ToTable("Users");
@@ -234,15 +231,15 @@ namespace DataLayer.Migrations
                     b.Property<DateTime>("UploadDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserID")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserID")
+                    b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("UserPhoto");
+                    b.ToTable("UserPhotos");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -274,14 +271,14 @@ namespace DataLayer.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a473f6da-cc6b-42c1-8068-940d19094211",
+                            Id = "d1ff7358-d669-48ba-954a-accdd0e50c5b",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "1f3d3d10-3dcb-4039-8bc7-cf5b8a955bc7",
+                            Id = "d471da76-0d34-476b-b57d-1c831490345a",
                             ConcurrencyStamp = "2",
                             Name = "User",
                             NormalizedName = "USER"
@@ -519,7 +516,7 @@ namespace DataLayer.Migrations
                 {
                     b.HasOne("DataLayer.Entities.User", "User")
                         .WithOne("UserPhoto")
-                        .HasForeignKey("DataLayer.Entities.UserPhoto", "UserID")
+                        .HasForeignKey("DataLayer.Entities.UserPhoto", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

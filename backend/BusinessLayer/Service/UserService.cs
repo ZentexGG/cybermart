@@ -1,6 +1,10 @@
-﻿using BusinessLayer.Interfaces;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using BusinessLayer.Interfaces;
+using BusinessLayer.Model;
 using DataLayer.ContextInterface;
 using DataLayer.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace BusinessLayer.Service;
@@ -14,17 +18,57 @@ public class UserService : IUserService
         _context = context;
     }
 
-    public async Task<User> GetUser(string email)
+    public async Task<UserDto> GetUser(string email)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
-        return user;
+        var user = await _context.Users
+            .Include(u => u.UserPhoto)
+            .FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
+
+        var userDto = new UserDto
+        {
+            Id = user.ID,
+            Username = user.Username,
+            Email = user.Email,
+            // Set other properties as needed
+            ImageData = user.UserPhoto?.ImageData,
+            FileName = user.UserPhoto?.FileName
+        };
+
+        return userDto;
     }
 
-    public async Task UpdateUser(User user)
+    public async Task UpdateUser(string username, string email, IFormFile photo)
     {
-        _context.Users.Update(user);
-        await _context.SaveChangesAsync();
+        try
+        {
+            // Save the user entity before adding related entities
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+
+            // Extract photo data from IFormFile
+            if (photo != null)
+            {
+                using var memoryStream = new MemoryStream();
+                await photo.CopyToAsync(memoryStream);
+
+                var userPhoto = new UserPhoto
+                {
+                    FileName = photo.FileName,
+                    ImageData = memoryStream.ToArray(),
+                    UploadDate = DateTime.Now,
+                    UserId = user.ID // Set the foreign key value
+                };
+                _context.UserPhotos.Add(userPhoto);
+                await _context.SaveChangesAsync();
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
+
+
 
     public async Task CreateUser(User user)
     {

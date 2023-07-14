@@ -19,22 +19,16 @@ public class UserController : ControllerBase
     [HttpGet("{email}")]
     public async Task<IActionResult> GetUser(string email)
     {
-        return Ok(_userService.GetUser(email));
+        var user = await _userService.GetUser(email);
+        return Ok(user);
     }
 
     [HttpPut]
-    public async Task<IActionResult> UpdateUser(User user)
+    public async Task<IActionResult> UpdateUser(string username, string email, IFormFile photo)
     {
-        try
-        {
-            await _userService.UpdateUser(user);
-            return Ok();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return Conflict();
-        }
+        Console.WriteLine("am intrat aici");
+        await _userService.UpdateUser(username, email, photo);
+        return Ok();
     }
 
 }

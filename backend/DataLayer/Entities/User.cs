@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+
 namespace DataLayer.Entities;
 
 public class User
@@ -12,8 +14,7 @@ public class User
     [EmailAddress]
     [Required(ErrorMessage = "Email is required")]
     public string? Email { get; set; }
-    
-    [Required(ErrorMessage = "Password is required")]
-    public string? Password { get; set; }
+    [JsonIgnore]
+    public UserPhoto? UserPhoto { get; set; }
 }
 
