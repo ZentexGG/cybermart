@@ -1,6 +1,6 @@
 ﻿using MimeKit;
 
-namespace AuthenticationService.Models;
+namespace BusinessLayer.Model;
 
 public class Message
 {

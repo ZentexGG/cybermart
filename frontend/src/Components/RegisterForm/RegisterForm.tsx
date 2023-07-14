@@ -30,7 +30,7 @@ export default function RegisterForm() {
     try {
       setLoading(true);
       const response = await axios.post(
-        "/Auth/register?role=User",
+        "/Auth/register",
         {
           username: `${data.firstName}${data.lastName}`,
           email: data.email,

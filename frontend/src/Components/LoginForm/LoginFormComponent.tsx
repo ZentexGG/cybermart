@@ -25,11 +25,13 @@ export default function LoginFormComponent() {
     const fetchUserInfo = async () => {
       let userInfo = await checkAuth();
       if (userInfo) {
-        navigate("/")
+        console.log(userInfo);
+        navigate("/");
       }
-      fetchUserInfo();
-    }
-  }, [])
+    };
+
+    fetchUserInfo();
+  }, []);
 
   const {
     register,
@@ -49,8 +51,9 @@ export default function LoginFormComponent() {
         data
       );
       const token = response.data.token;
-      const decodedToken: DecodedToken = jwt_decode(token);
-      document.cookie = `token=${token}; expires=${new Date(decodedToken.expires * 1000).toUTCString()}; path=/`;
+      console.log(token);
+      
+      // const decodedToken: DecodedToken = jwt_decode(token);
       navigate("/")
     } catch (error) {
       setIncorrectCredentials(true);
