@@ -24,9 +24,7 @@ export default function RegisterForm() {
   const attemptRegister = async (data: FormData) => {
     try {
       setLoading(true);
-      const response = await axios.post("https://localhost:7166/Auth/forgot-password", {
-        email:data["email"]
-      });
+      const response = await axios.post("/Auth/forgot-password", data);
       console.log(response);
     } catch (error: any) {
       console.log(error);
