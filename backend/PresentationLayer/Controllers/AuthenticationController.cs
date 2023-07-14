@@ -2,8 +2,9 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using AuthenticationService.Models;
+using System.Text;
 using BusinessLayer.Interfaces;
+using BusinessLayer.Model;
 using DataLayer.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -30,13 +31,14 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] User user, string role)
+    public async Task<IActionResult> Register([FromBody] RegisterModel user)
     {
+        const string role = "User";
         var userExists = await _userManager.FindByEmailAsync(user.Email);
         if (userExists!= null)
         {
-            return StatusCode(StatusCodes.Status400BadRequest,
-                new Response { Status = "Error", Message = "User already exists!" });
+            return StatusCode(StatusCodes.Status403Forbidden,
+                new Response { Status = "Error", Message = "User already exists" });
         }
         IdentityUser newUser = new()
         {
@@ -53,7 +55,7 @@ public class AuthController : ControllerBase
         if (!result.Succeeded)
         {
             return StatusCode(StatusCodes.Status500InternalServerError,
-            new Response { Status = "Error", Message = "User failed to create" });
+                new Response { Status = "Error", Message = "User failed to create" });
         }
         await _userManager.AddToRoleAsync(newUser,role);
 
@@ -66,10 +68,11 @@ public class AuthController : ControllerBase
             new Response { Status = "Success", Message = $"User created successfully & Confirmation Email to {user} Successfully    " });
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpGet("TestEmail")]
     public async Task<IActionResult> TestEmail()
     {
-        var message = new Message(new [] { "izabelacornea88@gmail.com" }, "Test", "<button>Dani e smecher<button>");
+        var message = new Message(new [] { "stefan.tanase2121@gmail.com" }, "Test", "<button>Dani e smecher<button>");
         _emailService.SendEmail(message);
         return StatusCode(StatusCodes.Status201Created,
             new Response { Status = "Success", Message = "Email Sent Successfully" });
@@ -107,12 +110,11 @@ public class AuthController : ControllerBase
         }
         if (!await _userManager.CheckPasswordAsync(user,loginUser.Password))
         {
-            return Unauthorized();
+            return Unauthorized(new {message = "Email or password incorrect!"});
         }
         if (!user.EmailConfirmed)
         {
-            return StatusCode(StatusCodes.Status401Unauthorized,
-                new Response { Status = "Error", Message = "The Email hasn't been verified" });
+            return Unauthorized(new { message = "The Email hasn't been verified" });
         }
         var authClaims = new List<Claim>()
         {
@@ -122,6 +124,7 @@ public class AuthController : ControllerBase
         };
 
         var userRoles = await _userManager.GetRolesAsync(user);
+        
 
         foreach (var userRole in userRoles)
         {
@@ -130,22 +133,19 @@ public class AuthController : ControllerBase
 
         var jwtToken = GetToken(authClaims, loginUser.RememberMe);
 
+        var tokenString = new JwtSecurityTokenHandler().WriteToken(jwtToken);
+
+        Response.Cookies.Append("token", tokenString);
         return Ok(new
         {
-            token = new JwtSecurityTokenHandler().WriteToken(jwtToken),
+            token = tokenString,
             expiration = jwtToken.ValidTo
         });
     }
 
-    private JwtSecurityToken GetToken(List<Claim> authClaims,bool rememberMe)
+    private JwtSecurityToken GetToken(List<Claim> authClaims, bool rememberMe)
     {
-        // var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
-        var authSigningKey = new byte[128 / 8]; // 128-bit key
-        using (var generator = RandomNumberGenerator.Create())
-        {
-            generator.GetBytes(authSigningKey);
-        }
-
+        var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
 
         var expireTime = rememberMe ? DateTime.Now.AddDays(30) : DateTime.Now.AddHours(3);
         JwtSecurityToken token = new JwtSecurityToken(
@@ -153,12 +153,11 @@ public class AuthController : ControllerBase
             audience: _configuration["JWT:ValidAudience"],
             expires: expireTime,
             claims: authClaims,
-            // signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256));
-            signingCredentials: new SigningCredentials(
-                new SymmetricSecurityKey(authSigningKey),
-                SecurityAlgorithms.HmacSha256));
+            signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256));
+
         return token;
     }
+
 
     [HttpPost("forgot-password")]
     [AllowAnonymous]

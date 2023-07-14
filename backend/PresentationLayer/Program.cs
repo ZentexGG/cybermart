@@ -5,9 +5,9 @@ using BusinessLayer.Service;
 using DataLayer.ContextInterface;
 using DataLayer.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -100,20 +100,28 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var connectionString = builder.Configuration.GetConnectionString("CybermartDb");
+var frontendUrl = builder.Configuration.GetConnectionString("CybermartFrontend");
 
 // Update the CybermartContext class to derive from IdentityDbContext<IdentityUser, IdentityRole, string>
 builder.Services.AddDbContext<CybermartContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddScoped<IDbContext>(provider => provider.GetService<CybermartContext>());
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.MinimumSameSitePolicy = SameSiteMode.Strict;
+    options.HttpOnly = HttpOnlyPolicy.None;
+    options.Secure = CookieSecurePolicy.Always; // TO BE CHANGED WHEN FRONTEND IS HTTPS INSTEAD OF HTTP
+});
 
 builder.Services.AddCors(options =>
 {
 
     options.AddDefaultPolicy(builder =>
     {
-        builder.WithOrigins("http://localhost:3000") // Replace with your React frontend URL
+        builder.WithOrigins(frontendUrl)
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 
@@ -127,10 +135,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCookiePolicy();
 app.UseHttpsRedirection();
+app.UseRouting();
+
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCors();
 
+app.UseCors();
 app.MapControllers();
 app.Run();
