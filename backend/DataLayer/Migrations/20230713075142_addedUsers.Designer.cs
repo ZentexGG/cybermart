@@ -4,6 +4,7 @@ using DataLayer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataLayer.Migrations
 {
     [DbContext(typeof(CybermartContext))]
-    partial class CybermartContextModelSnapshot : ModelSnapshot
+    [Migration("20230713075142_addedUsers")]
+    partial class addedUsers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -212,36 +215,6 @@ namespace DataLayer.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("DataLayer.Entities.UserPhoto", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("ImageData")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<DateTime>("UploadDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("UserPhotos");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -271,14 +244,14 @@ namespace DataLayer.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "d1ff7358-d669-48ba-954a-accdd0e50c5b",
+                            Id = "ffb82d8f-9ea4-47df-ab35-e48a88528de1",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "d471da76-0d34-476b-b57d-1c831490345a",
+                            Id = "ddbedb88-5309-4c0a-82dd-a64b85f79fbf",
                             ConcurrencyStamp = "2",
                             Name = "User",
                             NormalizedName = "USER"
@@ -512,17 +485,6 @@ namespace DataLayer.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("DataLayer.Entities.UserPhoto", b =>
-                {
-                    b.HasOne("DataLayer.Entities.User", "User")
-                        .WithOne("UserPhoto")
-                        .HasForeignKey("DataLayer.Entities.UserPhoto", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -589,11 +551,6 @@ namespace DataLayer.Migrations
             modelBuilder.Entity("DataLayer.Entities.SpecificationType", b =>
                 {
                     b.Navigation("Specifications");
-                });
-
-            modelBuilder.Entity("DataLayer.Entities.User", b =>
-                {
-                    b.Navigation("UserPhoto");
                 });
 #pragma warning restore 612, 618
         }

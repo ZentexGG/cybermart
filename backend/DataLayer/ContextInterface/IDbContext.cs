@@ -11,7 +11,9 @@ public interface IDbContext
     DbSet<Specification> Specifications { get; set; }
     DbSet<SpecificationType> SpecificationTypes { get; set; }
     DbSet<ProductPhoto> ProductPhotos { get; set; }
-    
+    DbSet<UserPhoto> UserPhotos { get; set; }
+
+    DbSet<User> Users { get; set; }
     int SaveChanges();
     Task<int> SaveChangesAsync();
     void UpdateEntityState<TEntity>(TEntity entity, EntityState state) where TEntity : class;

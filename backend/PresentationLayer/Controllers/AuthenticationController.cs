@@ -1,7 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json.Serialization;
 using AuthenticationService.Models;
 using BusinessLayer.Interfaces;
 using DataLayer.Entities;
@@ -20,25 +23,34 @@ public class AuthController : ControllerBase
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IEmailService _emailService ;
     private readonly IConfiguration _configuration;
+    private readonly IUserService _userService;
 
-    public AuthController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IEmailService emailService,IConfiguration configuration)
+
+    public AuthController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IEmailService emailService, IConfiguration configuration, IUserService userService)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _emailService = emailService;
         _configuration = configuration;
+        _userService = userService;
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] User user, string role)
+    public async Task<IActionResult> Register([FromBody] RegisterModel user, string role)
     {
         var userExists = await _userManager.FindByEmailAsync(user.Email);
         if (userExists!= null)
         {
-            return StatusCode(StatusCodes.Status400BadRequest,
-                new Response { Status = "Error", Message = "User already exists!" });
+            return StatusCode(StatusCodes.Status403Forbidden,
+                new Response { Status = "Error", Message = "User already exists" });
         }
-        IdentityUser newUser = new()
+        var newUser = new User()
+        {
+            Username = user.Username,
+            Email = user.Email
+        };
+        await _userService.CreateUser(newUser);
+        IdentityUser identityUser = new()
         {
             Email = user.Email,
             SecurityStamp = Guid.NewGuid().ToString(),
@@ -49,27 +61,28 @@ public class AuthController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError,
                 new Response { Status = "Error", Message = "The Role Doesn't exist" });
         }
-        var result = await _userManager.CreateAsync(newUser, user.Password);
+        var result = await _userManager.CreateAsync(identityUser, user.Password);
         if (!result.Succeeded)
         {
             return StatusCode(StatusCodes.Status500InternalServerError,
-            new Response { Status = "Error", Message = "User failed to create" });
+                new Response { Status = "Error", Message = "User failed to create" });
         }
-        await _userManager.AddToRoleAsync(newUser,role);
+        await _userManager.AddToRoleAsync(identityUser,role);
 
-        var token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
-        var confirmationLink = Url.ActionLink(nameof(ConfirmEmail), "Auth", new { token, email = newUser.Email },Request.Scheme);
-        var message = new Message(new string[] { newUser.Email! }, "Confirmation Email Link", $"<a href={confirmationLink!}>Da</a>");
+        var token = await _userManager.GenerateEmailConfirmationTokenAsync(identityUser);
+        var confirmationLink = Url.ActionLink(nameof(ConfirmEmail), "Auth", new { token, email = identityUser.Email },Request.Scheme);
+        var message = new Message(new string[] { identityUser.Email! }, "Confirmation Email Link", $"<a href={confirmationLink!}>Da</a>");
         _emailService.SendEmail(message);
         
         return StatusCode(StatusCodes.Status201Created,
             new Response { Status = "Success", Message = $"User created successfully & Confirmation Email to {user} Successfully    " });
     }
 
+    [Authorize(Roles = "User")]
     [HttpGet("TestEmail")]
     public async Task<IActionResult> TestEmail()
     {
-        var message = new Message(new [] { "izabelacornea88@gmail.com" }, "Test", "<button>Dani e smecher<button>");
+        var message = new Message(new [] { "alexandrudanielaka47@gmail.com" }, "Test", "<button style='color:red'>Dani e smecher<button>");
         _emailService.SendEmail(message);
         return StatusCode(StatusCodes.Status201Created,
             new Response { Status = "Success", Message = "Email Sent Successfully" });
@@ -128,7 +141,7 @@ public class AuthController : ControllerBase
             authClaims.Add(new Claim("role",userRole));
         }
 
-        var jwtToken = GetToken(authClaims, loginUser.RememberMe);
+        var jwtToken = GetToken(authClaims);
 
         return Ok(new
         {
@@ -137,34 +150,26 @@ public class AuthController : ControllerBase
         });
     }
 
-    private JwtSecurityToken GetToken(List<Claim> authClaims,bool rememberMe)
+    private JwtSecurityToken GetToken(List<Claim> authClaims)
     {
-        // var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
-        var authSigningKey = new byte[128 / 8]; // 128-bit key
-        using (var generator = RandomNumberGenerator.Create())
-        {
-            generator.GetBytes(authSigningKey);
-        }
+        var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
 
-
-        var expireTime = rememberMe ? DateTime.Now.AddDays(30) : DateTime.Now.AddHours(3);
         JwtSecurityToken token = new JwtSecurityToken(
             issuer: _configuration["JWT:ValidIssuer"],
             audience: _configuration["JWT:ValidAudience"],
-            expires: expireTime,
+            expires: DateTime.Now.AddHours(3),
             claims: authClaims,
-            // signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256));
-            signingCredentials: new SigningCredentials(
-                new SymmetricSecurityKey(authSigningKey),
-                SecurityAlgorithms.HmacSha256));
+            signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256));
+
         return token;
     }
 
     [HttpPost("forgot-password")]
     [AllowAnonymous]
-    public async Task<IActionResult> ForgotPassword([Required] string email)
+    public async Task<IActionResult> ForgotPassword([Required][FromBody] ForgotPasswordModel forgotPassword)
     {
-        var user = await _userManager.FindByEmailAsync(email);
+        var user = await _userManager.FindByEmailAsync(forgotPassword.Email);
+        Console.WriteLine(user);
         if (user == null)
         {
             return StatusCode(StatusCodes.Status400BadRequest,
@@ -172,8 +177,12 @@ public class AuthController : ControllerBase
         }
 
         var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        token = WebUtility.UrlEncode(token);
         var forgotPasswordLink =
-            Url.Action(nameof(ResetPassword), "Auth", new { token, email = user.Email }, Request.Scheme);
+            $"http://localhost:3000/reset-password/{token}";
+        UriBuilder uriBuilder = new UriBuilder("http://localhost:3000");
+        uriBuilder.Path = $"/reset-password/{token}/{user.Email}";
+        forgotPasswordLink = uriBuilder.ToString();
         var message = new Message(new string[] { user.Email }, "Forgot password link", forgotPasswordLink!);
         _emailService.SendEmail(message);
 

@@ -4,6 +4,7 @@ using DataLayer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataLayer.Migrations
 {
     [DbContext(typeof(CybermartContext))]
-    partial class CybermartContextModelSnapshot : ModelSnapshot
+    [Migration("20230713100619_addedUserPhoto")]
+    partial class addedUserPhoto
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -207,6 +210,10 @@ namespace DataLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("phoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("ID");
 
                     b.ToTable("Users");
@@ -231,15 +238,15 @@ namespace DataLayer.Migrations
                     b.Property<DateTime>("UploadDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("UserID")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
+                    b.HasIndex("UserID")
                         .IsUnique();
 
-                    b.ToTable("UserPhotos");
+                    b.ToTable("UserPhoto");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -271,14 +278,14 @@ namespace DataLayer.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "d1ff7358-d669-48ba-954a-accdd0e50c5b",
+                            Id = "a3251887-3d59-4a96-96eb-1b27124e4327",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "d471da76-0d34-476b-b57d-1c831490345a",
+                            Id = "c14e3b6e-4bb0-4450-9e38-3a9dcdfd2b66",
                             ConcurrencyStamp = "2",
                             Name = "User",
                             NormalizedName = "USER"
@@ -516,7 +523,7 @@ namespace DataLayer.Migrations
                 {
                     b.HasOne("DataLayer.Entities.User", "User")
                         .WithOne("UserPhoto")
-                        .HasForeignKey("DataLayer.Entities.UserPhoto", "UserId")
+                        .HasForeignKey("DataLayer.Entities.UserPhoto", "UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

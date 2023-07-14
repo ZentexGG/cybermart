@@ -12,6 +12,13 @@ public class CybermartContext : IdentityDbContext<IdentityUser>,IDbContext
 {
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<User>()
+            .HasKey(u => u.ID);
+        //Relationship: User -> UserPhoto
+        modelBuilder.Entity<User>()
+            .HasOne(u => u.UserPhoto)
+            .WithOne(up => up.User)
+            .HasForeignKey<UserPhoto>(up => up.UserId);
         // Relationship: Product -> Category
         modelBuilder.Entity<Product>()
             .HasOne(p => p.Category)
@@ -78,6 +85,9 @@ public class CybermartContext : IdentityDbContext<IdentityUser>,IDbContext
     public DbSet<Category> Categories { get; set; } = null!;
     public DbSet<Product> Products { get; set; } = null!;
     public DbSet<ProductPhoto> ProductPhotos { get; set; } = null!;
+    public DbSet<UserPhoto> UserPhotos { get; set; }=null!;
     public DbSet<Specification> Specifications { get; set; } = null!;
     public DbSet<SpecificationType> SpecificationTypes { get; set; } = null!;
+    public DbSet<User> Users { get; set; } = null!;
+    
 }

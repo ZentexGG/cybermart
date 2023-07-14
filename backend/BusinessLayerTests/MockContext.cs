@@ -12,6 +12,9 @@ public class MockContext : DbContext, IDbContext
     public virtual DbSet<Specification> Specifications { get; set; }
     public virtual DbSet<SpecificationType> SpecificationTypes { get; set; }
     public virtual DbSet<ProductPhoto> ProductPhotos { get; set; }
+    public DbSet<UserPhoto> UserPhotos { get; set; }
+    public virtual DbSet<User> Users { get; set; }
+
     public virtual Task<int> SaveChangesAsync()
     {
         return base.SaveChangesAsync();
