@@ -11,57 +11,61 @@ namespace DataLayer.Data;
 public class CybermartContext : IdentityDbContext<IdentityUser>,IDbContext
 {
     protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<User>()
-            .HasKey(u => u.ID);
-        //Relationship: User -> UserPhoto
-        modelBuilder.Entity<User>()
-            .HasOne(u => u.UserPhoto)
-            .WithOne(up => up.User)
-            .HasForeignKey<UserPhoto>(up => up.UserId);
-        // Relationship: Product -> Category
-        modelBuilder.Entity<Product>()
-            .HasOne(p => p.Category)
-            .WithMany()
-            .HasForeignKey(p => p.CategoryId)
-            .OnDelete(DeleteBehavior.Restrict);
+        {
+            modelBuilder.Entity<User>()
+                .HasKey(u => u.ID);
+            
+            // Relationship: User -> UserPhoto
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.UserPhoto)
+                .WithOne(up => up.User)
+                .HasForeignKey<UserPhoto>(up => up.UserId);
 
-        // Relationship: Specification -> Product
-        modelBuilder.Entity<Specification>()
-            .HasOne(sp => sp.Product)
-            .WithMany(p => p.Specifications)
-            .HasForeignKey(sp => sp.ProductId)
-            .OnDelete(DeleteBehavior.Restrict);
+            // Relationship: Product -> Category
+            modelBuilder.Entity<Product>()
+                .HasOne(p => p.Category)
+                .WithMany()
+                .HasForeignKey(p => p.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-        // Relationship: Specification -> SpecificationType
-        modelBuilder.Entity<Specification>()
-            .HasOne(sp => sp.SpecificationType)
-            .WithMany(st => st.Specifications)
-            .HasForeignKey(sp => sp.SpecificationTypeId)
-            .OnDelete(DeleteBehavior.Restrict);
+            // Relationship: Product -> ProductPhoto
+            modelBuilder.Entity<Product>()
+                .HasMany(p => p.Photos)
+                .WithOne(pp => pp.Product)
+                .HasForeignKey(pp => pp.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-        // Relationship: SpecificationType -> Specification
-        modelBuilder.Entity<SpecificationType>()
-            .HasMany(st => st.Specifications)
-            .WithOne(sp => sp.SpecificationType)
-            .HasForeignKey(sp => sp.SpecificationTypeId)
-            .OnDelete(DeleteBehavior.Restrict);
+            // Relationship: Specification -> Product
+            modelBuilder.Entity<Specification>()
+                .HasOne(sp => sp.Product)
+                .WithMany(p => p.Specifications)
+                .HasForeignKey(sp => sp.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-        // Unique index on Specification's ProductId and SpecificationTypeId
-        modelBuilder.Entity<Specification>()
-            .HasIndex(sp => new { sp.ProductId, sp.SpecificationTypeId })
-            .IsUnique();
+            // Relationship: Specification -> SpecificationType
+            modelBuilder.Entity<Specification>()
+                .HasOne(sp => sp.SpecificationType)
+                .WithMany(st => st.Specifications)
+                .HasForeignKey(sp => sp.SpecificationTypeId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-        // Configure ProductPhoto's Size property as decimal(18,2)
-        modelBuilder.Entity<ProductPhoto>()
-            .Property(pp => pp.Size)
-            .HasColumnType("decimal(18,2)");
+            // Relationship: SpecificationType -> Specification
+            modelBuilder.Entity<SpecificationType>()
+                .HasMany(st => st.Specifications)
+                .WithOne(sp => sp.SpecificationType)
+                .HasForeignKey(sp => sp.SpecificationTypeId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-        // Add any additional configurations for your entities
+            // Unique index on Specification's ProductId and SpecificationTypeId
+            modelBuilder.Entity<Specification>()
+                .HasIndex(sp => new { sp.ProductId, sp.SpecificationTypeId })
+                .IsUnique();
 
-        base.OnModelCreating(modelBuilder);
-        SeedRoles(modelBuilder);
-    }
+            // Add any additional configurations for your entities
+
+            base.OnModelCreating(modelBuilder);
+            SeedRoles(modelBuilder);
+        }
     
     public CybermartContext(DbContextOptions<CybermartContext> options) : base(options) { }
 

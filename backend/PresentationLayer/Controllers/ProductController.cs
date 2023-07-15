@@ -1,4 +1,5 @@
 ﻿using BusinessLayer.Interfaces;
+using BusinessLayer.Model;
 using DataLayer.Entities;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,6 +29,22 @@ public class ProductController : ControllerBase
             return StatusCode(500, new { message = $"A server error has occured!: {e.Message}" });
         }
     }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateProduct([FromForm] int ID, [FromForm] string Name, [FromForm] double Price, [FromForm] string Description, [FromForm] int CategoryId, [FromForm] List<Specification> specifications, [FromForm] List<IFormFile> photos)
+    {
+        try
+        {
+            await _service.CreateAsync(ID, Name, Price, Description, CategoryId, specifications, photos);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new { message = $"A server error has occurred: {e.Message}" });
+        }
+    }
+
+
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {

@@ -5,14 +5,16 @@ namespace DataLayer.Entities;
 
 public class ProductPhoto
 {
-    [Key] 
-    public int ID { get; set; }
+    [Key]
+    public int Id { get; set; }
 
-    public byte[] Bytes { get; set; }
-    public string Description { get; set; }
-    public string FileExtension { get; set; }
-    public decimal Size { get; set; }
+    public string FileName { get; set; }
+
+    public byte[] ImageData { get; set; }
+
+    public DateTime UploadDate { get; set; }
+
     public int ProductId { get; set; }
-    [ForeignKey("ProductId")] 
+
     public Product Product { get; set; }
 }

@@ -4,6 +4,7 @@ using DataLayer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataLayer.Migrations
 {
     [DbContext(typeof(CybermartContext))]
-    partial class CybermartContextModelSnapshot : ModelSnapshot
+    [Migration("20230714173737_addedProductPhoto")]
+    partial class addedProductPhoto
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -267,14 +270,14 @@ namespace DataLayer.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "dd32278e-bf55-4411-9143-7de1876b873c",
+                            Id = "e54daf4b-6752-4cda-b40c-08482d74831e",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "093acbea-25d0-49ac-9605-ff4a05de880e",
+                            Id = "4126021c-1275-4796-a715-30d5e5f38b0c",
                             ConcurrencyStamp = "2",
                             Name = "User",
                             NormalizedName = "USER"

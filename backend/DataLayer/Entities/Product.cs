@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace DataLayer.Entities;
@@ -17,5 +19,6 @@ public class Product
     public int CategoryId { get; set; }
     public Category Category { get; set; }
     public List<Specification> Specifications { get; set; }
-    public List<ProductPhoto> Photos { get; set; }
+    
+    public List<ProductPhoto>? Photos { get; set; }
 }
