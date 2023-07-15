@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { AiOutlineLogin } from "react-icons/ai";
 import { MdScreenshotMonitor } from "react-icons/md";
 import { DecodedToken } from "../../types";
-import { checkAuth } from '../../authChecker';
+import { checkAuth } from "../../authChecker";
 import jwt_decode from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 
@@ -14,24 +14,8 @@ interface FormData {
   rememberMe: boolean;
 }
 
-
-
 export default function LoginFormComponent() {
-
-
-    const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      let userInfo = await checkAuth();
-      if (userInfo) {
-        console.log(userInfo);
-        navigate("/");
-      }
-    };
-
-    fetchUserInfo();
-  }, []);
+  const navigate = useNavigate();
 
   const {
     register,
@@ -46,25 +30,16 @@ export default function LoginFormComponent() {
     try {
       setLoading(true);
       setIncorrectCredentials(false);
-      const response = await axios.post(
-        "/Auth/Login",
-        data
-      );
-      const token = response.data.token;
-      console.log(token);
-      
-      // const decodedToken: DecodedToken = jwt_decode(token);
-      navigate("/")
+      await axios.post("/Auth/Login", data);
+      navigate("/");
     } catch (error) {
       setIncorrectCredentials(true);
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
   const onSubmit = (data: FormData) => {
-    // Handle form submission logic here
-    console.log(data);
     attemptLogin(data);
   };
 
@@ -154,7 +129,7 @@ export default function LoginFormComponent() {
               </label>
             </div>
             <div>
-              <a href="" className="font-medium text-sm text-blue-500">
+              <a href="/forgot-password" className="font-medium text-sm text-blue-500">
                 Forgot password?
               </a>
             </div>
