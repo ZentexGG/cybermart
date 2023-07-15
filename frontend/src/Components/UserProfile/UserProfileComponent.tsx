@@ -31,7 +31,7 @@ export default function UserProfileComponent(): JSX.Element {
     const fetchUser = async () => {
       try {
         const response = await axios.get<UserDto>(
-          "https://localhost:7166/User/alexandrudanielaka47@gmail.com"
+          "/User/alexandrudanielaka47@gmail.com"
         );
         setUser(response.data);
       } catch (error) {
