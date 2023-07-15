@@ -1,13 +1,7 @@
 import jwt_decode from "jwt-decode";
 import { DecodedToken } from "./types";
-import Cookies from "universal-cookie";
 
 export const checkAuth = async () => {
-  const cookies = new Cookies();
-  console.log(cookies.get("token"));
-  
-
-
   const token = getCookie("token");
   if (token) {
     try {
@@ -21,7 +15,6 @@ export const checkAuth = async () => {
         return decodedCookie;
       }
     } catch (error) {
-      // Handle any errors while decoding the token
       console.error("Error decoding JWT token:", error);
     }
   }
@@ -29,8 +22,6 @@ export const checkAuth = async () => {
 };
 
 const getCookie = (name: string) => {
-  console.log(document.cookie);
-  
   const cookieValue = document.cookie
     .split(";")
     .map((cookie) => cookie.trim())
