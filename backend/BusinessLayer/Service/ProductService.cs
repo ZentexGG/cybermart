@@ -1,6 +1,8 @@
 ﻿using BusinessLayer.Interfaces;
+using BusinessLayer.Model;
 using DataLayer.ContextInterface;
 using DataLayer.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace BusinessLayer.Service;
@@ -25,10 +27,33 @@ public class ProductService : IProductService
         return products;
     }
 
-    public async Task<IEnumerable<Product>> GetAllAsync()
+    public async Task<IEnumerable<ProductDto>> GetAllAsync()
     {
-        return await _context.Products.ToListAsync();
+        var products = await _context.Products
+            .Include(p => p.Photos)
+            .ToListAsync();
+
+        var productDtos = products.Select(product => new ProductDto
+        {
+            ID = product.ID,
+            Name = product.Name,
+            Price = product.Price,
+            Description = product.Description,
+            CategoryId = product.CategoryId,
+            Specifications = product.Specifications,
+            Photos = product.Photos.Select(photo => new ProductPhotoDto
+            {
+                Id = photo.Id,
+                FileName = photo.FileName,
+                ImageData = photo.ImageData,
+                UploadDate = photo.UploadDate
+            }).ToList()
+        });
+
+        return productDtos;
     }
+
+
 
     public async Task<Product> GetByIdAsync(int id)
     {
@@ -38,18 +63,59 @@ public class ProductService : IProductService
         return product;
     }
 
-    public async Task CreateAsync(Product product)
+    public async Task CreateAsync(int ID, string Name, double Price, string Description, int CategoryId, List<Specification> specifications, List<IFormFile> photos)
     {
         try
         {
+            var product = new Product
+            {
+                ID = ID,
+                Name = Name,
+                Price = Price,
+                Description = Description,
+                CategoryId = CategoryId,
+                Specifications = specifications,
+                // Set other properties as needed
+            };
+
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
+
+            if (photos != null && photos.Any())
+            {
+                foreach (var file in photos)
+                {
+                    using var stream = new MemoryStream();
+                    await file.CopyToAsync(stream);
+
+                    var photo = new ProductPhoto
+                    {
+                        FileName = file.FileName,
+                        ImageData = stream.ToArray(),
+                        UploadDate = DateTime.UtcNow,
+                        ProductId = product.ID
+                    };
+
+                    _context.ProductPhotos.Add(photo);
+                }
+
+                await _context.SaveChangesAsync();
+            }
         }
         catch (DbUpdateException e)
         {
             throw new ApplicationException("Failed to save due to a database error.", e);
         }
     }
+
+
+
+
+
+
+
+
+
 
     public async Task UpdateAsync(int id, Product product)
     {
