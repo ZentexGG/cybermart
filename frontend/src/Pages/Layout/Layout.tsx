@@ -23,9 +23,6 @@ export default function Layout() {
       const user = await checkAuth();
       setUserInfo(user);
     };
-    console.log(document.cookie.length);
-    
-
     fetchUserInfo();
   }, [location]);
 

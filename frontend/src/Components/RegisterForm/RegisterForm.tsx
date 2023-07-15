@@ -9,8 +9,7 @@ interface FormData {
   email: string;
   password: string;
   confirmPassword: string;
-  firstName: string;
-  lastName: string;
+  username: string;
 }
 
 export default function RegisterForm() {
@@ -32,7 +31,7 @@ export default function RegisterForm() {
       const response = await axios.post(
         "/Auth/register",
         {
-          username: `${data.firstName}${data.lastName}`,
+          username: data.username,
           email: data.email,
           password: data.password
         }
@@ -73,60 +72,35 @@ export default function RegisterForm() {
             <label
               htmlFor=""
               className={`text-sm font-bold block ${
-                errors.firstName ? "text-red-500" : "text-gray-600"
+                errors.username ? "text-red-500" : "text-gray-600"
               }`}
             >
-              First Name
+              Username
             </label>
             <input
               type="name"
               className={`w-full p-2 border ${
-                errors.firstName ? "border-red-500" : "border-gray-300"
+                errors.username ? "border-red-500" : "border-gray-300"
               } rounded mt-1 focus:outline-none ${
-                errors.firstName
+                errors.username
                   ? "focus:border-red-500"
                   : "focus:border-blue-500"
               }`}
-              {...register("firstName", {
-                required: "First Name is required",
+              {...register("username", {
+                required: "Username is required",
+                minLength: {
+                  value: 4,
+                  message: "Username must be at least 4 characters long!",
+                },
                 pattern: {
-                  value: /^[A-Z]/,
-                  message: "First letter in your name should be uppercase",
+                  value: /^[a-zA-Z]{2,}[a-zA-Z0-9_.]*$/,
+                  message:
+                    "Username must contain 2 letters and can not contain spaces or any special characters except for . (period) and _ (underline)",
                 },
               })}
             />
-            {errors.firstName && (
-              <p className="text-red-500">{errors.firstName.message}</p>
-            )}
-          </div>
-          <div>
-            <label
-              htmlFor=""
-              className={`text-sm font-bold block ${
-                errors.lastName ? "text-red-500" : "text-gray-600"
-              }`}
-            >
-              Last Name
-            </label>
-            <input
-              type="name"
-              className={`w-full p-2 border ${
-                errors.lastName ? "border-red-500" : "border-gray-300"
-              } rounded mt-1 focus:outline-none ${
-                errors.lastName
-                  ? "focus:border-red-500"
-                  : "focus:border-blue-500"
-              }`}
-              {...register("lastName", {
-                required: "Last Name is required",
-                pattern: {
-                  value: /^[A-Z]/,
-                  message: "First letter in your name should be uppercase",
-                },
-              })}
-            />
-            {errors.lastName && (
-              <p className="text-red-500">{errors.lastName.message}</p>
+            {errors.username && (
+              <p className="text-red-500">{errors.username.message}</p>
             )}
           </div>
           <div>
@@ -208,8 +182,9 @@ export default function RegisterForm() {
                   : "focus:border-blue-500"
               }`}
               {...register("confirmPassword", {
-                  required: "Please confirm your password!",
-                  validate: (value) => value === password || "The passwords do not match!"
+                required: "Please confirm your password!",
+                validate: (value) =>
+                  value === password || "The passwords do not match!",
               })}
             />
             {errors.confirmPassword && (
@@ -254,9 +229,7 @@ export default function RegisterForm() {
           </div>
         </form>
         <p className="text-red-500 flex justify-center">
-          {!loading && registrationError
-            ? statusMessage
-            : ""}
+          {!loading && registrationError ? statusMessage : ""}
         </p>
       </div>
     </div>
