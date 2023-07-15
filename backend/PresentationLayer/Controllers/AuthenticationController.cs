@@ -148,7 +148,7 @@ public class AuthController : ControllerBase
     {
         var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
 
-        var expireTime = rememberMe ? DateTime.Now.AddDays(30) : DateTime.Now.AddHours(3);
+        var expireTime = rememberMe ? DateTime.Now.AddDays(30) : DateTime.Now.AddHours(1);
         JwtSecurityToken token = new JwtSecurityToken(
             issuer: _configuration["JWT:ValidIssuer"],
             audience: _configuration["JWT:ValidAudience"],
