@@ -13,7 +13,7 @@ import ForgotPasswordPage from "./Pages/ForgotPasswordPage/ForgotPasswordPage";
 import ResetPasswordPage from "./Pages/ResetPasswordPage/ResetPasswordPage";
 import ProductDetailsPage from "./Pages/ProductDetailsPage/ProductDetailsPage";
 import UserProfilePage from "./Pages/UserProfilePage/UserProfilePage";
-
+import CreateProductPage from "./Pages/CreateProductPage/CreateProductPage";
 
 const router = createBrowserRouter([
   {
@@ -25,37 +25,41 @@ const router = createBrowserRouter([
         element: <HomePage />,
       },
       {
-        path:"/login",
-        element: <LoginPage/>,
+        path: "/login",
+        element: <LoginPage />,
       },
       {
-        path:"/products",
-        element:<ProductsPage/>
+        path: "/products",
+        element: <ProductsPage />,
       },
       {
         path: "/register",
-        element: <RegisterPage />
+        element: <RegisterPage />,
       },
       {
         path: "/register-success/:email",
-        element: <RegistrationSuccessPage />
+        element: <RegistrationSuccessPage />,
       },
       {
-        path:"/forgot-password",
-        element: <ForgotPasswordPage />
+        path: "/forgot-password",
+        element: <ForgotPasswordPage />,
       },
       {
-        path:"/reset-password/:token/:email",
-        element: <ResetPasswordPage/>
+        path: "/reset-password/:token/:email",
+        element: <ResetPasswordPage />,
       },
       {
-        path:"/products/:id",
-        element:<ProductDetailsPage/>
+        path: "/products/:id",
+        element: <ProductDetailsPage />,
       },
       {
-        path:"users/:id",
-        element:<UserProfilePage/>
-      }
+        path: "/users/:id",
+        element: <UserProfilePage />,
+      },
+      {
+        path: "/add-product",
+        element: <CreateProductPage />,
+      },
     ],
   },
 ]);
