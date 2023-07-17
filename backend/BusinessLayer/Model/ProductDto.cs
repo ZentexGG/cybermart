@@ -1,5 +1,6 @@
-﻿using BusinessLayer.Model;
-using DataLayer.Entities;
+﻿using DataLayer.Entities;
+
+namespace BusinessLayer.Model;
 
 public class ProductDto
 {
