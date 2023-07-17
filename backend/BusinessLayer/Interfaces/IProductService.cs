@@ -1,4 +1,5 @@
-﻿using DataLayer.Entities;
+﻿using BusinessLayer.Model;
+using DataLayer.Entities;
 using Microsoft.AspNetCore.Http;
 
 namespace BusinessLayer.Interfaces;
