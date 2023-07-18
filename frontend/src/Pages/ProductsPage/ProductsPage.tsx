@@ -1,36 +1,34 @@
-import { useEffect, useState } from "react";
-import ProductCarcComponent from "../../Components/ProductCard/ProductCardComponent";
-import PaginationComponent from "../../Components/Pagination/PaginationComponent";
-import Cart from "../../Components/ShoppingCart/ShoppingCartComponent";
+import { useState, useEffect } from "react";
 import axios from "axios";
-interface CartItem {
-  id: string;
-  img: string;
-  name: string;
-  price: number;
-  amount: number;
-}
+import ProductCardComponent from "../../Components/ProductCard/ProductCardComponent";
+import PaginationComponent from "../../Components/Pagination/PaginationComponent";
+import { ProductDto } from "../../types";
 
 export default function ProductsPage() {
+  const [num, setNum] = useState(1);
+  const [products, setProducts] = useState<ProductDto[]>();
 
-  // TODO: Replace <any> with proper interface
-  const [products, setProducts] = useState<any>(); 
   useEffect(() => {
     const fetchProducts = async () => {
-      const response = await axios.get("/api/products");
-      setProducts(response.data)
-    }
-    fetchProducts();
-  }, [])
+      try {
+        const response = await axios.get(`/api/products/page/${num}`);
+        setProducts(response.data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
 
-  
+    fetchProducts();
+  }, [num]);
 
   return (
     <>
-      <div className="grid max-w-screen justify-center items-center place-items-center grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 my-5">
-        {products?.map((p: any) => <ProductCarcComponent productName={p.name} image={p.photos[0].imageData} />)}
+      <div className="grid max-w-screen justify-center items-center place-items-center grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 my-5">
+        {products?.map((product: ProductDto) => (
+          <ProductCardComponent product={product} />
+        ))}
       </div>
-      <PaginationComponent />
+      <PaginationComponent num={num} setNum={setNum} />
     </>
   );
 }

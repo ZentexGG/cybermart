@@ -6,7 +6,7 @@ namespace BusinessLayer.Interfaces;
 
 public interface IProductService
 {
-    Task<IEnumerable<Product>> GetProductsAsync(int page = 1, int limit = 10);
+    Task<IEnumerable<ProductDto>> GetProductsAsync(int page = 1, int limit = 10);
     Task<IEnumerable<ProductDto>> GetAllAsync();
     Task<Product> GetByIdAsync(int id);
 

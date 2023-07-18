@@ -8,7 +8,6 @@ interface UserDto {
   email: string;
   imageData?: string;
   fileName?: string;
-  // Other properties as needed
 }
 
 interface FormData {
