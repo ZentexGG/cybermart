@@ -1,25 +1,22 @@
 import { useForm } from "react-hook-form";
-import { Category } from "../../types";
+import { Category, Specification } from "../../types";
 import axios from "axios";
+
+interface FormData {
+  ID: number;
+  Name: string;
+  Price: number;
+  Description: string;
+  CategoryId: number;
+  specifications: Specification[];
+  photos: FileList;
+}
 
 export default function CreateProductForm({
   categories,
 }: {
   categories: Category[];
-    }) {
-    
-    interface ProductPhoto {
-        fileName: string;
-        imageData: string;
-        
-    }
-  interface FormData {
-      name: string;
-      description: string;
-    categoryId: number;
-    photos: FileList;
-    price: number;
-  }
+}) {
   const {
     register,
     handleSubmit,
@@ -27,35 +24,89 @@ export default function CreateProductForm({
     watch,
   } = useForm<FormData>({ mode: "onChange" });
 
-  const onSubmit = (data: FormData) => {
-    const createProduct = async () => {
-      const response = await axios.post(
-        "/api/products",
-        data,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+  const onSubmit = async (data: FormData) => {
+    const formData = new FormData();
+    formData.append("ID", data.ID.toString());
+    formData.append("Name", data.Name);
+    formData.append("Price", data.Price.toString());
+    formData.append("Description", data.Description);
+    formData.append("CategoryId", data.CategoryId.toString());
+    data.specifications?.forEach((spec, index) => {
+      formData.append(`specifications[${index}].ID`, spec.ID.toString());
+      formData.append(
+        `specifications[${index}].ProductId`,
+        spec.ProductId.toString()
       );
+      formData.append(
+        `specifications[${index}].SpecificationTypeId`,
+        spec.SpecificationTypeId.toString()
+      );
+      formData.append(`specifications[${index}].Value`, spec.Value);
+    });
+    for (let i = 0; i < data.photos.length; i++) {
+      formData.append("photos", data.photos[i]);
+    }
+
+    try {
+      const response = await axios.post("/api/products", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       console.log(response);
-      console.log(data.photos);
-    };
-    createProduct();
-    console.log(data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <input type="text" placeholder="Product name" {...register("name")} />
-      <select {...register("categoryId")}>
+      <input type="number" placeholder="ID" {...register("ID")} />
+      <input type="text" placeholder="Product name" {...register("Name")} />
+      <select {...register("CategoryId")}>
         {categories.map((c) => (
-          <option value={c.id}>{c.name}</option>
+          <option key={c.id} value={c.id}>
+            {c.name}
+          </option>
         ))}
-          </select>
-          <input type="text" {...register("description")} />
-      <input type="number" {...register("price")} placeholder="price" />
-      <input type="file" {...register("photos")} />
-      <button type="submit">Submit</button>
+      </select>
+      <input
+        type="text"
+        placeholder="Description"
+        {...register("Description")}
+      />
+      <input type="number" placeholder="Price" {...register("Price")} />
+      <input type="file" {...register("photos")} multiple />
+      {/* Render input fields for specifications */}
+      {watch("specifications")?.map((spec, index) => (
+        <div key={index}>
+          <input
+            type="number"
+            placeholder="Specification ID"
+            {...register(`specifications.${index}.ID` as const)}
+          />
+          <input
+            type="number"
+            placeholder="Product ID"
+            {...register(`specifications.${index}.ProductId` as const)}
+          />
+          <input
+            type="number"
+            placeholder="Specification Type ID"
+            {...register(
+              `specifications.${index}.SpecificationTypeId` as const
+            )}
+          />
+          <input
+            type="text"
+            placeholder="Value"
+            {...register(`specifications.${index}.Value` as const)}
+          />
+        </div>
+      ))}
+      <button type="submit" disabled={!isValid}>
+        Submit
+      </button>
     </form>
   );
 }
