@@ -16,15 +16,33 @@ public class ProductService : IProductService
         _context = context;
     }
 
-    public async Task<IEnumerable<Product>> GetProductsAsync(int page = 1, int limit = 10)
+    public async Task<IEnumerable<ProductDto>> GetProductsAsync(int page = 1, int limit = 10)
     {
         var offset = (page - 1) * limit;
-        var products = await _context.Products
+        var products = await _context.Products.Include(p=>p.Photos)
             .OrderBy(p => p.ID)
             .Skip(offset)
             .Take(limit)
             .ToListAsync();
-        return products;
+        
+        var productDtos = products.Select(product => new ProductDto
+        {
+            ID = product.ID,
+            Name = product.Name,
+            Price = product.Price,
+            Description = product.Description,
+            CategoryId = product.CategoryId,
+            Specifications = product.Specifications,
+            Photos = product.Photos.Select(photo => new ProductPhotoDto
+            {
+                Id = photo.Id,
+                FileName = photo.FileName,
+                ImageData = photo.ImageData,
+                UploadDate = photo.UploadDate
+            }).ToList()
+        });
+
+        return productDtos;
     }
 
     public async Task<IEnumerable<ProductDto>> GetAllAsync()
@@ -55,16 +73,48 @@ public class ProductService : IProductService
 
 
 
-    public async Task<Product> GetByIdAsync(int id)
+    public async Task<ProductDto> GetByIdAsync(int id)
     {
-        var product = await _context.Products.FirstOrDefaultAsync(p => p.ID == id);
-        if (product == null) throw new KeyNotFoundException("The specified ID was not found!");
+        var product = await _context.Products
+            .Include(product => product.Specifications )
+            .Include(p => p.Photos)
+            .FirstOrDefaultAsync(p => p.ID == id);
+        if (product == null)
+        {
+            return null;
+        }
 
-        return product;
+        // Ensure that the necessary properties are not null
+        if (product.Name == null || product.Price == null)
+        {
+            return null;
+        }
+
+        var productDto = new ProductDto
+        {
+            ID = product.ID,
+            Name = product.Name,
+            Price = product.Price,
+            Description = product.Description,
+            CategoryId = product.CategoryId,
+            Specifications = product.Specifications,
+            Photos = product.Photos?.Select(photo => new ProductPhotoDto
+            {
+                Id = photo.Id,
+                FileName = photo.FileName,
+                ImageData = photo.ImageData,
+                UploadDate = photo.UploadDate
+            }).ToList() ?? new List<ProductPhotoDto>()
+        };
+
+        return productDto;
     }
+
+
 
     public async Task CreateAsync(int ID, string Name, double Price, string Description, int CategoryId, List<Specification> specifications, List<IFormFile> photos)
     {
+        Console.WriteLine(photos.Count);
         try
         {
             var product = new Product

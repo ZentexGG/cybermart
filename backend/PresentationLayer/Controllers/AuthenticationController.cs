@@ -22,13 +22,16 @@ public class AuthController : ControllerBase
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IEmailService _emailService ;
     private readonly IConfiguration _configuration;
+    private readonly IUserService _userService;
 
-    public AuthController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IEmailService emailService,IConfiguration configuration)
+
+    public AuthController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IEmailService emailService, IConfiguration configuration, IUserService userService)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _emailService = emailService;
         _configuration = configuration;
+        _userService = userService;
     }
 
     [HttpPost("register")]
@@ -41,7 +44,14 @@ public class AuthController : ControllerBase
             return StatusCode(StatusCodes.Status403Forbidden,
                 new Response { Status = "Error", Message = "User already exists" });
         }
-        IdentityUser newUser = new()
+
+        var newUser = new User()
+        {
+            Email = user.Email,
+            Username = user.Username
+        };
+        await _userService.CreateUserAsync(newUser);
+        IdentityUser identityUser = new()
         {
             Email = user.Email,
             SecurityStamp = Guid.NewGuid().ToString(),
@@ -52,17 +62,17 @@ public class AuthController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError,
                 new Response { Status = "Error", Message = "The Role Doesn't exist" });
         }
-        var result = await _userManager.CreateAsync(newUser, user.Password);
+        var result = await _userManager.CreateAsync(identityUser, user.Password);
         if (!result.Succeeded)
         {
             return StatusCode(StatusCodes.Status500InternalServerError,
                 new Response { Status = "Error", Message = "User failed to create" });
         }
-        await _userManager.AddToRoleAsync(newUser,role);
+        await _userManager.AddToRoleAsync(identityUser,role);
 
-        var token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
-        var confirmationLink = Url.ActionLink(nameof(ConfirmEmail), "Auth", new { token, email = newUser.Email },Request.Scheme);
-        var message = new Message(new string[] { newUser.Email! }, "Confirmation Email Link", $"<a href={confirmationLink!}>Da</a>");
+        var token = await _userManager.GenerateEmailConfirmationTokenAsync(identityUser);
+        var confirmationLink = Url.ActionLink(nameof(ConfirmEmail), "Auth", new { token, email = identityUser.Email },Request.Scheme);
+        var message = new Message(new string[] { identityUser.Email! }, "Confirmation Email Link", $"<a href={confirmationLink!}>Da</a>");
         _emailService.SendEmail(message);
         
         return StatusCode(StatusCodes.Status201Created,
@@ -103,28 +113,30 @@ public class AuthController : ControllerBase
     [HttpPost("Login")]
     public async Task<IActionResult> Login(LoginUser loginUser)
     {
-        var user = await _userManager.FindByEmailAsync(loginUser.Email);
-        
-        if (user == null)
+        var identityUser = await _userManager.FindByEmailAsync(loginUser.Email);
+        var user = await _userService.GetUser(loginUser.Email);
+        if (identityUser == null)
         {
             return Unauthorized(new {message = "User does not exist!"});
         }
-        if (!await _userManager.CheckPasswordAsync(user,loginUser.Password))
+        if (!await _userManager.CheckPasswordAsync(identityUser,loginUser.Password))
         {
             return Unauthorized(new {message = "Email or password incorrect!"});
         }
-        if (!user.EmailConfirmed)
+        if (!identityUser.EmailConfirmed)
         {
             return Unauthorized(new { message = "The Email hasn't been verified" });
         }
-        var authClaims = new List<Claim>()
+        var authClaims = new List<Claim>
         {
-            new ("name", user.UserName),
-            new ("email", user.Email),
-            new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new("id", user.Id.ToString()),
+            new("name", identityUser.UserName),
+            new("email", identityUser.Email),
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
 
-        var userRoles = await _userManager.GetRolesAsync(user);
+
+        var userRoles = await _userManager.GetRolesAsync(identityUser);
         
 
         foreach (var userRole in userRoles)

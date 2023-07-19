@@ -1,61 +1,124 @@
-import { StrictMode } from "react";
+import { Suspense, lazy, StrictMode } from "react";
 import ReactDOM from "react-dom/client";
+import "./index.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
-import Layout from "./Pages/Layout/Layout";
-import HomePage from "./Pages/HomePage/HomePage";
-import LoginPage from "./Pages/LoginPage/LoginPage";
-import "./index.css";
-import ProductsPage from "./Pages/ProductsPage/ProductsPage";
-import RegisterPage from "./Pages/RegisterPage/RegisterPage";
-import RegistrationSuccessPage from "./Pages/RegistrationSuccessPage/RegistrationSuccessPage";
-import ForgotPasswordPage from "./Pages/ForgotPasswordPage/ForgotPasswordPage";
-import ResetPasswordPage from "./Pages/ResetPasswordPage/ResetPasswordPage";
-import ProductDetailsPage from "./Pages/ProductDetailsPage/ProductDetailsPage";
-import UserProfilePage from "./Pages/UserProfilePage/UserProfilePage";
+import Loader from "./Pages/Loader/Loader";
 
+// Lazy load the pages
+const Layout = lazy(() => import("./Pages/Layout/Layout"));
+const HomePage = lazy(() => import("./Pages/HomePage/HomePage"));
+const LoginPage = lazy(() => import("./Pages/LoginPage/LoginPage"));
+const ProductsPage = lazy(() => import("./Pages/ProductsPage/ProductsPage"));
+const RegisterPage = lazy(() => import("./Pages/RegisterPage/RegisterPage"));
+const RegistrationSuccessPage = lazy(
+  () => import("./Pages/RegistrationSuccessPage/RegistrationSuccessPage")
+);
+const ForgotPasswordPage = lazy(
+  () => import("./Pages/ForgotPasswordPage/ForgotPasswordPage")
+);
+const ResetPasswordPage = lazy(
+  () => import("./Pages/ResetPasswordPage/ResetPasswordPage")
+);
+const ProductDetailsPage = lazy(
+  () => import("./Pages/ProductDetailsPage/ProductDetailsPage")
+);
+const UserProfilePage = lazy(
+  () => import("./Pages/UserProfilePage/UserProfilePage")
+);
+const CreateProductPage = lazy(
+  () => import("./Pages/CreateProductPage/CreateProductPage")
+);
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,
+    element: (
+      <Suspense fallback={<Loader />}>
+        <Layout />
+      </Suspense>
+    ),
     children: [
       {
         path: "/",
-        element: <HomePage />,
+        element: (
+          <Suspense>
+            <HomePage />
+          </Suspense>
+        ),
       },
       {
-        path:"/login",
-        element: <LoginPage/>,
+        path: "/login",
+        element: (
+          <Suspense>
+            <LoginPage />
+          </Suspense>
+        ),
       },
       {
-        path:"/products",
-        element:<ProductsPage/>
+        path: "/products",
+        element: (
+          <Suspense>
+            <ProductsPage />
+          </Suspense>
+        ),
       },
       {
         path: "/register",
-        element: <RegisterPage />
+        element: (
+          <Suspense>
+            <RegisterPage />
+          </Suspense>
+        ),
       },
       {
         path: "/register-success/:email",
-        element: <RegistrationSuccessPage />
+        element: (
+          <Suspense>
+            <RegistrationSuccessPage />
+          </Suspense>
+        ),
       },
       {
-        path:"/forgot-password",
-        element: <ForgotPasswordPage />
+        path: "/forgot-password",
+        element: (
+          <Suspense>
+            <ForgotPasswordPage />
+          </Suspense>
+        ),
       },
       {
-        path:"/reset-password/:token/:email",
-        element: <ResetPasswordPage/>
+        path: "/reset-password/:token/:email",
+        element: (
+          <Suspense>
+            <ResetPasswordPage />
+          </Suspense>
+        ),
       },
       {
-        path:"/products/:id",
-        element:<ProductDetailsPage/>
+        path: "/products/:id",
+        element: (
+          <Suspense>
+            <ProductDetailsPage />
+          </Suspense>
+        ),
       },
       {
-        path:"users/:id",
-        element:<UserProfilePage/>
-      }
+        path: "/users/:id",
+        element: (
+          <Suspense>
+            <UserProfilePage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/add-product",
+        element: (
+          <Suspense>
+            <CreateProductPage />
+          </Suspense>
+        ),
+      },
     ],
   },
 ]);

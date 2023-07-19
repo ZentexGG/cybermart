@@ -71,10 +71,6 @@ public class ProductController : ControllerBase
         {
             return NotFound(new { message = e.Message });
         }
-        catch (Exception e)
-        {
-            return StatusCode(500, new { message = $"A server error has occured!: {e.Message}" });
-        }
     }
 
     [HttpDelete("{id}")]

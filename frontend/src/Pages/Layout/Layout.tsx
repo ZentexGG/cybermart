@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Cart from "../../Components/ShoppingCart/ShoppingCartComponent";
 import { DecodedToken } from "../../types";
 import { checkAuth } from "../../authChecker";
+import Loader from "../Loader/Loader";
 
 interface CartItem {
   id: string;
@@ -16,12 +17,14 @@ interface CartItem {
 
 export default function Layout() {
   const [userInfo, setUserInfo] = useState<DecodedToken | boolean>(false);
+  const [isFetching, setIsFetching] = useState<Boolean>(true);
   const location = useLocation();
 
   useEffect(() => {
     const fetchUserInfo = async () => {
       const user = await checkAuth();
       setUserInfo(user);
+      setIsFetching(false);
     };
     fetchUserInfo();
   }, [location]);
@@ -64,7 +67,9 @@ export default function Layout() {
     });
   };
 
-  return (
+  return isFetching ? (
+    <Loader />
+  ) : (
     <div className="flex flex-col h-screen">
       <div className="flex-grow">
         <NavbarComponent handleShowCart={handleShowCart} userInfo={userInfo} />
@@ -76,7 +81,7 @@ export default function Layout() {
             setIsShowCart={setIsShowCart}
           />
         )}
-        <Outlet />
+        <Outlet context={[isFetching, setIsFetching ]} />
       </div>
       <div className="bg-white shadow mt-auto">
         <FooterComponent />
