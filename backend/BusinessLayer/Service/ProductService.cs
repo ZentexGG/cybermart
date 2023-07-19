@@ -114,6 +114,7 @@ public class ProductService : IProductService
 
     public async Task CreateAsync(int ID, string Name, double Price, string Description, int CategoryId, List<Specification> specifications, List<IFormFile> photos)
     {
+        Console.WriteLine(photos.Count);
         try
         {
             var product = new Product
