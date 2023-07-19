@@ -8,12 +8,12 @@ export interface Category {
 }
 
 export interface ProductDto {
-  ID: number;
-  Name: string;
-  Price: number;
-  Description: string;
-  CategoryId: number;
-  Specifications: Specification[];
+  id: number;
+  name: string;
+  price: number;
+  description: string;
+  categoryId: number;
+  specifications: Specification[];
   photos: ProductPhotoDto[];
 }
 

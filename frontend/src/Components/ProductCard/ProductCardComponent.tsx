@@ -5,9 +5,10 @@ export default function ProductCardComponent({
 }: {
   product: ProductDto;
 }) {
+  console.log(product);
   return (
     <div className="w-full max-w-xs bg-white border border-gray-200 rounded-lg shadow dark:bg-blue-100 dark:border-blue-200">
-      <a href="products/4">
+      <a href={`products/${product.id}`}>
         <img
           className="rounded-t-lg h-80 w-full"
           src={`data:image/jpeg;base64,${
@@ -21,7 +22,7 @@ export default function ProductCardComponent({
       <div className="px-5 pb-5">
         <a href="#">
           <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-black">
-            {product.Name}
+            {product.name}
           </h5>
         </a>
         <div className="flex items-center mt-2.5 mb-5">
