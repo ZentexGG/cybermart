@@ -70,7 +70,7 @@ public class UserService : IUserService
 
 
 
-    public async Task CreateUser(User user)
+    public async Task CreateUserAsync(User user)
     {
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();

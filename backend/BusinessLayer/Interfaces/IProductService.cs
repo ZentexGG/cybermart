@@ -8,7 +8,7 @@ public interface IProductService
 {
     Task<IEnumerable<ProductDto>> GetProductsAsync(int page = 1, int limit = 10);
     Task<IEnumerable<ProductDto>> GetAllAsync();
-    Task<Product> GetByIdAsync(int id);
+    Task<ProductDto> GetByIdAsync(int id);
 
     Task CreateAsync(int ID, string Name, double Price, string Description, int CategoryId,
         List<Specification> specifications, List<IFormFile> photos);

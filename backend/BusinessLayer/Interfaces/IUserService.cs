@@ -8,5 +8,5 @@ public interface IUserService
 {
     Task<UserDto> GetUser(string email);
     Task UpdateUser(string username, string email, IFormFile photo);
-    Task CreateUser(User user);
+    Task CreateUserAsync(User user);
 }
