@@ -20,9 +20,11 @@ public class UserService : IUserService
 
     public async Task<UserDto> GetUser(string email)
     {
+        Console.WriteLine(email);
         var user = await _context.Users
             .Include(u => u.UserPhoto)
             .FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
+        Console.WriteLine(user.Email);
 
         var userDto = new UserDto
         {

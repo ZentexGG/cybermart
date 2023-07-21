@@ -114,7 +114,6 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Login(LoginUser loginUser)
     {
         var identityUser = await _userManager.FindByEmailAsync(loginUser.Email);
-        var user = await _userService.GetUser(loginUser.Email);
         if (identityUser == null)
         {
             return Unauthorized(new {message = "User does not exist!"});
@@ -127,6 +126,7 @@ public class AuthController : ControllerBase
         {
             return Unauthorized(new { message = "The Email hasn't been verified" });
         }
+        var user = await _userService.GetUser(identityUser.Email);
         var authClaims = new List<Claim>
         {
             new("id", user.Id.ToString()),
