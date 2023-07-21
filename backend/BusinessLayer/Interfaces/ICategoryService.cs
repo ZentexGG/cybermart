@@ -8,4 +8,5 @@ public interface ICategoryService
     Task Create(Category category);
     Task Delete(int id);
     Task Update(int id, Category category);
+    Task<Category> GetById(int id);
 }

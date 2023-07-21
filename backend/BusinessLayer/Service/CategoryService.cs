@@ -17,6 +17,17 @@ public class CategoryService : ICategoryService
         return _context.Categories;
     }
 
+    public async Task<Category> GetById(int id)
+    {
+        var category = await _context.Categories.FirstOrDefaultAsync(c => c.ID == id);
+        if (category == null)
+        {
+            throw new KeyNotFoundException("The specified ID was not found!");
+        }
+
+        return category;
+    }
+
     public async Task Create(Category category)
     {
         _context.Categories.Add(category);
