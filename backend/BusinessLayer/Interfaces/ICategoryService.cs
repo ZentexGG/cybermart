@@ -5,5 +5,8 @@ namespace BusinessLayer.Interfaces;
 public interface ICategoryService
 {
     IEnumerable<Category> GetAll();
-    Task CreateCategory(Category category);
+    Task Create(Category category);
+    Task Delete(int id);
+    Task Update(int id, Category category);
+    Task<Category> GetById(int id);
 }

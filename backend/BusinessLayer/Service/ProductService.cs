@@ -81,13 +81,12 @@ public class ProductService : IProductService
             .FirstOrDefaultAsync(p => p.ID == id);
         if (product == null)
         {
-            return null;
+            throw new KeyNotFoundException("The specified ID was not found!");
         }
 
-        // Ensure that the necessary properties are not null
-        if (product.Name == null || product.Price == null)
+        if (product.Name == null)
         {
-            return null;
+            throw new KeyNotFoundException("Product name and price fields are null!");
         }
 
         var productDto = new ProductDto
