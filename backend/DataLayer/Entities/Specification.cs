@@ -9,6 +9,6 @@ public class Specification
     public int SpecificationTypeId { get; set; }
     public string Value { get; set; }
     
-    public Product Product { get; set; }
-    public SpecificationType SpecificationType { get; set; }
+    public Product? Product { get; set; }
+    public SpecificationType? SpecificationType { get; set; }
 }
