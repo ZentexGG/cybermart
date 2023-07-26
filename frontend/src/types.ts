@@ -68,3 +68,9 @@ export interface UserDto {
   imageData?: string;
   fileName?: string;
 }
+
+export interface SpecificationType {
+  id: number,
+  name: string,
+  categoryId: number
+}
