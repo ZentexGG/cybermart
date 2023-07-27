@@ -1,12 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import ProductCardComponent from "../../Components/ProductCard/ProductCardComponent";
 import PaginationComponent from "../../Components/Pagination/PaginationComponent";
 import { ProductDto } from "../../types";
+import { LayoutContext } from "../Layout/Layout";
 
 export default function ProductsPage() {
   const [num, setNum] = useState(1);
   const [products, setProducts] = useState<ProductDto[]>();
+
+  const { handleAddToCart } = useContext(LayoutContext);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -23,7 +26,7 @@ export default function ProductsPage() {
     <>
       <div className="grid max-w-screen justify-center items-center place-items-center grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 my-5">
         {products?.map((product: ProductDto) => (
-          <ProductCardComponent key={product.id} product={product} />
+          <ProductCardComponent handleAddToCart={handleAddToCart} key={product.id} product={product} />
         ))}
       </div>
       <PaginationComponent num={num} setNum={setNum} />

@@ -1,23 +1,27 @@
 import { Outlet, useLocation } from "react-router-dom";
 import FooterComponent from "../../Components/Footer/FooterComponent";
 import NavbarComponent from "../../Components/Navbar/NavbarComponent";
-import { useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import Cart from "../../Components/ShoppingCart/ShoppingCartComponent";
 import { DecodedToken } from "../../types";
 import { checkAuth } from "../../authChecker";
 import Loader from "../Loader/Loader";
+import useLocalStorageState from "use-local-storage-state";
+import { CartItem } from "../../types";
 
-interface CartItem {
-  id: string;
-  img: string;
-  name: string;
-  price: number;
-  amount: number;
-}
+
+export const LayoutContext = createContext<{
+  handleAddToCart: (product: CartItem) => void;
+}>({
+  handleAddToCart: () => {
+    console.warn("handleAddToCart wrong.");
+  },
+});
 
 export default function Layout() {
   const [userInfo, setUserInfo] = useState<DecodedToken | boolean>(false);
   const [isFetching, setIsFetching] = useState<Boolean>(true);
+  const [cartItems, setCartItems] = useLocalStorageState('cart')
   const location = useLocation();
 
   useEffect(() => {
@@ -48,9 +52,10 @@ export default function Layout() {
         );
       }
 
-      // First time adding the product to cart
       return [...prev, { ...product, amount: 1 }];
     });
+
+    setCartItems(cart);
   };
 
   const handleRemoveFromCart = (id: string) => {
@@ -70,22 +75,27 @@ export default function Layout() {
   return isFetching ? (
     <Loader />
   ) : (
-    <div className="flex flex-col h-screen">
-      <div className="flex-grow">
-        <NavbarComponent handleShowCart={handleShowCart} userInfo={userInfo} />
-        {isShowCart && (
-          <Cart
-            cart={cart}
-            handleRemoveFromCart={handleRemoveFromCart}
-            handleAddToCart={handleAddToCart}
-            setIsShowCart={setIsShowCart}
+    <LayoutContext.Provider value={{handleAddToCart}}>
+      <div className="flex flex-col h-screen">
+        <div className="flex-grow">
+          <NavbarComponent
+            handleShowCart={handleShowCart}
+            userInfo={userInfo}
           />
-        )}
-        <Outlet context={[isFetching, setIsFetching ]} />
+          {isShowCart && (
+            <Cart
+              cart={cart}
+              handleRemoveFromCart={handleRemoveFromCart}
+              handleAddToCart={handleAddToCart}
+              setIsShowCart={setIsShowCart}
+            />
+          )}
+          <Outlet context={[isFetching, setIsFetching, handleAddToCart]} />
+        </div>
+        <div className="bg-white shadow mt-auto">
+          <FooterComponent />
+        </div>
       </div>
-      <div className="bg-white shadow mt-auto">
-        <FooterComponent />
-      </div>
-    </div>
+    </LayoutContext.Provider>
   );
 }
