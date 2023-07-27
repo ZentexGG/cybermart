@@ -74,3 +74,11 @@ export interface SpecificationType {
   name: string,
   categoryId: number
 }
+
+export interface CartItem {
+  id: string;
+  img: string;
+  name: string;
+  price: number;
+  amount: number;
+}
