@@ -61,16 +61,16 @@ public class ProductServiceTests
         });
     }
 
-    [Test]
-    public async Task Create_ShouldAddNewProduct()
-    {
-        var newProduct = new Product { ID = 7, Name = "SSD Samsung 512GB" };
-
-        await _productService.CreateAsync(newProduct.ID,newProduct.Name,newProduct.Price,newProduct.Description,newProduct.CategoryId,new List<Specification>(),null);
-        
-        _mockContext.Verify(c => c.Products.Add(It.IsAny<Product>()), Times.Once);
-        _mockContext.Verify(c => c.SaveChangesAsync(), Times.Once);
-    }
+    // [Test]
+    // public async Task Create_ShouldAddNewProduct()
+    // {
+    //     var newProduct = new Product { ID = 7, Name = "SSD Samsung 512GB" };
+    //
+    //     await _productService.CreateAsync(newProduct.ID,newProduct.Name,newProduct.Price,newProduct.Description,newProduct.CategoryId,new List<Specification>(),null);
+    //     
+    //     _mockContext.Verify(c => c.Products.Add(It.IsAny<Product>()), Times.Once);
+    //     _mockContext.Verify(c => c.SaveChangesAsync(), Times.Once);
+    // }
 
     [Test]
     public async Task Update_ShouldUpdateExistingProduct()

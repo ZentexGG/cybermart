@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using BusinessLayer.Interfaces;
 using BusinessLayer.Model;
 using BusinessLayer.Service;
@@ -96,7 +97,11 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ISpecificationTypeService, SpecificationTypeService>();
-builder.Services.AddControllers();
+builder.Services.AddScoped<ISpecificationService, SpecificationService>();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

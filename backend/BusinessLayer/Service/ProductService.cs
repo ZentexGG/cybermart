@@ -111,7 +111,7 @@ public class ProductService : IProductService
 
 
 
-    public async Task CreateAsync(int ID, string Name, double Price, string Description, int CategoryId, List<Specification> specifications, List<IFormFile> photos)
+    public async Task<Product> CreateAsync(int ID, string Name, double Price, string Description, int CategoryId, List<SpecificationDto> specifications, List<IFormFile> photos)
     {
         Console.WriteLine(photos.Count);
         try
@@ -122,34 +122,31 @@ public class ProductService : IProductService
                 Name = Name,
                 Price = Price,
                 Description = Description,
-                CategoryId = CategoryId,
-                Specifications = specifications,
-                // Set other properties as needed
+                CategoryId = CategoryId
             };
-
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
 
-            if (photos != null && photos.Any())
+            if (!photos.Any()) return product;
+            foreach (var file in photos)
             {
-                foreach (var file in photos)
+                using var stream = new MemoryStream();
+                await file.CopyToAsync(stream);
+
+                var photo = new ProductPhoto
                 {
-                    using var stream = new MemoryStream();
-                    await file.CopyToAsync(stream);
+                    FileName = file.FileName,
+                    ImageData = stream.ToArray(),
+                    UploadDate = DateTime.UtcNow,
+                    ProductId = product.ID
+                };
 
-                    var photo = new ProductPhoto
-                    {
-                        FileName = file.FileName,
-                        ImageData = stream.ToArray(),
-                        UploadDate = DateTime.UtcNow,
-                        ProductId = product.ID
-                    };
-
-                    _context.ProductPhotos.Add(photo);
-                }
-
-                await _context.SaveChangesAsync();
+                _context.ProductPhotos.Add(photo);
             }
+
+            await _context.SaveChangesAsync();
+
+            return product;
         }
         catch (DbUpdateException e)
         {

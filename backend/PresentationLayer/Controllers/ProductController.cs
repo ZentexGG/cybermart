@@ -31,12 +31,18 @@ public class ProductController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateProduct([FromForm] int ID, [FromForm] string Name, [FromForm] double Price, [FromForm] string Description, [FromForm] int CategoryId, [FromForm] List<Specification> specifications, [FromForm] List<IFormFile> photos)
+    public async Task<IActionResult> CreateProduct([FromForm] int ID, [FromForm] string Name, [FromForm] double Price, [FromForm] string Description, [FromForm] int CategoryId, [FromForm] List<SpecificationDto> specifications, [FromForm] List<IFormFile> photos)
     {
         try
         {
-            await _service.CreateAsync(ID, Name, Price, Description, CategoryId, specifications, photos);
-            return Ok();
+            var createdProduct = await _service.CreateAsync(ID, Name, Price, Description, CategoryId, specifications, photos);
+            return CreatedAtAction(nameof(GetById), new { id = createdProduct.ID },
+                new
+                {
+                    id = createdProduct.ID, name = createdProduct.Name, categoryId = createdProduct.CategoryId,
+                    specifications = createdProduct.Specifications
+                });
+
         }
         catch (Exception e)
         {

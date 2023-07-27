@@ -10,8 +10,8 @@ public interface IProductService
     Task<IEnumerable<ProductDto>> GetAllAsync();
     Task<ProductDto> GetByIdAsync(int id);
 
-    Task CreateAsync(int ID, string Name, double Price, string Description, int CategoryId,
-        List<Specification> specifications, List<IFormFile> photos);
+    Task<Product> CreateAsync(int ID, string Name, double Price, string Description, int CategoryId,
+        List<SpecificationDto> specifications, List<IFormFile> photos);
     Task UpdateAsync(int id, Product product);
     Task DeleteAsync(int id);
 }
