@@ -12,8 +12,6 @@ export default function ProductsPage() {
     const fetchProducts = async () => {
       try {
         const response = await axios.get(`/api/products/page/${num}`);
-        console.log("da ba am intrat");
-        
         setProducts(response.data);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -25,7 +23,7 @@ export default function ProductsPage() {
     <>
       <div className="grid max-w-screen justify-center items-center place-items-center grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 my-5">
         {products?.map((product: ProductDto) => (
-          <ProductCardComponent product={product} />
+          <ProductCardComponent key={product.id} product={product} />
         ))}
       </div>
       <PaginationComponent num={num} setNum={setNum} />
