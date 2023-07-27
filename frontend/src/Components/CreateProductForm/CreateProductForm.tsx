@@ -128,6 +128,37 @@ export default function CreateProductForm({
               </option>
             ))}
           </select>
+          <label className="block text-sm font-bold text-gray-700">
+            Specifications
+          </label>
+          {categorySpecifications?.map((spec, index) => (
+            <div key={index} className="space-y-2">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label
+                    className="block text-xs font-bold text-gray-600"
+                    htmlFor={`specifications.${index}.ID`}
+                  >
+                    {spec.name}
+                  </label>
+                  <input
+                    type="hidden"
+                    {...register(
+                      `specifications.${index}.SpecificationTypeId`,
+                      {
+                        value: spec.id, // Set the value to the SpecificationTypeId
+                      }
+                    )}
+                  />
+                  <input
+                    type="text"
+                    {...register(`specifications.${index}.Value`)}
+                    className="form-input w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                  />
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
         <div>
           <label
@@ -170,34 +201,7 @@ export default function CreateProductForm({
           />
         </div>
         {/* Render input fields for specifications */}
-        <label className="block text-sm font-bold text-gray-700">
-          Specifications
-        </label>
-        {categorySpecifications?.map((spec, index) => (
-          <div key={index} className="space-y-2">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label
-                  className="block text-xs font-bold text-gray-600"
-                  htmlFor={`specifications.${index}.ID`}
-                >
-                  {spec.name}
-                </label>
-                <input
-                  type="hidden"
-                  {...register(`specifications.${index}.SpecificationTypeId`, {
-                    value: spec.id, // Set the value to the SpecificationTypeId
-                  })}
-                />
-                <input
-                  type="text"
-                  {...register(`specifications.${index}.Value`)}
-                  className="form-input w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                />
-              </div>
-            </div>
-          </div>
-        ))}
+
         <button
           type="submit"
           disabled={!isValid}
