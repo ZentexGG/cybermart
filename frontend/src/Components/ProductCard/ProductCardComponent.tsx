@@ -5,7 +5,6 @@ export default function ProductCardComponent({
 }: {
   product: ProductDto;
 }) {
-  console.log(product);
   return (
     <div className="w-full max-w-xs bg-white border border-gray-200 rounded-lg shadow dark:bg-blue-100 dark:border-blue-200">
       <a href={`products/${product.id}`}>
