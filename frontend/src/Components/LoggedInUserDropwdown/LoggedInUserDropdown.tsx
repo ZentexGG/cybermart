@@ -15,7 +15,6 @@ export default function LoggedInUserDropdown({
   const toggleUserDropdown = () => {
     setUserDropdownOpen(!isUserDropdownOpen);
   };
-  console.log(userInfo);
   
   return (
     <>
