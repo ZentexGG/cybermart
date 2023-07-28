@@ -16,5 +16,6 @@ public class User
     public string? Email { get; set; }
     [JsonIgnore]
     public UserPhoto? UserPhoto { get; set; }
+    public List<Order> Orders { get; set; }
 }
 

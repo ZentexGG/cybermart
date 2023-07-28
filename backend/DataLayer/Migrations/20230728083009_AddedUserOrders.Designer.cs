@@ -4,6 +4,7 @@ using DataLayer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataLayer.Migrations
 {
     [DbContext(typeof(CybermartContext))]
-    partial class CybermartContextModelSnapshot : ModelSnapshot
+    [Migration("20230728083009_AddedUserOrders")]
+    partial class AddedUserOrders
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -100,7 +103,7 @@ namespace DataLayer.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderProducts");
+                    b.ToTable("OrderProduct");
                 });
 
             modelBuilder.Entity("DataLayer.Entities.Product", b =>
@@ -288,14 +291,14 @@ namespace DataLayer.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "7ea1ae26-19ab-4292-8895-688f024a4af8",
+                            Id = "595487f4-69c0-4341-8690-a6455b2d93f5",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "e435ee05-c1e4-4b11-9ba3-3b8ab8ed5589",
+                            Id = "1f376ff8-de66-45de-a37d-e39730d4f022",
                             ConcurrencyStamp = "2",
                             Name = "User",
                             NormalizedName = "USER"

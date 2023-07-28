@@ -14,6 +14,7 @@ public interface IDbContext
     DbSet<UserPhoto> UserPhotos { get; set; }
 
     DbSet<User> Users { get; set; }
+    DbSet<OrderProduct> OrderProducts { get; set; }
     int SaveChanges();
     Task<int> SaveChangesAsync();
     void UpdateEntityState<TEntity>(TEntity entity, EntityState state) where TEntity : class;

@@ -20,5 +20,8 @@ public class Order
     public string Country { get; set; }
     [Required]
     public string PhoneNumber { get; set; }
+    public User User { get; set; }
+    public int UserId { get; set; }
+    
        
 }
