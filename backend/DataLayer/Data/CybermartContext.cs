@@ -34,6 +34,15 @@ public class CybermartContext : IdentityDbContext<IdentityUser>,IDbContext
                 .WithOne(pp => pp.Product)
                 .HasForeignKey(pp => pp.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
+            
+            // Relationship: Order -> OrderProduct
+            modelBuilder.Entity<Order>()
+                .HasMany(o => o.OrderProducts)
+                .WithOne(op => op.Order)
+                .HasForeignKey(op => op.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            
 
             // Relationship: Specification -> Product
             modelBuilder.Entity<Specification>()
