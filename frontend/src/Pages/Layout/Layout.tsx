@@ -12,15 +12,19 @@ import { CartItem } from "../../types";
 
 export const LayoutContext = createContext<{
   handleAddToCart: (product: CartItem) => void;
+  setIsFetching: (isFetching: boolean) => void;
 }>({
   handleAddToCart: () => {
     console.warn("handleAddToCart wrong.");
   },
+  setIsFetching: () => {
+    console.warn("wrong")
+  }
 });
 
 export default function Layout() {
   const [userInfo, setUserInfo] = useState<DecodedToken | boolean>(false);
-  const [isFetching, setIsFetching] = useState<Boolean>(true);
+  const [isFetching, setIsFetching] = useState<boolean>(false);
   const [cartItems, setCartItems] = useLocalStorageState('cart')
   const location = useLocation();
 
@@ -73,9 +77,9 @@ export default function Layout() {
   };
 
   return isFetching ? (
-    <Loader />
+      <Loader />
   ) : (
-    <LayoutContext.Provider value={{handleAddToCart}}>
+    <LayoutContext.Provider value={{ handleAddToCart, setIsFetching }}>
       <div className="flex flex-col h-screen">
         <div className="flex-grow">
           <NavbarComponent
@@ -90,7 +94,7 @@ export default function Layout() {
               setIsShowCart={setIsShowCart}
             />
           )}
-          <Outlet context={[isFetching, setIsFetching, handleAddToCart]} />
+            <Outlet context={{ setIsFetching, handleAddToCart }} />
         </div>
         <div className="bg-white shadow mt-auto">
           <FooterComponent />
