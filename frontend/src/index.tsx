@@ -4,6 +4,7 @@ import "./index.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
 import Loader from "./Pages/Loader/Loader";
+import OrderPage from "./Pages/OrderPage/OrderPage";
 
 // Lazy load the pages
 const Layout = lazy(() => import("./Pages/Layout/Layout"));
@@ -116,6 +117,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense>
             <CreateProductPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/Order",
+        element: (
+          <Suspense>
+            <OrderPage />
           </Suspense>
         ),
       },
