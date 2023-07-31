@@ -6,6 +6,9 @@ public class OrderDTO
 {
     public int Id { get; set; }
     public List<OrderProductsDto> OrderProducts { get; set; }
+    public string FirstName { get; set; }
+    public string LasName { get; set; }
+    public bool CardPayment { get; set; }
     public int UserId { get; set; }
     public string Address { get; set; }
     public string City { get; set; }

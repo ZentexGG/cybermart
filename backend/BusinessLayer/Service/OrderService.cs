@@ -103,7 +103,8 @@ public class OrderService : IOrderService
                     ProductId = newOrder.Id,
                     OrderId = op.OrderId,
                     Product = _context.Products.Find(op.ProductId),
-                    Order = _context.Orders.Find(op.OrderId)
+                    Order = _context.Orders.Find(op.OrderId),
+                    Amount = op.Amount
                 }).ToList()
             };
 
