@@ -72,6 +72,10 @@ public class CybermartContext : IdentityDbContext<IdentityUser>,IDbContext
                 .HasForeignKey(sp => sp.SpecificationTypeId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // Relationship: OrderProducts -> Order
+            modelBuilder.Entity<Order>()
+                .HasMany(order => order.OrderProducts)
+                .WithOne(products => products.Order);
             // Unique index on Specification's ProductId and SpecificationTypeId
             modelBuilder.Entity<Specification>()
                 .HasIndex(sp => new { sp.ProductId, sp.SpecificationTypeId })
@@ -79,6 +83,7 @@ public class CybermartContext : IdentityDbContext<IdentityUser>,IDbContext
 
             // Add any additional configurations for your entities
 
+            
             base.OnModelCreating(modelBuilder);
             SeedRoles(modelBuilder);
         }

@@ -14,6 +14,7 @@ public class MockContext : DbContext, IDbContext
     public virtual DbSet<ProductPhoto> ProductPhotos { get; set; }
     public DbSet<UserPhoto> UserPhotos { get; set; }
     public virtual DbSet<User> Users { get; set; }
+    public DbSet<OrderProduct> OrderProducts { get; set; }
 
     public virtual Task<int> SaveChangesAsync()
     {
