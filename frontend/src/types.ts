@@ -82,3 +82,19 @@ export interface CartItem {
   price: number;
   amount: number;
 }
+
+export interface Order {
+  id: number;
+  orderProducts: {
+    orderId: number;
+    productId: number;
+  }[];
+  userId: number;
+  address: string;
+  city: string;
+  region: string;
+  postalCode: string;
+  country: string;
+  phoneNumber: string;
+}
+
