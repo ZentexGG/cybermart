@@ -9,7 +9,6 @@ import Loader from "../Loader/Loader";
 import useLocalStorageState from "use-local-storage-state";
 import { CartItem } from "../../types";
 
-
 export const LayoutContext = createContext<{
   handleAddToCart: (product: CartItem) => void;
   setIsFetching: (isFetching: boolean) => void;
@@ -18,14 +17,21 @@ export const LayoutContext = createContext<{
     console.warn("handleAddToCart wrong.");
   },
   setIsFetching: () => {
-    console.warn("wrong")
-  }
+    console.warn("wrong");
+  },
 });
 
 export default function Layout() {
   const [userInfo, setUserInfo] = useState<DecodedToken | boolean>(false);
   const [isFetching, setIsFetching] = useState<boolean>(false);
-  const [cartItems, setCartItems] = useLocalStorageState('cart')
+  const [cartItems, setCartItems] = useLocalStorageState<CartItem[]>("cart", {
+    storageSync: true,
+    defaultValue: [],
+  });
+  const [products, setProducts] = useState<CartItem[]>([]);
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [activePrice, setActivePrice] = useState<string>("");
+  const [isShowCart, setIsShowCart] = useState<boolean>(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -35,12 +41,8 @@ export default function Layout() {
       setIsFetching(false);
     };
     fetchUserInfo();
+    setCart(cartItems);
   }, [location]);
-
-  const [products, setProducts] = useState<CartItem[]>([]);
-  const [cart, setCart] = useState<CartItem[]>([]);
-  const [activePrice, setActivePrice] = useState<string>("");
-  const [isShowCart, setIsShowCart] = useState<boolean>(false);
 
   const handleShowCart = () => {
     setIsShowCart(true);
@@ -51,33 +53,40 @@ export default function Layout() {
       const findProductInCart = prev.find((item) => item.id === product.id);
 
       if (findProductInCart) {
+        setCartItems(
+          prev.map((item) =>
+            item.id === product.id ? { ...item, amount: item.amount + 1 } : item
+          )
+        );
         return prev.map((item) =>
           item.id === product.id ? { ...item, amount: item.amount + 1 } : item
         );
       }
+      setCartItems([...prev, { ...product, amount: 1 }]);
 
       return [...prev, { ...product, amount: 1 }];
     });
-
-    setCartItems(cart);
   };
 
-  const handleRemoveFromCart = (id: string) => {
+  const handleRemoveFromCart = async (id: string) => {
     setCart((prev) => {
       return prev.reduce((cal, item) => {
         if (item.id === id) {
-          if (item.amount === 1) return cal;
-
+          if (item.amount === 1) {
+            setCartItems(cal);
+            return cal;
+          }
+          setCartItems([...cal, { ...item, amount: item.amount - 1 }]);
           return [...cal, { ...item, amount: item.amount - 1 }];
         }
-
+        setCartItems([...cal, { ...item }]);
         return [...cal, { ...item }];
       }, [] as CartItem[]);
     });
   };
 
   return isFetching ? (
-      <Loader />
+    <Loader />
   ) : (
     <LayoutContext.Provider value={{ handleAddToCart, setIsFetching }}>
       <div className="flex flex-col h-screen">
@@ -94,7 +103,7 @@ export default function Layout() {
               setIsShowCart={setIsShowCart}
             />
           )}
-            <Outlet context={{ setIsFetching, handleAddToCart }} />
+          <Outlet context={{ setIsFetching, handleAddToCart }} />
         </div>
         <div className="bg-white shadow mt-auto">
           <FooterComponent />
