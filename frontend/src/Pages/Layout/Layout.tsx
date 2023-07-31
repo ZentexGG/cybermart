@@ -12,6 +12,7 @@ import { CartItem } from "../../types";
 export const LayoutContext = createContext<{
   handleAddToCart: (product: CartItem) => void;
   setIsFetching: (isFetching: boolean) => void;
+  userInfo : (DecodedToken | boolean)
 }>({
   handleAddToCart: () => {
     console.warn("handleAddToCart wrong.");
@@ -19,6 +20,9 @@ export const LayoutContext = createContext<{
   setIsFetching: () => {
     console.warn("wrong");
   },
+  userInfo : ()=>{
+    console.warn("no user info")
+  }
 });
 
 export default function Layout() {
@@ -38,6 +42,7 @@ export default function Layout() {
     const fetchUserInfo = async () => {
       const user = await checkAuth();
       setUserInfo(user);
+      console.log(user);
       setIsFetching(false);
     };
     fetchUserInfo();
@@ -88,7 +93,7 @@ export default function Layout() {
   return isFetching ? (
     <Loader />
   ) : (
-    <LayoutContext.Provider value={{ handleAddToCart, setIsFetching }}>
+    <LayoutContext.Provider value={{ handleAddToCart, setIsFetching, userInfo }}>
       <div className="flex flex-col h-screen">
         <div className="flex-grow">
           <NavbarComponent
