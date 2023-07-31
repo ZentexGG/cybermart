@@ -54,7 +54,9 @@ You can clone the repository in many different ways, listed below are some ways 
 #### Using your IDE's UI
 Many IDEs have an UI for cloning a Git repo. Depending on your IDE, you might have to click on New or Open --> Get from version control or Get from remote repository
 For this example, we've used Jetbrains Rider's interface
+
 ![image](https://github.com/ZentexGG/cybermart/assets/54683170/ac61e5df-d9d0-47f7-946b-872d38e761fa)
+
 In this case, all you have to do is insert the repository URL and choose the location where you want it to be cloned on your computer.
 
 #### Using the command line
@@ -73,6 +75,7 @@ git clone git@github.com:ZentexGG/cybermart.git
 
 #### Downloading the files
 It is as easy as it sounds! Once you are on the repository's page, click on the **Code** button, and then on **Download ZIP**, as showwn below
+
 ![image](https://github.com/ZentexGG/cybermart/assets/54683170/32d02fcf-7fec-41d6-b6c1-792559f08b0e)
 
 
