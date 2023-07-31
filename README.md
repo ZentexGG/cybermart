@@ -8,7 +8,6 @@ Open-source project for an online tech store
 - [Technologies & Libraries](#technologies--libraries)
 - [Features](#features)
 - [Installation](#installation)
-- [App Settings Fields](#app-settings-fields)
 
 ## Introduction
 
