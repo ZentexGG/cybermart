@@ -13,32 +13,85 @@ public class OrderService : IOrderService
         _context = context;
     }
 
-    public async Task<IEnumerable<Order>> GetOrdersByUser(int id)
+    public async Task<Order> GetOrdersByOrderId(int OrderId)
     {
         try
         {
-            var user = await _context.Users.FindAsync(id);
-            return user.Orders;
+            // Include the Orders navigation property
+            
+
+            var order = await _context.Orders
+                .Include(order => order.User)
+                .Include(order => order.OrderProducts)
+                .ThenInclude(op => op.Product)
+                .FirstOrDefaultAsync(u => u.Id == OrderId);
+            // If the user is not found, return an empty list or handle as needed.
+
+            // The Orders property should now be populated with the user's orders.
+            return order;
         }
         catch (Exception e)
         {
+            // Handle exception
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+    public async Task<IEnumerable<Order>> GetOrdersByUser(int userId)
+    {
+        try
+        {
+            var user = await _context.Users
+                .Include(u => u.Orders)
+                .ThenInclude(order => order.OrderProducts)
+                .ThenInclude(product => product.Product)
+                .FirstOrDefaultAsync(u => u.ID == userId);
+
+            if (user == null)
+            {
+                // Return the user's orders
+                return Enumerable.Empty<Order>();
+            }
+
+            // If the user is not found, return an empty collection or null, depending on your preference.
+            return user.Orders;
+            // OR return null;
+        }
+        catch (Exception e)
+        {
+            // Handle exception
             Console.WriteLine(e);
             throw;
         }
     }
 
+
     public async Task<IEnumerable<Order>> GetAllOrders()
     {
-        return await _context.Orders.ToListAsync();
+        return await _context.Orders
+            .Include(order => order.User)
+            .Include(order => order.OrderProducts )
+            .ThenInclude(op=>op.Product).ToListAsync();
     }
 
     public async Task AddOrder(OrderDTO newOrder)
     {
         try
         {
+            // Find the existing user in the database
+            var userExisting = await _context.Users
+                .Include(u => u.Orders)
+                .FirstOrDefaultAsync(user => user.ID == newOrder.UserId);
+
+            if (userExisting == null)
+            {
+                // Handle the case where the user doesn't exist
+                throw new ArgumentException("User not found with the provided UserId.");
+            }
+
+            // Create a new Order entity
             var orderEntity = new Order
             {
-                UserId = newOrder.UserId,
                 Address = newOrder.Address,
                 City = newOrder.City,
                 Region = newOrder.Region,
@@ -47,15 +100,17 @@ public class OrderService : IOrderService
                 PhoneNumber = newOrder.PhoneNumber,
                 OrderProducts = newOrder.OrderProducts.Select(op => new OrderProduct
                 {
-                    ProductId = op.ProductId,
-                    OrderId = op.OrderId
+                    ProductId = newOrder.Id,
+                    OrderId = op.OrderId,
+                    Product = _context.Products.Find(op.ProductId),
+                    Order = _context.Orders.Find(op.OrderId)
                 }).ToList()
             };
 
-            // Add the new order to the DbContext
-            _context.Orders.Add(orderEntity);
+            // Associate the order with the user
+            userExisting.Orders.Add(orderEntity);
 
-            // Save changes to the database
+            // Save changes to the database (both Order and User)
             await _context.SaveChangesAsync();
         }
         catch (Exception ex)
@@ -66,6 +121,7 @@ public class OrderService : IOrderService
             throw;
         }
     }
+
 
 
     public async Task RemoveOrder(int orderId)
