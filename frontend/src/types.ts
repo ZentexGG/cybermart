@@ -84,9 +84,10 @@ export interface CartItem {
 }
 
 export interface Order {
-  id: number;
+  firstName:string;
+  lastName:string;
+  cardPayment:boolean;
   orderProducts: {
-    orderId: number;
     productId: number;
   }[];
   userId: number;
