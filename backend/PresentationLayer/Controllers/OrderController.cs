@@ -10,7 +10,7 @@ using PresentationLayer.Models; // Include the namespace for the Order and Order
 namespace PresentationLayer.Controllers
 {
     [ApiController]
-    [Route("api/products")]
+    [Route("api")]
     public class OrderController : ControllerBase
     {
         private readonly IOrderService _orderService;
@@ -19,13 +19,28 @@ namespace PresentationLayer.Controllers
         {
             _orderService = orderService;
         }
-
-        [HttpGet("orders/user/{id}")]
-        public async Task<ActionResult<IEnumerable<Order>>> GetOrdersByUser(int id)
+        
+        [HttpGet("orders/order/{orderId}")]
+        public async Task<ActionResult<Order>> GetOrderByOrderId(int orderId)
         {
             try
             {
-                var orders = await _orderService.GetOrdersByUser(id);
+                var order = await _orderService.GetOrdersByOrderId(orderId);
+                return Ok(order);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return StatusCode(500, "An error occurred while fetching orders.");
+            }
+        }
+
+        [HttpGet("orders/user/{userId}")]
+        public async Task<ActionResult<IEnumerable<Order>>> GetOrdersByUser(int userId)
+        {
+            try
+            {
+                var orders = await _orderService.GetOrdersByOrderId(userId);
                 return Ok(orders);
             }
             catch (Exception e)
