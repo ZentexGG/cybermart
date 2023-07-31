@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace DataLayer.Entities;
 
@@ -21,6 +22,7 @@ public class Order
     [Required]
     public string PhoneNumber { get; set; }
     public User User { get; set; }
+    [JsonIgnore]
     public int UserId { get; set; }
     
        
