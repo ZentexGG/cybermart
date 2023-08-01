@@ -100,7 +100,7 @@ public class OrderService : IOrderService
                 PhoneNumber = newOrder.PhoneNumber,
                 OrderProducts = newOrder.OrderProducts.Select(op => new OrderProduct
                 {
-                    ProductId = newOrder.Id,
+                    ProductId = op.ProductId,
                     OrderId = op.OrderId,
                     Product = _context.Products.Find(op.ProductId),
                     Order = _context.Orders.Find(op.OrderId),
