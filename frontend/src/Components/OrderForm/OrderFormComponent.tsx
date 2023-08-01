@@ -33,19 +33,18 @@ export default function OrderFormComponent() {
       setIncorrectCredentials(false);
       data.cardPayment=cardPayment
       data.orderProducts = cartItems.map((e) => ({
-        productId: e.id as unknown as number, // Assert that the id is of type number
+        productId: e.id as unknown as number,
+        amount:e.amount as unknown as number
       }));
       if (typeof userInfo === "object" && userInfo !== null) {
         data.userId = userInfo.id;
-      } else {
-        navigate("/"); // Redirect to the login page or appropriate page when userInfo is true
-        return;
-      }      
-      console.log(data.userId);
+      }   
+      await axios.post("/api/orders", data);
     } catch (error) {
       setIncorrectCredentials(true);
     } finally {
       setLoading(false);
+      navigate("/")
     }
   };
 
