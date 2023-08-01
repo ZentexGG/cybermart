@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { AiOutlineLogin } from "react-icons/ai";
 import { MdScreenshotMonitor } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
-import jwtDecode from "jwt-decode";
 
 interface FormData {
   email: string;
@@ -16,7 +15,7 @@ export default function ResetPasswordComponent() {
   const {
     register,
     handleSubmit,
-      formState: { errors, isValid },
+      formState: { errors },
     watch
   } = useForm<FormData>({ mode: "onChange" });
 
@@ -30,7 +29,7 @@ export default function ResetPasswordComponent() {
     
     try {
       setLoading(true);
-      const response = await axios.post(
+      await axios.post(
         "/Auth/reset-password",
         {
           email: email,
@@ -39,11 +38,8 @@ export default function ResetPasswordComponent() {
           token : token
         }
       );
-      console.log(response.data.message);
-      navigate(`/register-success/${data.email}`)
+      navigate("/reset-password/success");
     } catch (error: any) {
-      console.log(error);
-      
       setRegistrationError(true);
       setStatusMessage(error.response.data.message);
     } finally {
@@ -52,8 +48,6 @@ export default function ResetPasswordComponent() {
   };
 
   const onSubmit = (data: FormData) => {
-    // Handle form submission logic here
-    console.log(data);
     attemptResetPassword(data);
     };
     

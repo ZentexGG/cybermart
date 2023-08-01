@@ -5,6 +5,10 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
 import Loader from "./Pages/Loader/Loader";
 import OrderPage from "./Pages/OrderPage/OrderPage";
+import ForgotPasswordSuccessPage from "./Pages/ForgotPasswordSuccessPage/ForgotPasswordSuccessPage";
+import ResetPasswordSuccessPage from "./Pages/ResetPasswordSuccessPage/ResetPasswordSuccessPage";
+import TitleUpdater from "./Components/TitleUpdater/TitleUpdater";
+import EmailVerifiedSuccessPage from "./Pages/EmailVerifiedSuccessPage/EmailVerifiedSuccessPage";
 
 // Lazy load the pages
 const Layout = lazy(() => import("./Pages/Layout/Layout"));
@@ -43,7 +47,7 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: (
-          <Suspense>
+          <Suspense fallback={<Loader />}>
             <HomePage />
           </Suspense>
         ),
@@ -51,7 +55,8 @@ const router = createBrowserRouter([
       {
         path: "/login",
         element: (
-          <Suspense>
+          <Suspense fallback={<Loader />}>
+            <TitleUpdater title="Cybermart - Login" />
             <LoginPage />
           </Suspense>
         ),
@@ -59,7 +64,8 @@ const router = createBrowserRouter([
       {
         path: "/products",
         element: (
-          <Suspense>
+          <Suspense fallback={<Loader />}>
+            <TitleUpdater title="Cybermart - Products" />
             <ProductsPage />
           </Suspense>
         ),
@@ -67,7 +73,8 @@ const router = createBrowserRouter([
       {
         path: "/register",
         element: (
-          <Suspense>
+          <Suspense fallback={<Loader />}>
+            <TitleUpdater title="Cybermart - Register" />
             <RegisterPage />
           </Suspense>
         ),
@@ -75,7 +82,8 @@ const router = createBrowserRouter([
       {
         path: "/register-success/:email",
         element: (
-          <Suspense>
+          <Suspense fallback={<Loader />}>
+            <TitleUpdater title="Registration Successful" />
             <RegistrationSuccessPage />
           </Suspense>
         ),
@@ -83,7 +91,8 @@ const router = createBrowserRouter([
       {
         path: "/forgot-password",
         element: (
-          <Suspense>
+          <Suspense fallback={<Loader />}>
+            <TitleUpdater title="Cybermart - Reset Password" />
             <ForgotPasswordPage />
           </Suspense>
         ),
@@ -91,7 +100,8 @@ const router = createBrowserRouter([
       {
         path: "/reset-password/:token/:email",
         element: (
-          <Suspense>
+          <Suspense fallback={<Loader />}>
+            <TitleUpdater title="Cybermart - Reset Password" />
             <ResetPasswordPage />
           </Suspense>
         ),
@@ -99,7 +109,7 @@ const router = createBrowserRouter([
       {
         path: "/products/:id",
         element: (
-          <Suspense>
+          <Suspense fallback={<Loader />}>
             <ProductDetailsPage />
           </Suspense>
         ),
@@ -107,7 +117,7 @@ const router = createBrowserRouter([
       {
         path: "/users/:id",
         element: (
-          <Suspense>
+          <Suspense fallback={<Loader />}>
             <UserProfilePage />
           </Suspense>
         ),
@@ -115,16 +125,45 @@ const router = createBrowserRouter([
       {
         path: "/add-product",
         element: (
-          <Suspense>
+          <Suspense fallback={<Loader />}>
+            <TitleUpdater title="Cybermart - Create Product" />
             <CreateProductPage />
           </Suspense>
         ),
       },
       {
-        path: "/Order",
+        path: "/order",
         element: (
-          <Suspense>
+          <Suspense fallback={<Loader />}>
+            <TitleUpdater title="Cybermart - Order" />
             <OrderPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/forgot-password/success/:email",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <TitleUpdater title="Email Sent!" />
+            <ForgotPasswordSuccessPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/reset-password/success",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <TitleUpdater title="Password Reset!" />
+            <ResetPasswordSuccessPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/email-verified",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <TitleUpdater title="Email Verified!" />
+            <EmailVerifiedSuccessPage />
           </Suspense>
         ),
       },
@@ -134,7 +173,9 @@ const router = createBrowserRouter([
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
-).render(
+);
+
+root.render(
   <StrictMode>
     <RouterProvider router={router} />
   </StrictMode>
