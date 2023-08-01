@@ -1,7 +1,5 @@
 # Cybermart
 
-Open-source project for an online tech store
-
 ## Table of Contents
 
 - [Introduction](#introduction)
