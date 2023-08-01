@@ -136,7 +136,7 @@ const router = createBrowserRouter([
           <Suspense fallback={<Loader />}>
             <ForgotPasswordSuccessPage />
           </Suspense>
-        )
+        ),
       },
       {
         path: "/reset-password/success",
@@ -144,15 +144,17 @@ const router = createBrowserRouter([
           <Suspense fallback={<Loader />}>
             <ResetPasswordSuccessPage />
           </Suspense>
-        )
-      }
+        ),
+      },
     ],
   },
 ]);
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
-).render(
+);
+
+root.render(
   <StrictMode>
     <RouterProvider router={router} />
   </StrictMode>
