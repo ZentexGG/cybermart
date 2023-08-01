@@ -30,6 +30,22 @@ public class ProductController : ControllerBase
         }
     }
 
+    [HttpGet("search/{name}")]
+    public async Task<IActionResult> GetSearchedProducts(string name)
+    {
+        try
+        {
+            var searchedProducts = await _service.GetSearchedProducts(name);
+            Console.WriteLine($"Search Query: {name}, Found {searchedProducts.Count()} products.");
+            return Ok(searchedProducts);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
     [HttpPost]
     public async Task<IActionResult> CreateProduct([FromForm] int ID, [FromForm] string Name, [FromForm] double Price, [FromForm] string Description, [FromForm] int CategoryId, [FromForm] List<SpecificationDto> specifications, [FromForm] List<IFormFile> photos)
     {

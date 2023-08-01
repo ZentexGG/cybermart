@@ -16,6 +16,31 @@ public class ProductService : IProductService
         _context = context;
     }
 
+    public async Task<IEnumerable<ProductDto>> GetSearchedProducts(string name)
+    {
+        var products = await _context.Products
+            .Include(p => p.Photos)
+            .Where(p => p.Name.ToLower().Contains(name.ToLower()))
+            .Take(5)
+            .ToListAsync();
+        var productDtos = products.Select(product => new ProductDto
+        {
+                ID = product.ID,
+                Name = product.Name,
+                Price = product.Price,
+                Description = product.Description,
+                CategoryId = product.CategoryId,
+                Specifications = product.Specifications,
+                Photos = product.Photos.Select(photo => new ProductPhotoDto
+                {
+                    Id = photo.Id,
+                    FileName = photo.FileName,
+                    ImageData = photo.ImageData,
+                    UploadDate = photo.UploadDate
+                }).ToList()
+        });
+        return productDtos;
+    }
     public async Task<IEnumerable<ProductDto>> GetProductsAsync(int page = 1, int limit = 10)
     {
         var offset = (page - 1) * limit;
