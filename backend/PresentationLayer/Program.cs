@@ -89,7 +89,7 @@ var emailConfig = builder.Configuration
 builder.Services.AddSingleton(emailConfig);
 
 builder.Services.Configure<DataProtectionTokenProviderOptions>(
-    options => options.TokenLifespan = TimeSpan.FromHours(10));
+    options => options.TokenLifespan = TimeSpan.FromDays(1));
 
 // Add services to the container.
 builder.Services.AddScoped<IProductService, ProductService>();
