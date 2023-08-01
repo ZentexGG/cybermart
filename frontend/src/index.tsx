@@ -6,6 +6,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Loader from "./Pages/Loader/Loader";
 import OrderPage from "./Pages/OrderPage/OrderPage";
 import ForgotPasswordSuccessPage from "./Pages/ForgotPasswordSuccessPage/ForgotPasswordSuccessPage";
+import ResetPasswordSuccessPage from "./Pages/ResetPasswordSuccessPage/ResetPasswordSuccessPage";
 
 // Lazy load the pages
 const Layout = lazy(() => import("./Pages/Layout/Layout"));
@@ -134,6 +135,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<Loader />}>
             <ForgotPasswordSuccessPage />
+          </Suspense>
+        )
+      },
+      {
+        path: "/reset-password/success",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <ResetPasswordSuccessPage />
           </Suspense>
         )
       }
