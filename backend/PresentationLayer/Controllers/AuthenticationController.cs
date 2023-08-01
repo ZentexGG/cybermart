@@ -72,18 +72,18 @@ public class AuthController : ControllerBase
 
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(identityUser);
         var confirmationLink = Url.ActionLink(nameof(ConfirmEmail), "Auth", new { token, email = identityUser.Email },Request.Scheme);
-        var message = new Message(new string[] { identityUser.Email! }, "Confirmation Email Link", $"<a href={confirmationLink!}>Da</a>");
+        var message = new Message(new string[] { identityUser.Email! }, "Cybermart - Confirmation Email", EmailTemplate.RegisterEmail(confirmationLink!, identityUser.UserName!));
         _emailService.SendEmail(message);
         
         return StatusCode(StatusCodes.Status201Created,
-            new Response { Status = "Success", Message = $"User created successfully & Confirmation Email to {user} Successfully    " });
+            new Response { Status = "Success", Message = $"User created successfully & Confirmation Email to {user} Successfully" });
     }
 
     [Authorize(Roles = "Admin")]
     [HttpGet("TestEmail")]
     public async Task<IActionResult> TestEmail()
     {
-        var message = new Message(new [] { "stefan.tanase2121@gmail.com" }, "Test", "<button>Dani e smecher<button>");
+        var message = new Message(new [] { "stefan.tanase2121@gmail.com" }, "Test", EmailTemplate.ForgotPasswordEmail("http://localhost:3000/", "test123"));
         _emailService.SendEmail(message);
         return StatusCode(StatusCodes.Status201Created,
             new Response { Status = "Success", Message = "Email Sent Successfully" });
@@ -105,9 +105,8 @@ public class AuthController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError,
                 new Response() { Status = "Error", Message = "The email is not confirmed" });
         }
-        
-        return StatusCode(StatusCodes.Status200OK,
-            new Response() { Status = "Success", Message = "Email Verified Successfully" });
+
+        return Redirect($"{_configuration["ConnectionStrings:CybermartFrontend"]}/email-verified");
     }
 
     [HttpPost("Login")]
@@ -180,7 +179,7 @@ public class AuthController : ControllerBase
         if (user == null)
         {
             return StatusCode(StatusCodes.Status400BadRequest,
-                new Response { Status = "Error", Message = "The user doesn't exist" });
+                new Response { Status = "Error", Message = "Invalid email address!" });
         }
 
         var token = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -190,10 +189,10 @@ public class AuthController : ControllerBase
 
         var newForgotPwdLink =
             $"{_configuration["ConnectionStrings:CybermartFrontend"]}/reset-password/{token}/{user.Email}";
-        var message = new Message(new string[] { user.Email }, "Forgot password link", newForgotPwdLink);
+        var message = new Message(new string[] { user.Email }, "Cybermart - Reset Password", EmailTemplate.ForgotPasswordEmail(newForgotPwdLink, user.UserName));
         _emailService.SendEmail(message);
 
-        return StatusCode(StatusCodes.Status200OK,
+        return Ok(
             new Response { Status = "Success", Message = $"The password change request is sent to {user.Email}" });
     }
     [HttpGet("reset-password")]
