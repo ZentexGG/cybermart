@@ -8,6 +8,7 @@ import OrderPage from "./Pages/OrderPage/OrderPage";
 import ForgotPasswordSuccessPage from "./Pages/ForgotPasswordSuccessPage/ForgotPasswordSuccessPage";
 import ResetPasswordSuccessPage from "./Pages/ResetPasswordSuccessPage/ResetPasswordSuccessPage";
 import TitleUpdater from "./Components/TitleUpdater/TitleUpdater";
+import EmailVerifiedSuccessPage from "./Pages/EmailVerifiedSuccessPage/EmailVerifiedSuccessPage";
 
 // Lazy load the pages
 const Layout = lazy(() => import("./Pages/Layout/Layout"));
@@ -154,6 +155,15 @@ const router = createBrowserRouter([
           <Suspense fallback={<Loader />}>
             <TitleUpdater title="Password Reset!" />
             <ResetPasswordSuccessPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/email-verified",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <TitleUpdater title="Email Verified!" />
+            <EmailVerifiedSuccessPage />
           </Suspense>
         ),
       },
