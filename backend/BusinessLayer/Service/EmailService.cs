@@ -23,7 +23,7 @@ public class EmailService : IEmailService
     private MimeMessage CreateEmailMessage(Message message)
     {
         var emailMessage = new MimeMessage();
-        emailMessage.From.Add(new MailboxAddress("email",_emailConfiguration.From));
+        emailMessage.From.Add(new MailboxAddress("Cybermart",_emailConfiguration.From));
         emailMessage.To.AddRange(message.To);
         emailMessage.Subject = message.Subject;
         emailMessage.Body = new TextPart(TextFormat.Html) { Text = message.Content };
