@@ -42,7 +42,6 @@ export default function Layout() {
     const fetchUserInfo = async () => {
       const user = await checkAuth();
       setUserInfo(user);
-      console.log(user);
       setIsFetching(false);
     };
     fetchUserInfo();

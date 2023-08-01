@@ -127,7 +127,7 @@ builder.Services.AddCors(options =>
 
     options.AddDefaultPolicy(builder =>
     {
-        builder.WithOrigins(frontendUrl)
+        builder.WithOrigins("http://localhost:3000")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
@@ -146,11 +146,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseCookiePolicy();
 app.UseHttpsRedirection();
+app.UseCors();
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseCors();
 app.MapControllers();
 app.Run();
