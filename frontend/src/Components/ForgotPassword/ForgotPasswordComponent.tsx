@@ -12,25 +12,24 @@ export default function RegisterForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid },
-    watch,
+    formState: { errors },
   } = useForm<FormData>({ mode: "onChange" });
 
   const [loading, setLoading] = useState(false);
-  const [statusMessage, setStatusMessage] = useState("");
+  const [statusMessage, setStatusMessage] = useState<string>("");
   const [registrationError, setRegistrationError] = useState(false);
   const navigate = useNavigate();
 
-  const attemptRegister = async (data: FormData) => {
+  const attemptForgotPwd = async (data: FormData) => {
     try {
       setLoading(true);
-      const response = await axios.post("/Auth/forgot-password", data);
-      console.log(response);
+      setRegistrationError(false);
+      setStatusMessage("");
+      await axios.post("/Auth/forgot-password", data);
+      navigate(`/forgot-password/success/${data.email}`)
     } catch (error: any) {
-      console.log(error);
-
       setRegistrationError(true);
-    //   setStatusMessage(error.response.data.message);
+      setStatusMessage(error.response.data.message);
     } finally {
       setLoading(false);
     }
@@ -39,7 +38,7 @@ export default function RegisterForm() {
   const onSubmit = (data: FormData) => {
     // Handle form submission logic here
     console.log(data);
-    attemptRegister(data);
+    attemptForgotPwd(data);
   };
 
   return (
@@ -83,6 +82,7 @@ export default function RegisterForm() {
             {errors.email && (
               <p className="text-red-500">{errors.email.message}</p>
             )}
+            <p></p>
           </div>
 
           <div>
@@ -118,7 +118,7 @@ export default function RegisterForm() {
             </button>
           </div>
         </form>
-        <p className="text-red-500 flex justify-center">
+        <p className='text-red-500 flex justify-center'>
           {!loading && registrationError ? statusMessage : ""}
         </p>
       </div>

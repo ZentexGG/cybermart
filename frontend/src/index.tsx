@@ -5,6 +5,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
 import Loader from "./Pages/Loader/Loader";
 import OrderPage from "./Pages/OrderPage/OrderPage";
+import ForgotPasswordSuccessPage from "./Pages/ForgotPasswordSuccessPage/ForgotPasswordSuccessPage";
 
 // Lazy load the pages
 const Layout = lazy(() => import("./Pages/Layout/Layout"));
@@ -43,7 +44,7 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: (
-          <Suspense>
+          <Suspense fallback={<Loader />}>
             <HomePage />
           </Suspense>
         ),
@@ -51,7 +52,7 @@ const router = createBrowserRouter([
       {
         path: "/login",
         element: (
-          <Suspense>
+          <Suspense fallback={<Loader />}>
             <LoginPage />
           </Suspense>
         ),
@@ -59,7 +60,7 @@ const router = createBrowserRouter([
       {
         path: "/products",
         element: (
-          <Suspense>
+          <Suspense fallback={<Loader />}>
             <ProductsPage />
           </Suspense>
         ),
@@ -67,7 +68,7 @@ const router = createBrowserRouter([
       {
         path: "/register",
         element: (
-          <Suspense>
+          <Suspense fallback={<Loader />}>
             <RegisterPage />
           </Suspense>
         ),
@@ -75,7 +76,7 @@ const router = createBrowserRouter([
       {
         path: "/register-success/:email",
         element: (
-          <Suspense>
+          <Suspense fallback={<Loader />}>
             <RegistrationSuccessPage />
           </Suspense>
         ),
@@ -83,7 +84,7 @@ const router = createBrowserRouter([
       {
         path: "/forgot-password",
         element: (
-          <Suspense>
+          <Suspense fallback={<Loader />}>
             <ForgotPasswordPage />
           </Suspense>
         ),
@@ -91,7 +92,7 @@ const router = createBrowserRouter([
       {
         path: "/reset-password/:token/:email",
         element: (
-          <Suspense>
+          <Suspense fallback={<Loader />}>
             <ResetPasswordPage />
           </Suspense>
         ),
@@ -99,7 +100,7 @@ const router = createBrowserRouter([
       {
         path: "/products/:id",
         element: (
-          <Suspense>
+          <Suspense fallback={<Loader />}>
             <ProductDetailsPage />
           </Suspense>
         ),
@@ -107,7 +108,7 @@ const router = createBrowserRouter([
       {
         path: "/users/:id",
         element: (
-          <Suspense>
+          <Suspense fallback={<Loader />}>
             <UserProfilePage />
           </Suspense>
         ),
@@ -115,19 +116,27 @@ const router = createBrowserRouter([
       {
         path: "/add-product",
         element: (
-          <Suspense>
+          <Suspense fallback={<Loader />}>
             <CreateProductPage />
           </Suspense>
         ),
       },
       {
-        path: "/Order",
+        path: "/order",
         element: (
-          <Suspense>
+          <Suspense fallback={<Loader />}>
             <OrderPage />
           </Suspense>
         ),
       },
+      {
+        path: "/forgot-password/success/:email",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <ForgotPasswordSuccessPage />
+          </Suspense>
+        )
+      }
     ],
   },
 ]);
