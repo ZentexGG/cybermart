@@ -30,11 +30,7 @@ public class ProductService : IProductService
                 Price = product.Price,
                 Description = product.Description,
                 CategoryId = product.CategoryId,
-                Specifications = product.Specifications.Select(spec => new SpecificationDto
-            {
-                SpecificationTypeId = spec.SpecificationTypeId,
-                Value = spec.Value
-            }).ToList(),
+                
                 Photos = product.Photos.Select(photo => new ProductPhotoDto
                 {
                     Id = photo.Id,
