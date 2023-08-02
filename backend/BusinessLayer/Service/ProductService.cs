@@ -30,7 +30,11 @@ public class ProductService : IProductService
                 Price = product.Price,
                 Description = product.Description,
                 CategoryId = product.CategoryId,
-                Specifications = product.Specifications,
+                Specifications = product.Specifications.Select(spec => new SpecificationDto
+            {
+                SpecificationTypeId = spec.SpecificationTypeId,
+                Value = spec.Value
+            }).ToList(),
                 Photos = product.Photos.Select(photo => new ProductPhotoDto
                 {
                     Id = photo.Id,
@@ -57,7 +61,6 @@ public class ProductService : IProductService
             Price = product.Price,
             Description = product.Description,
             CategoryId = product.CategoryId,
-            Specifications = product.Specifications,
             Photos = product.Photos.Select(photo => new ProductPhotoDto
             {
                 Id = photo.Id,
@@ -83,7 +86,11 @@ public class ProductService : IProductService
             Price = product.Price,
             Description = product.Description,
             CategoryId = product.CategoryId,
-            Specifications = product.Specifications,
+            Specifications = product.Specifications.Select(spec => new SpecificationDto
+            {
+                SpecificationTypeId = spec.SpecificationTypeId,
+                Value = spec.Value
+            }).ToList(),
             Photos = product.Photos.Select(photo => new ProductPhotoDto
             {
                 Id = photo.Id,
@@ -101,7 +108,9 @@ public class ProductService : IProductService
     public async Task<ProductDto> GetByIdAsync(int id)
     {
         var product = await _context.Products
+            .Include(product => product.Category)
             .Include(product => product.Specifications )
+            .ThenInclude(s => s.SpecificationType)
             .Include(p => p.Photos)
             .FirstOrDefaultAsync(p => p.ID == id);
         if (product == null)
@@ -121,7 +130,13 @@ public class ProductService : IProductService
             Price = product.Price,
             Description = product.Description,
             CategoryId = product.CategoryId,
-            Specifications = product.Specifications,
+            CategoryName = product.Category.Name,
+            Specifications = product.Specifications.Select(spec => new SpecificationDto
+            {
+                SpecificationTypeName = spec.SpecificationType.Name,
+                SpecificationTypeId = spec.SpecificationTypeId,
+                Value = spec.Value
+            }).ToList(),
             Photos = product.Photos?.Select(photo => new ProductPhotoDto
             {
                 Id = photo.Id,
