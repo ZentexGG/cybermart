@@ -9,6 +9,7 @@ public class ProductDto
     public double Price { get; set; }
     public string Description { get; set; }
     public int CategoryId { get; set; }
-    public List<Specification> Specifications { get; set; }
-    public List<ProductPhotoDto> Photos { get; set; }
+    public string CategoryName { get; set; }
+    public List<SpecificationDto>? Specifications { get; set; }
+    public List<ProductPhotoDto>? Photos { get; set; }
 }
