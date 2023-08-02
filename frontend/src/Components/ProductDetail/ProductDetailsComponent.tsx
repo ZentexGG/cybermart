@@ -2,7 +2,6 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { ProductDto } from "../../types";
-import { log } from "console";
 
 const ProductDetailsComponent = () => {
   const [product, setProduct] = useState<ProductDto>();
@@ -13,6 +12,7 @@ const ProductDetailsComponent = () => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get(`/api/products/${id}`);
+        console.log(response.data)
         setProduct(response.data);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -43,7 +43,8 @@ const ProductDetailsComponent = () => {
           />
           <div className="flex flex-row h-24 mt-4">
             {product?.photos.map((image) => {
-              if(image.imageData.toString() == activeImg?.split(",")[1]) return null;
+              if (image.imageData.toString() == activeImg?.split(",")[1])
+                return null;
               return (
                 <img
                   src={`data:image/jpeg;base64,${image.imageData}`}
@@ -59,15 +60,11 @@ const ProductDetailsComponent = () => {
         <div className="flex flex-col gap-4 lg:w-2/4">
           <div>
             <span className=" text-violet-600 font-semibold">
-              {product?.categoryId}
+              {product?.categoryName}
             </span>
             <h1 className="text-3xl font-bold">{product?.name}</h1>
           </div>
-          <p className="text-gray-700">
-            {
-              product?.description
-            }
-          </p>
+          <p className="text-gray-700">{product?.description}</p>
           <h6 className="text-2xl font-semibold text-center sm:text-left">
             {product?.price}€
           </h6>
@@ -75,13 +72,15 @@ const ProductDetailsComponent = () => {
             <div className="flex flex-row items-start ">
               <button
                 className="bg-gray-200 py-2 px-5 rounded-lg text-violet-800 text-3xl"
-                onClick={() => setAmount((prev) => prev - 1)}>
+                onClick={() => setAmount((prev) => prev - 1)}
+              >
                 -
               </button>
               <span className="py-4 px-6 rounded-lg">{amount}</span>
               <button
                 className="bg-gray-200 py-2 px-4 rounded-lg text-violet-800 text-3xl"
-                onClick={() => setAmount((prev) => prev + 1)}>
+                onClick={() => setAmount((prev) => prev + 1)}
+              >
                 +
               </button>
             </div>
@@ -94,7 +93,21 @@ const ProductDetailsComponent = () => {
       <div className="flex flex-col justify-between lg:flex-col gap-16 lg:items-start m-4 text-3xl">
         <p>Product Specifications</p>
         <div className="m-5">
-
+          <table>
+            <thead>
+              <tr>
+                <th>Product Specifications</th>
+              </tr>
+            </thead>
+            <tbody>
+              {product?.specifications.map((spec, index) => (
+                <tr key={index}>
+                  <td>{spec.specificationTypeName}</td>
+                  <td>{spec.value}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

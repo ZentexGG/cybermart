@@ -26,6 +26,7 @@ export default function CreateProductForm({
   } = useForm<FormData>({ mode: "onChange" });
 
   const [categorySpecifications, setCategorySpecifications] = useState<SpecificationType[]>();
+  let newProductId: number = 0;
 
  const onSubmit = async (data: FormData) => {
    const formData = new FormData();
@@ -34,22 +35,6 @@ export default function CreateProductForm({
    formData.append("Price", data.Price.toString());
    formData.append("Description", data.Description);
    formData.append("CategoryId", data.CategoryId.toString());
-
-   // Check if data.specifications is defined and not empty before iterating
-   if (data.specifications?.length) {
-     data.specifications.forEach((spec, index) => {
-       formData.append(`specifications[${index}].ID`, spec.ID.toString());
-       formData.append(
-         `specifications[${index}].ProductId`,
-         spec.ProductId.toString()
-       );
-       formData.append(
-         `specifications[${index}].SpecificationTypeId`,
-         spec.SpecificationTypeId.toString()
-       );
-       formData.append(`specifications[${index}].Value`, spec.Value);
-     });
-   }
 
    for (let i = 0; i < data.photos.length; i++) {
      formData.append("photos", data.photos[i]);
@@ -61,10 +46,17 @@ export default function CreateProductForm({
          "Content-Type": "multipart/form-data",
        },
      });
-     console.log(formData);
-   } catch (error) {
-     console.error("Error:", error);
+     newProductId = response.data.id
+    } catch (error) {
+     console.log(error)
    }
+
+   try {
+     await axios.post(`/api/specifications/${newProductId}`, data.specifications)
+   } catch (error) {
+     console.log(error);
+   }
+
  };
 
   const handleCategoryChange = async (
@@ -144,7 +136,7 @@ export default function CreateProductForm({
                   <input
                     type="hidden"
                     {...register(
-                      `specifications.${index}.SpecificationTypeId`,
+                      `specifications.${index}.specificationTypeId`,
                       {
                         value: spec.id, // Set the value to the SpecificationTypeId
                       }
@@ -152,7 +144,7 @@ export default function CreateProductForm({
                   />
                   <input
                     type="text"
-                    {...register(`specifications.${index}.Value`)}
+                    {...register(`specifications.${index}.value`)}
                     className="form-input w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                   />
                 </div>
