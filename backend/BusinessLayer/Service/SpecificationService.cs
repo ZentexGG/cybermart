@@ -16,7 +16,7 @@ public class SpecificationService : ISpecificationService
     
     public async Task AddSpecsForProduct(int productId, List<SpecificationDto> specs)
     {
-        var productExists = await _context.Specifications.FirstOrDefaultAsync(s => s.ProductId == productId) != null;
+        var productExists = await _context.Products.FirstOrDefaultAsync(p => p.ID == productId) != null;
         if (!productExists)
         {
             throw new KeyNotFoundException("The specified ID was not found!");

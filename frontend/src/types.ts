@@ -13,7 +13,8 @@ export interface ProductDto {
   price: number;
   description: string;
   categoryId: number;
-  specifications: Specification[];
+  categoryName: string;
+  specifications: SpecificationDto[];
   photos: ProductPhotoDto[];
 }
 
@@ -27,10 +28,16 @@ export interface ProductPhotoDto {
 export interface Specification {
   ID: number;
   ProductId: number;
-  SpecificationTypeId: number;
-  Value: string;
+  specificationTypeId: number;
+  value: string;
   Product: Product;
   SpecificationType: SpecificationType;
+}
+
+export interface SpecificationDto {
+  specificationTypeId: number;
+  specificationTypeName: string;
+  value: string;
 }
 
 export interface SpecificationType {
