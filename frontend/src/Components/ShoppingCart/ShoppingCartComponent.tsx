@@ -31,7 +31,7 @@ const Cart: React.FC<CartProps> = ({
 
   const DollarUsd = new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: "USD",
+    currency: "EUR",
   });
 
   const handleCloseCart = () => {
@@ -56,7 +56,7 @@ const Cart: React.FC<CartProps> = ({
       >
         <h1 className="bg-blue-100 py-2 text-center text-red-700 font-medium">Shopping Cart</h1>
         <div className="flex flex-col items-center px-2 py-4">
-          {cart.length == 0 ? (
+          {cart.length === 0 ? (
             <p className="text-center text-red-700 font-normal">
               Your cart is empty!
               <br /> Start adding products to your cart and they will show up
