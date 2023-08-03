@@ -19,6 +19,7 @@ public class ProductService : IProductService
     public async Task<IEnumerable<ProductDto>> GetSearchedProducts(string name)
     {
         var products = await _context.Products
+            .Include(p => p.Category)
             .Include(p => p.Photos)
             .Where(p => p.Name.ToLower().Contains(name.ToLower()))
             .Take(5)
@@ -30,7 +31,7 @@ public class ProductService : IProductService
                 Price = product.Price,
                 Description = product.Description,
                 CategoryId = product.CategoryId,
-                
+                CategoryName = product.Category.Name,
                 Photos = product.Photos.Select(photo => new ProductPhotoDto
                 {
                     Id = photo.Id,
