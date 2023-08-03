@@ -17,7 +17,7 @@ export default function SearchBarComponent({
   };
 
   return (
-    <div className="lg:flex md:order-1 md:flex w-full hidden">
+    <div className="lg:flex md:order-1 md:flex w-full">
       <div className="relative flex w-full flex-wrap items-stretch items-center">
         <input
           type="search"
