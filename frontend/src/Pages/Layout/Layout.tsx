@@ -11,6 +11,7 @@ import { CartItem } from "../../types";
 
 export const LayoutContext = createContext<{
   handleAddToCart: (product: CartItem) => void;
+  handleRemoveFromCart: (id: string) => void;
   setIsFetching: (isFetching: boolean) => void;
   userInfo : (DecodedToken | boolean)
 }>({
@@ -22,6 +23,9 @@ export const LayoutContext = createContext<{
   },
   userInfo : ()=>{
     console.warn("no user info")
+  },
+  handleRemoveFromCart : ()=>{
+    console.warn("Can t do that boyyy")
   }
 });
 
@@ -92,7 +96,7 @@ export default function Layout() {
   return isFetching ? (
     <Loader />
   ) : (
-    <LayoutContext.Provider value={{ handleAddToCart, setIsFetching, userInfo }}>
+    <LayoutContext.Provider value={{ handleAddToCart, setIsFetching, userInfo,handleRemoveFromCart }}>
       <div className="flex flex-col h-screen">
         <div className="flex-grow">
           <NavbarComponent
