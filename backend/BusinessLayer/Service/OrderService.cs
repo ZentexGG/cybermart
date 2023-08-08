@@ -92,6 +92,8 @@ public class OrderService : IOrderService
             // Create a new Order entity
             var orderEntity = new Order
             {
+                FirstName = newOrder.FirstName,
+                LastName = newOrder.LastName,
                 Address = newOrder.Address,
                 City = newOrder.City,
                 Region = newOrder.Region,
