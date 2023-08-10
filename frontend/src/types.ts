@@ -49,14 +49,14 @@ export interface SpecificationType {
 }
 
 export interface Product {
-  ID: number;
-  Name: string;
-  Price: number;
-  Description: string | null;
-  CategoryId: number;
-  Category: Category;
-  Specifications: Specification[];
-  Photos: ProductPhoto[] | null;
+  id: number;
+  name: string;
+  price: number;
+  description: string | null;
+  categoryId: number;
+  category: Category;
+  specifications: Specification[];
+  photos: ProductPhoto[] | null;
 }
 
 export interface ProductPhoto {
@@ -96,6 +96,7 @@ export interface Order {
   cardPayment:boolean;
   orderProducts: {
     productId: number;
+    product?:Product;
   }[];
   userId: number;
   address: string;
