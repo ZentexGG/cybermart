@@ -1,6 +1,8 @@
-﻿namespace BusinessLayer.Interfaces;
+﻿using BusinessLayer.Model;
 
-public class IPaymentService
+namespace BusinessLayer.Interfaces;
+
+public interface IPaymentService
 {
-    
+    Task<PaymentResult> ProcessPaymentAsync(PaymentRequest paymentRequest);
 }
