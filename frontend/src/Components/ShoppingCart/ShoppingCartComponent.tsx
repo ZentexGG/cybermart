@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import { AiOutlinePlusSquare, AiOutlineMinusSquare } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
 
 interface CartItem {
   id: string;
@@ -21,6 +22,7 @@ const Cart: React.FC<CartProps> = ({
   handleAddToCart,
   handleRemoveFromCart,
 }) => {
+  const navigate = useNavigate()
   const cartRef = useRef<HTMLDivElement>(null);
 
   const total = (arr: CartItem[]) => {
@@ -44,17 +46,22 @@ const Cart: React.FC<CartProps> = ({
     }
   };
 
+  const handleCheckOut = async () => {
+    handleCloseCart(); // Close the cart
+    navigate("/Order"); // Navigate to the "/Order" route
+  };  
+
   return (
     <div
       className="fixed inset-0 bg-[rgba(0,0,0,0.7)] z-50"
-      onClick={handleCloseCart}
-    >
+      onClick={handleCloseCart}>
       <div
         ref={cartRef}
         onClick={(e) => e.stopPropagation()}
-        className="bg-white w-[250px] h-full absolute right-0 overflow-y-scroll"
-      >
-        <h1 className="bg-blue-100 py-2 text-center text-red-700 font-medium">Shopping Cart</h1>
+        className="bg-white w-[275px] absolute right-0 h-full">
+        <h1 className="bg-blue-100 py-2 text-center text-red-700 font-medium">
+          Shopping Cart
+        </h1>
         <div className="flex flex-col items-center px-2 py-4">
           {cart.length === 0 ? (
             <p className="text-center text-red-700 font-normal">
@@ -66,8 +73,7 @@ const Cart: React.FC<CartProps> = ({
             cart.map((item) => (
               <div
                 key={item.id}
-                className="text-center border-b-[3px] w-full mb-2 flex flex-col items-center"
-              >
+                className="text-center border-b-[3px] w-full mb-2 flex flex-col items-center">
                 <img
                   className="w-[100px] h-[100px]"
                   src={item.img}
@@ -92,6 +98,11 @@ const Cart: React.FC<CartProps> = ({
             ))
           )}
           {cart.length > 0 && <p>Total: {DollarUsd.format(total(cart))}</p>}
+        </div>
+        <div className="w-full h-12 bottom-0 absolute flex justify-center">
+          <button onClick={handleCheckOut} className="w-full bg-red-700 hover:bg-red-800 text-white text-sm">
+            Checkout
+          </button>
         </div>
       </div>
     </div>

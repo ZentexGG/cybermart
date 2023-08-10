@@ -42,10 +42,11 @@ public class ProductService : IProductService
         });
         return productDtos;
     }
-    public async Task<IEnumerable<ProductDto>> GetProductsAsync(int page = 1, int limit = 10)
+    public async Task<IEnumerable<ProductDto>> GetProductsAsync(int page = 1, int limit = 20)
     {
         var offset = (page - 1) * limit;
         var products = await _context.Products.Include(p=>p.Photos)
+            .Include(p=>p.Category)
             .OrderBy(p => p.ID)
             .Skip(offset)
             .Take(limit)
@@ -58,6 +59,7 @@ public class ProductService : IProductService
             Price = product.Price,
             Description = product.Description,
             CategoryId = product.CategoryId,
+            CategoryName = product.Category.Name,
             Photos = product.Photos.Select(photo => new ProductPhotoDto
             {
                 Id = photo.Id,

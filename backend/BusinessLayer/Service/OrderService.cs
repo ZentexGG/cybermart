@@ -41,21 +41,11 @@ public class OrderService : IOrderService
     {
         try
         {
-            var user = await _context.Users
-                .Include(u => u.Orders)
-                .ThenInclude(order => order.OrderProducts)
-                .ThenInclude(product => product.Product)
-                .FirstOrDefaultAsync(u => u.ID == userId);
-
-            if (user == null)
-            {
-                // Return the user's orders
-                return Enumerable.Empty<Order>();
-            }
-
-            // If the user is not found, return an empty collection or null, depending on your preference.
-            return user.Orders;
-            // OR return null;
+            var orders = _context.Orders.Include(o => o.User)
+                .Include((o) => o.OrderProducts).ThenInclude(op=>op.Product)
+                .Where(o => o.UserId == userId);
+            Console.WriteLine(string.Join(",", orders));
+            return orders;
         }
         catch (Exception e)
         {
@@ -104,12 +94,22 @@ public class OrderService : IOrderService
                 {
                     ProductId = op.ProductId,
                     OrderId = op.OrderId,
-                    Product = _context.Products.Find(op.ProductId),
-                    Order = _context.Orders.Find(op.OrderId),
                     Amount = op.Amount
                 }).ToList()
             };
-
+            foreach (var orderProduct in orderEntity.OrderProducts)
+            {
+                var product = await _context.Products.FindAsync(orderProduct.ProductId);
+                if (product != null)
+                {
+                    orderProduct.Product = product;
+                }
+                else
+                {
+                    // Handle the case where the product doesn't exist
+                    throw new ArgumentException($"Product not found with the provided ProductId: {orderProduct.ProductId}.");
+                }
+            }
             // Associate the order with the user
             userExisting.Orders.Add(orderEntity);
 

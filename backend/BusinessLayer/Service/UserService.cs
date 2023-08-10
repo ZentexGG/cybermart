@@ -24,14 +24,12 @@ public class UserService : IUserService
         var user = await _context.Users
             .Include(u => u.UserPhoto)
             .FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
-        Console.WriteLine(user.Email);
 
         var userDto = new UserDto
         {
             Id = user.ID,
             Username = user.Username,
             Email = user.Email,
-            // Set other properties as needed
             ImageData = user.UserPhoto?.ImageData,
             FileName = user.UserPhoto?.FileName
         };
@@ -39,28 +37,51 @@ public class UserService : IUserService
         return userDto;
     }
 
-    public async Task UpdateUser(string username, string email, IFormFile photo)
+    public async Task UpdateUser(UserDto rUserDto, IFormFile photo)
     {
         try
         {
-            // Save the user entity before adding related entities
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            // Find the user entity by email
+            var user = await _context.Users
+                .Include(u => u.UserPhoto) // Include UserPhoto in the query
+                .FirstOrDefaultAsync(u => u.Email == rUserDto.Email);
 
-            // Extract photo data from IFormFile
-            if (photo != null)
+            if (user != null)
             {
-                using var memoryStream = new MemoryStream();
-                await photo.CopyToAsync(memoryStream);
+                // Update user properties from UserDto
+                user.Username = rUserDto.Username;
 
-                var userPhoto = new UserPhoto
+                if (photo != null)
                 {
-                    FileName = photo.FileName,
-                    ImageData = memoryStream.ToArray(),
-                    UploadDate = DateTime.Now,
-                    UserId = user.ID // Set the foreign key value
-                };
-                _context.UserPhotos.Add(userPhoto);
+                    using var memoryStream = new MemoryStream();
+                    await photo.CopyToAsync(memoryStream);
+
+                    if (user.UserPhoto != null)
+                    {
+                        // Update existing user photo
+                        user.UserPhoto.FileName = photo.FileName;
+                        user.UserPhoto.ImageData = memoryStream.ToArray();
+                        user.UserPhoto.UploadDate = DateTime.Now;
+                    }
+                    else
+                    {
+                        // Create a new user photo
+                        var userPhoto = new UserPhoto
+                        {
+                            FileName = photo.FileName,
+                            ImageData = memoryStream.ToArray(),
+                            UploadDate = DateTime.Now,
+                            UserId = user.ID // Set the foreign key value
+                        };
+                        _context.UserPhotos.Add(userPhoto);
+                    }
+                }
+
                 await _context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new ArgumentException("User not found");
             }
         }
         catch (Exception e)
@@ -69,6 +90,7 @@ public class UserService : IUserService
             throw;
         }
     }
+
 
 
 

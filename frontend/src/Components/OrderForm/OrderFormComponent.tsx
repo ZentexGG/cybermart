@@ -40,11 +40,16 @@ export default function OrderFormComponent() {
         data.userId = userInfo.id;
       }   
       await axios.post("/api/orders", data);
+      if(data.cardPayment)
+      {
+        navigate("/payment")
+        return;
+      }
+      navigate('/')
     } catch (error) {
       setIncorrectCredentials(true);
     } finally {
       setLoading(false);
-      navigate("/")
     }
   };
 

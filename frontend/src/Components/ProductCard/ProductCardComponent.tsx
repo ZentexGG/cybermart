@@ -9,8 +9,8 @@ export default function ProductCardComponent({
   setShowAlert,
 }: {
   product: ProductDto;
-    handleAddToCart: (product: CartItem) => void;
-    setShowAlert: (showAlert: boolean) => void;
+  handleAddToCart: (product: CartItem) => void;
+  setShowAlert: (showAlert: boolean) => void;
 }) {
   const navigate = useNavigate();
 
@@ -39,35 +39,33 @@ export default function ProductCardComponent({
     }, 3000);
   };
   return (
-    <div className="w-full max-w-xs bg-white border border-gray-200 rounded-lg shadow dark:bg-blue-100 dark:border-blue-200">
-      <a href={`products/${product.id}`}>
+    <div className="flex flex-col h-min w-56 p-1 border-box bg-blue-200 rounded xl mt-5">
+      <div className="flex rounded flex-col w-full h-48 bg-gray-200 relative">
+        <br />
+        <div className="bg-red-500 text-white w-1/4 text-center rounded-r-xl z-10">
+          NEW
+        </div>
         <img
-          className="rounded-t-lg h-80 w-full"
           src={`data:image/jpeg;base64,${
             product.photos && product.photos.length > 0
               ? product.photos[0].imageData
               : ""
           }`}
-          alt="product image"
+          className="absolute h-full z-0"
         />
-      </a>
-      <div className="px-5 pb-5">
-        <a href={`products/${product.id}`}>
-          <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-black">
-            {product.name}
-          </h5>
-        </a>
-        <div className="flex items-center justify-between">
-          <span className="text-3xl font-bold text-gray-900 dark:text-black">
-            €{product.price}
-          </span>
-          <button
-            onClick={addToCart}
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
-          >
-            Add to cart
-          </button>
-        </div>
+
+      </div>
+      <div className="flex border-box p-1 flex-col">
+        <p className="text-sm text-gray-500">{product.categoryName}</p>
+        <p>{product.name}</p>
+        <p>
+          ${product.price}.<span className="text-sm">00</span>
+        </p>
+        <button
+          onClick={addToCart}
+          className="text-center text-sm bg-red-800 rounded py-2 text-white mt-2">
+          Add To Cart
+        </button>
       </div>
     </div>
   );

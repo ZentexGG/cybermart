@@ -38,7 +38,7 @@ export default function OrderPage() {
                   <td className="p-2">{item.name}</td>
                   <td className="p-2 whitespace-nowrap">Quantity: {item.amount}</td>
                   <td className="p-2">
-                    <button className="px-3 py-1 hover:bg-red-500 hover:text-white text-black text-white rounded" onClick={()=>{handleRemoveFromCart(item.id)}}>
+                    <button className="px-3 py-1 hover:bg-red-500 hover:text-white text-black rounded" onClick={()=>{handleRemoveFromCart(item.id)}}>
                       X
                     </button>
                   </td>

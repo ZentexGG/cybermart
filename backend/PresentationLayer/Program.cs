@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json.Serialization;
+using Backend.Services;
 using BusinessLayer.Interfaces;
 using BusinessLayer.Model;
 using BusinessLayer.Service;
@@ -99,6 +100,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ISpecificationTypeService, SpecificationTypeService>();
 builder.Services.AddScoped<ISpecificationService, SpecificationService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
@@ -124,8 +126,7 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
 
 builder.Services.AddCors(options =>
 {
-
-    options.AddDefaultPolicy(builder =>
+    options.AddPolicy("AllowSpecificOrigin", builder =>
     {
         builder.WithOrigins("http://localhost:3000")
             .AllowAnyHeader()
@@ -144,9 +145,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("AllowSpecificOrigin");
 app.UseCookiePolicy();
 app.UseHttpsRedirection();
-app.UseCors();
 app.UseRouting();
 
 app.UseAuthentication();
