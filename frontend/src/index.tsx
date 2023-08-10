@@ -9,7 +9,12 @@ import ForgotPasswordSuccessPage from "./Pages/ForgotPasswordSuccessPage/ForgotP
 import ResetPasswordSuccessPage from "./Pages/ResetPasswordSuccessPage/ResetPasswordSuccessPage";
 import TitleUpdater from "./Components/TitleUpdater/TitleUpdater";
 import EmailVerifiedSuccessPage from "./Pages/EmailVerifiedSuccessPage/EmailVerifiedSuccessPage";
+import PaymentPage from "./Pages/PaymentPage/PaymentPage";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import UserOrdersPage from "./Pages/UserOrdersPage/UserOrdersPage";
 
+const stripePromise = loadStripe("pk_test_51NU9A1E7blOkcXvgDUiJx1JqdDeJIc6WvY9stEMjNxzTJW60w50hxvJNjjSoQbnwNhQNRjskhfnnHDbfRTyJz9tX00q8g4aLCb");
 // Lazy load the pages
 const Layout = lazy(() => import("./Pages/Layout/Layout"));
 const HomePage = lazy(() => import("./Pages/HomePage/HomePage"));
@@ -164,6 +169,24 @@ const router = createBrowserRouter([
           <Suspense fallback={<Loader />}>
             <TitleUpdater title="Email Verified!" />
             <EmailVerifiedSuccessPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/payment",
+        element: (
+          <Elements stripe={stripePromise}>
+            <Suspense fallback={<Loader />}>
+              <PaymentPage />
+            </Suspense>
+          </Elements>
+        ),
+      },
+      {
+        path: "/UserOrders/:userId",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <UserOrdersPage/>
           </Suspense>
         ),
       },
