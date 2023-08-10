@@ -40,7 +40,7 @@ namespace PresentationLayer.Controllers
         {
             try
             {
-                var orders = await _orderService.GetOrdersByOrderId(userId);
+                var orders = await _orderService.GetOrdersByUser(userId);
                 return Ok(orders);
             }
             catch (Exception e)
