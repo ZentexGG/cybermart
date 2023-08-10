@@ -53,6 +53,7 @@ export default function ProductCardComponent({
           }`}
           className="absolute h-full z-0"
         />
+
       </div>
       <div className="flex border-box p-1 flex-col">
         <p className="text-sm text-gray-500">{product.categoryName}</p>

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 
 export default function SearchBarComponent({
   handleSearch
@@ -18,7 +18,7 @@ export default function SearchBarComponent({
 
   return (
     <div className="lg:flex md:order-1 md:flex w-full">
-      <div className="relative flex w-full flex-wrap items-stretch items-center">
+      <div className="relative flex w-full flex-wrap items-stretch">
         <input
           type="search"
           ref={inputRef}
@@ -26,7 +26,7 @@ export default function SearchBarComponent({
           placeholder="Search"
           aria-label="Search"
           aria-describedby="button-addon2"
-          onChange={handleChange} // Add onChange event handler
+          onChange={handleChange}
         />
       </div>
     </div>
