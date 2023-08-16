@@ -18,7 +18,7 @@ export default function OrderPage() {
       <div className="h-max flex flex-col justify-center my-32">
         <div className="flex justify-center items-center text-3xl font-bold text-gray-900 text-center flex-row z-50 min-w-max">
           <AiOutlineShoppingCart size={40} />
-          <p>CartItems</p>
+          <p>Your Cart</p>
         </div>
         <div className="max-w-md w-full mx-auto my-4 bg-white p-8 border border-gray-300 shadow-[10px_0px_100px_30px_#EBF8FF]">
           <table className="border-collapse w-full">
@@ -27,6 +27,8 @@ export default function OrderPage() {
                 <th className="p-2">Image</th>
                 <th className="p-2">Name</th>
                 <th className="p-2">Quantity</th>
+                <th className="p-2 pl-3">Price</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -36,9 +38,15 @@ export default function OrderPage() {
                     <img src={item.img} alt="" className="w-20 h-20" />
                   </td>
                   <td className="p-2">{item.name}</td>
-                  <td className="p-2 whitespace-nowrap">Quantity: {item.amount}</td>
+                  <td className="p-2 whitespace-nowrap">{item.amount}</td>
+                  <td className="p-2">{item.price * item.amount}€</td>
                   <td className="p-2">
-                    <button className="px-3 py-1 hover:bg-red-500 hover:text-white text-black rounded" onClick={()=>{handleRemoveFromCart(item.id)}}>
+                    <button
+                      className="px-3 py-1 hover:bg-red-500 hover:text-white text-black rounded"
+                      onClick={() => {
+                        handleRemoveFromCart(item.id);
+                      }}
+                    >
                       X
                     </button>
                   </td>
