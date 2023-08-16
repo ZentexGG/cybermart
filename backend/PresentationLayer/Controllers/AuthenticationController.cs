@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using BusinessLayer.Interfaces;
 using BusinessLayer.Model;
+using BusinessLayer.Service;
 using DataLayer.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -45,18 +46,15 @@ public class AuthController : ControllerBase
                 new Response { Status = "Error", Message = "User already exists" });
         }
 
-        var newUser = new User()
-        {
-            Email = user.Email,
-            Username = user.Username
-        };
-        await _userService.CreateUserAsync(newUser);
+       
         IdentityUser identityUser = new()
         {
             Email = user.Email,
             SecurityStamp = Guid.NewGuid().ToString(),
             UserName = user.Username
         };
+        
+        
         if (!await _roleManager.RoleExistsAsync(role))
         {
             return StatusCode(StatusCodes.Status500InternalServerError,
@@ -74,6 +72,14 @@ public class AuthController : ControllerBase
         var confirmationLink = Url.ActionLink(nameof(ConfirmEmail), "Auth", new { token, email = identityUser.Email },Request.Scheme);
         var message = new Message(new string[] { identityUser.Email! }, "Cybermart - Confirmation Email", EmailTemplate.RegisterEmail(confirmationLink!, identityUser.UserName!));
         _emailService.SendEmail(message);
+        
+        var newUser = new User
+        {
+            Email = user.Email,
+            Username = user.Username,
+            IdentityUserId = identityUser.Id
+        };
+        await _userService.CreateUserAsync(newUser);
         
         return StatusCode(StatusCodes.Status201Created,
             new Response { Status = "Success", Message = $"User created successfully & Confirmation Email to {user} Successfully" });
@@ -142,8 +148,8 @@ public class AuthController : ControllerBase
         {
             authClaims.Add(new Claim("role",userRole));
         }
-
-        var jwtToken = GetToken(authClaims, loginUser.RememberMe);
+        
+        var jwtToken = _userService.GetToken(authClaims, loginUser.RememberMe);
 
         var tokenString = new JwtSecurityTokenHandler().WriteToken(jwtToken);
 
@@ -155,20 +161,7 @@ public class AuthController : ControllerBase
         });
     }
 
-    private JwtSecurityToken GetToken(List<Claim> authClaims, bool rememberMe)
-    {
-        var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
-
-        var expireTime = rememberMe ? DateTime.Now.AddDays(30) : DateTime.Now.AddHours(1);
-        JwtSecurityToken token = new JwtSecurityToken(
-            issuer: _configuration["JWT:ValidIssuer"],
-            audience: _configuration["JWT:ValidAudience"],
-            expires: expireTime,
-            claims: authClaims,
-            signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256));
-
-        return token;
-    }
+    
 
 
     [HttpPost("forgot-password")]
