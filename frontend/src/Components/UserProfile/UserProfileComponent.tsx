@@ -76,7 +76,7 @@ export default function UserProfileComponent(): JSX.Element {
 
     try {
       const response = await axios.put(
-        "https://localhost:7166/User",
+        "/User",
         formData,
         {
           headers: {
@@ -90,6 +90,7 @@ export default function UserProfileComponent(): JSX.Element {
       console.log(responseData);
       fetchUser();
       SetIsEditMode(false);
+      window.location.reload();
     } catch (error) {
       console.error("Request Error:", error);
       // Handle error
