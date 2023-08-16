@@ -76,6 +76,13 @@ public class CybermartContext : IdentityDbContext<IdentityUser>,IDbContext
             modelBuilder.Entity<Order>()
                 .HasMany(order => order.OrderProducts)
                 .WithOne(products => products.Order);
+            
+            // Relationship: AspNetUsers -> Users
+            modelBuilder.Entity<User>()
+                .HasOne(user => user.IdentityUser)
+                .WithOne()
+                .HasForeignKey<User>(user => user.IdentityUserId);
+                
             // Unique index on Specification's ProductId and SpecificationTypeId
             modelBuilder.Entity<Specification>()
                 .HasIndex(sp => new { sp.ProductId, sp.SpecificationTypeId })
