@@ -1,4 +1,6 @@
-﻿using System.Text.Json;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text.Json;
 using BusinessLayer.Interfaces;
 using BusinessLayer.Model;
 using DataLayer.Entities;
@@ -33,10 +35,21 @@ public class UserController : ControllerBase
             var userDto = userUpdateRequest.UserDto;
             var photo = userUpdateRequest.Photo;
             // Call your update method with userDto and photoFormFile
-            await _userService.UpdateUser(userDto, userUpdateRequest.Photo);
+            var newUserClaims = await _userService.UpdateUser(userDto, userUpdateRequest.Photo);
             
 
-            return Ok(userUpdateRequest);
+            
+        
+            var jwtToken = _userService.GetToken(newUserClaims, true);
+
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(jwtToken);
+
+            Response.Cookies.Append("token", tokenString);
+            return Ok(new
+            {
+                token = tokenString,
+                expiration = jwtToken.ValidTo
+            });
         }
         catch (Exception e)
         {
