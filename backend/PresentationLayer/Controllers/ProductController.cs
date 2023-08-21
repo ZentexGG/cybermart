@@ -22,6 +22,7 @@ public class ProductController : ControllerBase
         try
         {
             var products= await _service.GetProductsAsync(page);
+            Console.WriteLine(products.Count());
             return Ok(products);
         }
         catch (Exception e)

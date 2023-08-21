@@ -7,7 +7,7 @@ namespace BusinessLayer.Interfaces;
 public interface IProductService
 {
     Task<IEnumerable<ProductDto>> GetSearchedProducts(string name);
-    Task<IEnumerable<ProductDto>> GetProductsAsync(int page = 1, int limit = 10);
+    Task<IEnumerable<ProductDto>> GetProductsAsync(int page = 1, int limit = 20);
     Task<IEnumerable<ProductDto>> GetAllAsync();
     Task<ProductDto> GetByIdAsync(int id);
 

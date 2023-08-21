@@ -40,11 +40,9 @@ export default function ProductCardComponent({
   };
   return (
     <div className="flex flex-col h-min w-56 p-1 border-box bg-blue-200 rounded xl mt-5">
+      
       <div className="flex rounded flex-col w-full h-48 bg-gray-200 relative">
         <br />
-        <div className="bg-red-500 text-white w-1/4 text-center rounded-r-xl z-10">
-          NEW
-        </div>
         <img
           src={`data:image/jpeg;base64,${
             product.photos && product.photos.length > 0
@@ -53,7 +51,6 @@ export default function ProductCardComponent({
           }`}
           className="absolute h-full z-0"
         />
-
       </div>
       <div className="flex border-box p-1 flex-col">
         <p className="text-sm text-gray-500">{product.categoryName}</p>

@@ -33,13 +33,13 @@ export default function LoggedInUserDropdown({
     <>
       <button
         type="button"
-        className="flex mr-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
+        className="flex mr-3 text-sm rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300"
         id="user-menu-button"
         aria-expanded={isUserDropdownOpen ? "true" : "false"}
         onClick={toggleUserDropdown}>
         <span className="sr-only">Open user menu</span>
         <img
-          className="w-8 h-8 rounded-full"
+          className="w-9 h-9 rounded-full"
           src={`data:image/jpeg;base64,${user ? user.imageData : ""}`}
           alt="user photo"
         />
@@ -47,7 +47,7 @@ export default function LoggedInUserDropdown({
       <div
         className={`${
           isUserDropdownOpen ? "block" : "hidden"
-        } absolute right-0 origin-top-right w-48 rounded-md shadow-lg bg-white divide-y divide-gray-100 dark:bg-red-900 dark:divide-red-800 z-50`}
+        } absolute  block right-0 origin-top-right w-48 rounded-md shadow-lg bg-white divide-y divide-gray-100 dark:bg-red-900 dark:divide-red-800 z-50`}
         id="user-dropdown"
         style={{ top: "calc(100% + 0.9rem)", right: "0" }}>
         <div className="px-4 py-3">
