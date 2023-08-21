@@ -1,7 +1,8 @@
 import { useForm } from "react-hook-form";
-import { Category, Specification, SpecificationType } from "../../types";
+import { Category, DecodedToken, Specification, SpecificationType } from "../../types";
 import axios from "axios";
 import { useState } from "react";
+import { getCookie } from "../../authChecker";
 
 interface FormData {
   ID: number;
@@ -14,9 +15,9 @@ interface FormData {
 }
 
 export default function CreateProductForm({
-  categories,
+  categories
 }: {
-  categories: Category[];
+    categories: Category[];
 }) {
   const {
     register,
@@ -41,9 +42,11 @@ export default function CreateProductForm({
    }
 
    try {
+     const userToken = getCookie("token");
      const response = await axios.post("/api/products", formData, {
        headers: {
          "Content-Type": "multipart/form-data",
+         "Authorization": `Bearer ${userToken}`
        },
      });
      newProductId = response.data.id
