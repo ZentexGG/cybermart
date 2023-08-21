@@ -21,7 +21,7 @@ export const checkAuth = async () => {
   return false;
 };
 
-const getCookie = (name: string) => {
+export const getCookie = (name: string) => {
   const cookieValue = document.cookie
     .split(";")
     .map((cookie) => cookie.trim())
