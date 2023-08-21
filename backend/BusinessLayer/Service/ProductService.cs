@@ -222,7 +222,11 @@ public class ProductService : IProductService
     {
         var productToDelete = await _context.Products.FirstOrDefaultAsync(p => p.ID == id);
         if (productToDelete == null) throw new KeyNotFoundException("The specified ID was not found!");
-
+        var specsToDelete = await _context.Specifications.Where(s => s.ProductId == id).ToListAsync();
+        foreach (var specification in specsToDelete)
+        {
+            _context.Specifications.Remove(specification);
+        }
         _context.Products.Remove(productToDelete);
         await _context.SaveChangesAsync();
     }
