@@ -118,14 +118,6 @@ export default function NavbarComponent({
                 </a>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-red-100 md:hover:bg-transparent md:hover:text-blue-100 md:p-0 dark:text-red-900 md:dark:hover:text-blue-500 dark:hover:bg-red-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-red-700"
-                >
-                  Contact
-                </a>
-              </li>
-              <li>
                 <div
                   id="search-bar"
                   className="md:hidden lg:hidden w-full md:w-1/4 justify-center flex-col-reverse overflow-hidden relative"

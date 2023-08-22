@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { checkAuth } from "../../authChecker";
 import { CartItem, ProductDto } from "../../types";
-import { useState } from "react";
 
 export default function ProductCardComponent({
   product,
@@ -40,7 +39,7 @@ export default function ProductCardComponent({
   };
   return (
     <div className="flex flex-col h-min w-56 p-1 border-box bg-blue-200 rounded xl mt-5">
-      
+      <a href={`products/${product.id}`}>
       <div className="flex rounded flex-col w-full h-48 bg-gray-200 relative">
         <br />
         <img
@@ -51,7 +50,8 @@ export default function ProductCardComponent({
           }`}
           className="absolute h-full z-0"
         />
-      </div>
+        </div>
+        </a>
       <div className="flex border-box p-1 flex-col">
         <p className="text-sm text-gray-500">{product.categoryName}</p>
         <p>{product.name}</p>
