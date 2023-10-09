@@ -12,7 +12,7 @@ export default function CreateProductPage() {
       const fetchUserInfo = async () => {
         let userInfo = await checkAuth();
         if (!userInfo || userInfo.role !== "Admin") {
-            navigate("/");
+            navigate("/not-found");
             return;
           }
       };
