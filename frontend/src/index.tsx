@@ -14,6 +14,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import UserOrdersPage from "./Pages/UserOrdersPage/UserOrdersPage";
 import EditProductPage from "./Pages/EditProductPage/EditProductPage";
+import NotFoundPage from "./Pages/NotFoundPage/NotFoundPage";
 
 const stripePromise = loadStripe("pk_test_51NU9A1E7blOkcXvgDUiJx1JqdDeJIc6WvY9stEMjNxzTJW60w50hxvJNjjSoQbnwNhQNRjskhfnnHDbfRTyJz9tX00q8g4aLCb");
 // Lazy load the pages
@@ -192,10 +193,18 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "edit-product/:productId",
+        path: "/edit-product/:productId",
         element: (
           <Suspense fallback={<Loader />}>
             <EditProductPage />
+          </Suspense>
+        )
+      },
+      {
+        path: "/not-found",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <NotFoundPage />
           </Suspense>
         )
       }
