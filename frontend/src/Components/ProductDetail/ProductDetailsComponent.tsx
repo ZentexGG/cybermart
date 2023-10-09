@@ -57,17 +57,16 @@ const ProductDetailsComponent = () => {
         <>
           <div className="flex flex-col lg:flex-row gap-8">
             <div className="flex flex-col w-full lg:w-1/2 border-black mt-10 items-center">
-              <div className="relative w-full h-96 aspect-square rounded-xl overflow-hidden">
+              <div className="relative w-full h-96 aspect-square rounded-xl overflow-hidden bg-white">
                 {product?.photos.map((photo, index) => (
                   <img
                     key={photo.Id}
                     src={`data:image/jpeg;base64,${photo.imageData}`}
                     alt=""
-                    className={`absolute w-full h-full object-cover transition-opacity ${
-                      index === activeIndex
+                    className={`absolute w-full h-full object-contain transition-opacity ${index === activeIndex
                         ? "opacity-100"
                         : "opacity-0 pointer-events-none"
-                    }`}
+                      }`}
                   />
                 ))}
                 <button
