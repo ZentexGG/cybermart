@@ -188,7 +188,7 @@ const router = createBrowserRouter([
         path: "/user-orders/:userId",
         element: (
           <Suspense fallback={<Loader />}>
-            <UserOrdersPage/>
+            <UserOrdersPage />
           </Suspense>
         ),
       },
@@ -198,10 +198,18 @@ const router = createBrowserRouter([
           <Suspense fallback={<Loader />}>
             <EditProductPage />
           </Suspense>
-        )
+        ),
       },
       {
         path: "/not-found",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <NotFoundPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "*",
         element: (
           <Suspense fallback={<Loader />}>
             <NotFoundPage />

@@ -48,7 +48,7 @@ export default function ProductCardComponent({
               ? product.photos[0].imageData
               : ""
           }`}
-          className="absolute h-full z-0"
+          className="absolute w-full h-full z-0 object-contain bg-white"
         />
         </div>
         </a>
