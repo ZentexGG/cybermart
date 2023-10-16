@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ProductDto, ProductPhotoDto } from "../../types";
 import Loader from "../../Pages/Loader/Loader";
 
@@ -8,6 +8,7 @@ const ProductDetailsComponent = () => {
   const [product, setProduct] = useState<ProductDto>();
   const [loading, setLoading] = useState<boolean>(false);
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [activeIndex, setActiveIndex] = useState<number>(0);
 
@@ -18,7 +19,7 @@ const ProductDetailsComponent = () => {
         const response = await axios.get(`/api/products/${id}`);
         setProduct(response.data);
       } catch (error) {
-        console.error("Error fetching products:", error);
+        navigate("/not-found")
       } finally {
         setLoading(false);
       }
