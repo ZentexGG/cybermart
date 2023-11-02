@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import CreateProductForm from "../../Components/CreateProductForm/CreateProductForm";
-import { Category, DecodedToken } from "../../types";
+import { Category } from "../../types";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { checkAuth } from "../../authChecker";

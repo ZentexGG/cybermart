@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { Category, DecodedToken, Specification, SpecificationType } from "../../types";
+import { Category, ProductDto, Specification, SpecificationType } from "../../types";
 import axios from "axios";
 import { useState } from "react";
 import { getCookie } from "../../authChecker";
