@@ -40,27 +40,26 @@ export default function ProductCardComponent({
   return (
     <div className="flex flex-col h-min w-56 p-1 border-box bg-blue-200 rounded xl mt-5">
       <a href={`products/${product.id}`}>
-      <div className="flex rounded flex-col w-full h-48 bg-gray-200 relative">
-        <br />
-        <img
-          src={`data:image/jpeg;base64,${
-            product.photos && product.photos.length > 0
-              ? product.photos[0].imageData
-              : ""
-          }`}
-          className="absolute w-full h-full z-0 object-contain bg-white"
-        />
+        <div className="flex rounded flex-col w-full h-48 bg-gray-200 relative">
+          <br />
+          <img
+            src={`data:image/jpeg;base64,${
+              product.photos && product.photos.length > 0
+                ? product.photos[0].imageData
+                : ""
+            }`}
+            className="absolute w-full h-full z-0 object-contain bg-white"
+          />
         </div>
-        </a>
+      </a>
       <div className="flex border-box p-1 flex-col">
         <p className="text-sm text-gray-500">{product.categoryName}</p>
         <p>{product.name}</p>
-        <p>
-          ${product.price}.<span className="text-sm">00</span>
-        </p>
+        <p>€{product.price}</p>
         <button
           onClick={addToCart}
-          className="text-center text-sm bg-red-800 rounded py-2 text-white mt-2">
+          className="text-center text-sm bg-red-800 rounded py-2 text-white mt-2"
+        >
           Add To Cart
         </button>
       </div>
