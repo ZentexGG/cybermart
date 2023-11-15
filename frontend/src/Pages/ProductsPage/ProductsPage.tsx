@@ -46,7 +46,7 @@ export default function ProductsPage() {
           </div>
         </div>
       )}
-      <div className="grid max-w-screen justify-center items-center place-items-center sm:grid-cols-1 lg:grid-cols-4 md:grid-cols-2 my-5">
+      <div className="grid max-w-screen justify-center items-center place-items-center sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 my-5">
         {products?.map((product: ProductDto) => (
           <ProductCardComponent
             handleAddToCart={handleAddToCart}
