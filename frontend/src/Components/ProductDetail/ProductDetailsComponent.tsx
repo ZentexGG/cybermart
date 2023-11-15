@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ProductDto, ProductPhotoDto } from "../../types";
 import Loader from "../../Pages/Loader/Loader";
 
@@ -8,6 +8,7 @@ const ProductDetailsComponent = () => {
   const [product, setProduct] = useState<ProductDto>();
   const [loading, setLoading] = useState<boolean>(false);
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [activeIndex, setActiveIndex] = useState<number>(0);
 
@@ -18,7 +19,7 @@ const ProductDetailsComponent = () => {
         const response = await axios.get(`/api/products/${id}`);
         setProduct(response.data);
       } catch (error) {
-        console.error("Error fetching products:", error);
+        navigate("/not-found")
       } finally {
         setLoading(false);
       }
@@ -57,17 +58,16 @@ const ProductDetailsComponent = () => {
         <>
           <div className="flex flex-col lg:flex-row gap-8">
             <div className="flex flex-col w-full lg:w-1/2 border-black mt-10 items-center">
-              <div className="relative w-full h-96 aspect-square rounded-xl overflow-hidden">
+              <div className="relative w-full h-96 aspect-square rounded-xl overflow-hidden bg-white">
                 {product?.photos.map((photo, index) => (
                   <img
                     key={photo.Id}
                     src={`data:image/jpeg;base64,${photo.imageData}`}
                     alt=""
-                    className={`absolute w-full h-full object-cover transition-opacity ${
-                      index === activeIndex
+                    className={`absolute w-full h-full object-contain transition-opacity ${index === activeIndex
                         ? "opacity-100"
                         : "opacity-0 pointer-events-none"
-                    }`}
+                      }`}
                   />
                 ))}
                 <button

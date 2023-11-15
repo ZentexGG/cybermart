@@ -309,14 +309,14 @@ namespace DataLayer.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "89bcbe60-c6c2-4dac-b7c3-12ebcc2de610",
+                            Id = "e41487dc-acbf-460d-af29-84b7fa53b778",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "c1c27203-ccaf-45a4-baf9-d8b8534afa48",
+                            Id = "f89ec78e-d345-4ab7-81a0-7084719b44bd",
                             ConcurrencyStamp = "2",
                             Name = "User",
                             NormalizedName = "USER"

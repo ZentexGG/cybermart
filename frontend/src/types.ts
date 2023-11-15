@@ -91,12 +91,14 @@ export interface CartItem {
 }
 
 export interface Order {
+  id: number;
   firstName:string;
   lastName:string;
   cardPayment:boolean;
   orderProducts: {
     productId: number;
-    product?:Product;
+    product?: Product;
+    amount: number;
   }[];
   userId: number;
   address: string;
