@@ -177,6 +177,8 @@ export default function CreateProductForm({
           </label>
           <input
             type="number"
+            min={0}
+            step={0.01}
             {...register("Price")}
             className="form-input w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
           />
