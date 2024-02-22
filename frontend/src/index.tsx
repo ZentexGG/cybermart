@@ -122,7 +122,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/users/:id",
+        path: "/user-settings",
         element: (
           <Suspense fallback={<Loader />}>
             <UserProfilePage />
@@ -185,7 +185,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/user-orders/:userId",
+        path: "/user-orders/",
         element: (
           <Suspense fallback={<Loader />}>
             <UserOrdersPage />
