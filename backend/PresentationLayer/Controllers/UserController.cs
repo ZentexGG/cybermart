@@ -5,6 +5,7 @@ using BusinessLayer.Interfaces;
 using BusinessLayer.Model;
 using DataLayer.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace PresentationLayer.Controllers;
 
@@ -34,12 +35,11 @@ public class UserController : ControllerBase
         {
             var userDto = userUpdateRequest.UserDto;
             var photo = userUpdateRequest.Photo;
-            // Call your update method with userDto and photoFormFile
             var newUserClaims = await _userService.UpdateUser(userDto, userUpdateRequest.Photo);
-            
 
-            
-        
+
+
+
             var jwtToken = _userService.GetToken(newUserClaims, true);
 
             var tokenString = new JwtSecurityTokenHandler().WriteToken(jwtToken);
@@ -51,10 +51,14 @@ public class UserController : ControllerBase
                 expiration = jwtToken.ValidTo
             });
         }
+        catch (DbUpdateException e)
+        {
+            return StatusCode(StatusCodes.Status401Unauthorized, e.Message);
+        }
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred");
+            return StatusCode(StatusCodes.Status401Unauthorized, "An error occurred");
         }
     }
     
