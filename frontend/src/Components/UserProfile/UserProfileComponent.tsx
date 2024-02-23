@@ -1,10 +1,10 @@
-import { useEffect, useState, useContext } from "react";
-import axios from "axios";
-import { DecodedToken, UserDto } from "../../types";
+import { useEffect, useState } from "react";
+import axios, { AxiosError } from "axios";
+import { UserDto } from "../../types";
 import { useForm } from "react-hook-form";
-import { useNavigate, useParams } from "react-router-dom";
-import { LayoutContext } from "../../Pages/Layout/Layout";
+import { useNavigate } from "react-router-dom";
 import { checkAuth } from "../../authChecker";
+import Loader from "../../Pages/Loader/Loader";
 
 interface FormData {
   userDto: UserDto;
@@ -14,6 +14,8 @@ export default function UserProfileComponent(): JSX.Element {
   const [image, setImage] = useState<File>();
   const [isEditMode, SetIsEditMode] = useState<boolean>(false);
   const [user, setUser] = useState<UserDto | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [errMsg, setErrMsg] = useState<string>("");
   const navigate = useNavigate();
   const {
     register,
@@ -22,6 +24,7 @@ export default function UserProfileComponent(): JSX.Element {
   } = useForm<FormData>({ mode: "onChange" });
 
   const fetchUser = async () => {
+    setLoading(true);
     const user = await checkAuth();
     console.log(user);
     if (!user) {
@@ -54,6 +57,8 @@ export default function UserProfileComponent(): JSX.Element {
       }
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
   useEffect(() => {
@@ -62,6 +67,7 @@ export default function UserProfileComponent(): JSX.Element {
 
   const onSubmit = async (data: FormData) => {
     const formData = new FormData();
+    setErrMsg("");
     console.log(data.photo);
     if (user && user.id !== null) {
       formData.append("UserDto.Id", user?.id.toString());
@@ -76,6 +82,7 @@ export default function UserProfileComponent(): JSX.Element {
     }
 
     try {
+      setLoading(true);
       const response = await axios.put("/User", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -87,12 +94,17 @@ export default function UserProfileComponent(): JSX.Element {
       fetchUser();
       SetIsEditMode(false);
       window.location.reload();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Request Error:", error);
+      setErrMsg(error.response.data);
+    } finally {
+      setLoading(false);
     }
   };
 
-  return (
+  return loading ? (
+    <Loader />
+  ) : (
     <>
       {!isEditMode && (
         <div className="w-full flex justify-center mt-5 flex-col items-center">
@@ -163,6 +175,7 @@ export default function UserProfileComponent(): JSX.Element {
               defaultValue={user?.username}
               {...register("userDto.username")}
             />
+            <p className="text-red-700">{errMsg}</p>
             <button type="submit">Submit</button>
           </div>
         </form>
@@ -170,9 +183,7 @@ export default function UserProfileComponent(): JSX.Element {
 
       <div className="w-full flex justify-center flex-col items-center mt-10">
         <button onClick={() => SetIsEditMode(true)}>Change</button>
-        <button onClick={() => navigate(`/user-orders/`)}>
-          Orders
-        </button>
+        <button onClick={() => navigate(`/user-orders/`)}>Orders</button>
       </div>
     </>
   );
