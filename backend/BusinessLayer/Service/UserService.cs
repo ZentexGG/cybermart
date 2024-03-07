@@ -53,6 +53,12 @@ public class UserService : IUserService
     {
         try
         {
+            var isUsernameExists = await _context.Users.AnyAsync(u => u.Username == rUserDto.Username);
+            if (isUsernameExists)
+            {
+                throw new DbUpdateException("Username already exists!");
+            }
+            
             // Find the user entity by email
             var user = await _context.Users
                 .Include(u => u.UserPhoto) // Include UserPhoto in the query

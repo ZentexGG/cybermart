@@ -1,10 +1,10 @@
-import { useEffect, useState, useContext } from "react";
-import axios from "axios";
-import { DecodedToken, UserDto } from "../../types";
+import { useEffect, useState } from "react";
+import axios, { AxiosError } from "axios";
+import { UserDto } from "../../types";
 import { useForm } from "react-hook-form";
-import { useNavigate, useParams } from "react-router-dom";
-import { LayoutContext } from "../../Pages/Layout/Layout";
+import { useNavigate } from "react-router-dom";
 import { checkAuth } from "../../authChecker";
+import Loader from "../../Pages/Loader/Loader";
 
 interface FormData {
   userDto: UserDto;
@@ -12,8 +12,10 @@ interface FormData {
 }
 export default function UserProfileComponent(): JSX.Element {
   const [image, setImage] = useState<File>();
-  const [isEditMode, SetIsEditMode] = useState(false);
+  const [isEditMode, SetIsEditMode] = useState<boolean>(false);
   const [user, setUser] = useState<UserDto | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [errMsg, setErrMsg] = useState<string>("");
   const navigate = useNavigate();
   const {
     register,
@@ -22,15 +24,18 @@ export default function UserProfileComponent(): JSX.Element {
   } = useForm<FormData>({ mode: "onChange" });
 
   const fetchUser = async () => {
-    const user = await checkAuth()
-    console.log(user)
-    let email;
+    setLoading(true);
+    const user = await checkAuth();
+    console.log(user);
+    if (!user) {
+      navigate("/not-found");
+    }
+    let email: string = "";
     try {
       if (typeof user !== "boolean") {
         email = user.email;
-      }
-      else{
-        navigate("/")
+      } else {
+        navigate("/not-found");
       }
       const response = await axios.get<UserDto>(`/User/${email}`);
       setUser(response.data);
@@ -52,6 +57,8 @@ export default function UserProfileComponent(): JSX.Element {
       }
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
   useEffect(() => {
@@ -60,6 +67,7 @@ export default function UserProfileComponent(): JSX.Element {
 
   const onSubmit = async (data: FormData) => {
     const formData = new FormData();
+    setErrMsg("");
     console.log(data.photo);
     if (user && user.id !== null) {
       formData.append("UserDto.Id", user?.id.toString());
@@ -67,7 +75,6 @@ export default function UserProfileComponent(): JSX.Element {
     formData.append("UserDto.Username", data.userDto.username);
     formData.append("UserDto.Email", data.userDto.email);
 
-    // Append the first file from the FileList to the FormData
     if (data.photo.length > 0) {
       formData.append("Photo", data.photo[0]);
     } else {
@@ -75,35 +82,38 @@ export default function UserProfileComponent(): JSX.Element {
     }
 
     try {
-      const response = await axios.put(
-        "/User",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      setLoading(true);
+      const response = await axios.put("/User", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-      // Handle response
       const responseData = response.data;
       console.log(responseData);
       fetchUser();
       SetIsEditMode(false);
       window.location.reload();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Request Error:", error);
-      // Handle error
+      setErrMsg(error.response.data);
+    } finally {
+      setLoading(false);
     }
   };
 
-  return (
+  return loading ? (
+    <Loader />
+  ) : (
     <>
-      {user?.id}
       {!isEditMode && (
         <div className="w-full flex justify-center mt-5 flex-col items-center">
           <img
-            src={`data:image/jpeg;base64,${user?.imageData}`}
+            src={`data:image/jpeg;base64,${
+              user?.imageData
+                ? user.imageData
+                : "iVBORw0KGgoAAAANSUhEUgAAAHwAAAB8CAMAAACcwCSMAAAAMFBMVEXk5ueutLersbTN0dPn6eq9wsTY29yzuLvKztC4vcCorrHFycve4eLR1NbU19nb3t90VuxHAAACvUlEQVRoge2Z3c6zIAyAKRRQRL3/u/3EzWXZHLRba/K94TlZspPH8ltaYzqdTqfT6XQ6nc7fBRHvv9eb8zz5seCHcOkHoBlishZu2GT9cpUes0+H+MDa4Qo9msm+qnc9LOp2DPFMveu9tnv+pC72uKq6h4q7sOoNPU4NN1g1ezPuYs9K7tB2byiFTlGDnTTs6EmBQ1LY77gkkhsgiruNGYlusE46dFxog64SOpID30KfhUNf6e4tdFk55Xx5QvaMx8hxWycqzxw3wCg67oy1vocuKWdOuez1Qj1aH/IgKWetN+GdzpYPknKeW/Ze/b/kosPOnXPJW5Vzp+1y0dXezJlf5KI3S+2hciaXdJvAckvnz7zAZdNn3uFuF0k3906VdRvD2OnijxbWZhN/pjMSKdkkqkAPXTSTOKC6NZ6p1XLMM/JqQ93r0nv8AWG76dQGCu0Vb71eOapl13QbzB/rj4WkNuZ3KqtONHM7BQc419uoWH582LM/KTtbUA/70L9UvW2CwVzWbEAz+2iTLSQYp/XaRkuxrYtzc8jmuqBv5lfd+z9a3uBKYynCPuoWYhz9NGwjoPsBiGHwMaX31X6f+0XpAxBXN9rT3s7TJ6Q4BHE/Zhc/HC5vHwCTpB/N4mnmwz/OQjtg29Mj76VW/FHk1MG5epF91sP06+BXenhtvXW/6Msd8q1618fwtR1nzjI710/fyn8L+wg+fxF8I2Ni6PndJuTWIj6TuGkG+XlCgZnLoxN0MzNq0bh3Oz12XIXd27zTS5LSaqB3WLm1TiKkzge31EmFVCyhtej5UB5TSoMOpIIss4PGkTd3O7enwCE11hynTc6mddSg13NDq1CVFQNvdT+EL5Q3qktOedQh1pZcZrawuFQbP7pT3ui3aR2tD3lls6G7VTr0qN0uwSkzV+a8FB5Uqbk7nU7nL/EPS0cfkCEZ18wAAAAASUVORK5CYII="
+            }`}
             className="w-40 h-40 rounded-full"
           />
           <p className="text-3xl">{user?.username}</p>
@@ -127,12 +137,14 @@ export default function UserProfileComponent(): JSX.Element {
                 htmlFor="photo"
                 className={
                   "w-full h-full inset-0 bg-gray-200 rounded-full flex items-center justify-center cursor-pointer"
-                }>
+                }
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-12 w-12 text-gray-400"
                   viewBox="0 0 20 20"
-                  fill="currentColor">
+                  fill="currentColor"
+                >
                   <path
                     fillRule="evenodd"
                     d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 100-12 6 6 0 000 12zm5-9a1 1 0 11-2 0 1 1 0 012 0zm-8 0a1 1 0 11-2 0 1 1 0 012 0zm6 5a1 1 0 011 1v1h1a1 1 0 010 2h-1v1a1 1 0 01-2 0v-1h-1a1 1 0 010-2h1v-1a1 1 0 011-1z"
@@ -163,6 +175,7 @@ export default function UserProfileComponent(): JSX.Element {
               defaultValue={user?.username}
               {...register("userDto.username")}
             />
+            <p className="text-red-700">{errMsg}</p>
             <button type="submit">Submit</button>
           </div>
         </form>
@@ -170,7 +183,7 @@ export default function UserProfileComponent(): JSX.Element {
 
       <div className="w-full flex justify-center flex-col items-center mt-10">
         <button onClick={() => SetIsEditMode(true)}>Change</button>
-        <button onClick={()=>navigate(`/UserOrders/${user?.id}`)}>Orders</button>
+        <button onClick={() => navigate(`/user-orders/`)}>Orders</button>
       </div>
     </>
   );
