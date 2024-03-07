@@ -115,8 +115,8 @@ var frontendUrl = builder.Configuration.GetConnectionString("CybermartFrontend")
 
 // Update the CybermartContext class to derive from IdentityDbContext<IdentityUser, IdentityRole, string>
 builder.Services.AddDbContext<CybermartContext>(options =>
-    options.UseSqlServer(connectionString));
-builder.Services.AddScoped<IDbContext>(provider => provider.GetService<CybermartContext>());
+    options.UseNpgsql(connectionString));
+builder.Services.AddScoped<IDbContext>(provider => provider.GetService<CybermartContext>() ?? throw new InvalidOperationException());
 builder.Services.Configure<CookiePolicyOptions>(options =>
 {
     options.MinimumSameSitePolicy = SameSiteMode.Strict;
@@ -133,6 +133,12 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod()
             .AllowCredentials();
     });
+    options.AddPolicy("AllowAnyOrigin", builder =>
+    {
+        builder.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
 });
 
 
@@ -145,9 +151,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowSpecificOrigin");
+app.UseCors("AllowAnyOrigin");
 app.UseCookiePolicy();
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseAuthentication();

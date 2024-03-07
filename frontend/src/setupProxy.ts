@@ -1,10 +1,10 @@
 import { createProxyMiddleware } from "http-proxy-middleware";
-
+const apiUrl = process.env.API_URL
 module.exports = function (app: any) {
   app.use(
     "/api",
     createProxyMiddleware({
-      target: "https://localhost:7166",
+      target: apiUrl,
       changeOrigin: true,
       pathRewrite: {
         "^/api": "",
@@ -15,7 +15,7 @@ module.exports = function (app: any) {
   app.use(
     "/Auth",
     createProxyMiddleware({
-      target: "https://localhost:7166",
+      target: apiUrl,
       changeOrigin: true,
       pathRewrite: {
         "^/Auth": "",
