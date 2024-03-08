@@ -27,12 +27,15 @@ export default function LoginFormComponent() {
     try {
       setLoading(true);
       setIncorrectCredentials(false);
-      await axios.post("/Auth/Login", data);
-      navigate("/");
+      await axios.post(
+        "https://ec2-18-199-33-90.eu-central-1.compute.amazonaws.com/Auth/Login",
+        data
+      );
     } catch (error) {
       setIncorrectCredentials(true);
     } finally {
       setLoading(false);
+      navigate("/");
     }
   };
 
