@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { checkAuth } from "../../authChecker";
 import { CartItem, ProductDto } from "../../types";
-import './ProductCardComponent.css';
+import "./ProductCardComponent.css";
 
 export default function ProductCardComponent({
   product,
@@ -9,7 +9,7 @@ export default function ProductCardComponent({
   setShowAlert,
 }: {
   product: ProductDto;
-  handleAddToCart: (product: CartItem) => void;
+  handleAddToCart: (product: CartItem, amount: number) => void;
   setShowAlert: (showAlert: boolean) => void;
 }) {
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ export default function ProductCardComponent({
       price: product.price,
       amount: 1,
     };
-    handleAddToCart(cartProduct);
+    handleAddToCart(cartProduct, 1);
     setShowAlert(true);
     setTimeout(() => {
       setShowAlert(false);
@@ -63,8 +63,7 @@ export default function ProductCardComponent({
           </p>
           <button
             onClick={addToCart}
-            className="text-center text-sm bg-red-800 rounded py-2 text-white w-full mt-2 mb-3"
-          >
+            className="text-center text-sm bg-red-800 rounded py-2 text-white w-full mt-2 mb-3">
             Add To Cart
           </button>
         </div>

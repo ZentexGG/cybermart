@@ -31,14 +31,13 @@ export default function LoggedInUserDropdown({
     <>
       <button
         type="button"
-        className="flex mr-3 text-sm rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300"
+        className="flex ml-5 text-sm rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300"
         id="user-menu-button"
         aria-expanded={isUserDropdownOpen ? "true" : "false"}
-        onClick={toggleUserDropdown}
-      >
+        onClick={toggleUserDropdown}>
         <span className="sr-only">Open user menu</span>
         <img
-          className="w-9 h-9 rounded-full"
+          className="w-5 h-5 md:h-7 md:w-7 rounded-full"
           src={`data:image/jpeg;base64,${
             user
               ? user.imageData
@@ -54,8 +53,7 @@ export default function LoggedInUserDropdown({
           isUserDropdownOpen ? "block" : "hidden"
         } absolute  block right-0 origin-top-right w-48 rounded-md shadow-lg bg-white divide-y divide-gray-100 dark:bg-red-900 dark:divide-red-800 z-50`}
         id="user-dropdown"
-        style={{ top: "calc(100% + 0.9rem)", right: "0" }}
-      >
+        style={{ top: "calc(100% + 0.9rem)", right: "0" }}>
         <div className="px-4 py-3">
           <span className="block text-sm text-gray-900 dark:text-white">
             {userInfo.name}
@@ -68,24 +66,25 @@ export default function LoggedInUserDropdown({
           <li>
             <a
               href={`/user-settings`}
-              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white z-50"
-            >
+              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white z-50">
               Settings
             </a>
           </li>
           <li>
             <a
               href={`/user-orders/`}
-              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-            >
+              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
               Orders
             </a>
           </li>
           <SignoutButton />
         </ul>
       </div>
-      <div className="ml-5">
-        <BsCartCheckFill size={25} onClick={handleShowCart} />
+      <div className="ml-3">
+        <BsCartCheckFill
+          className="h-5 w-5 md:h-7 md:w-7 md:ml-2  "
+          onClick={handleShowCart}
+        />
       </div>
     </>
   );

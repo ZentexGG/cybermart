@@ -12,7 +12,7 @@ interface CartItem {
 interface CartProps {
   setIsShowCart: React.Dispatch<React.SetStateAction<boolean>>;
   cart: CartItem[];
-  handleAddToCart: (item: CartItem) => void;
+  handleAddToCart: (item: CartItem, amount: number) => void;
   handleRemoveFromCart: (id: string) => void;
 }
 
@@ -22,7 +22,7 @@ const Cart: React.FC<CartProps> = ({
   handleAddToCart,
   handleRemoveFromCart,
 }) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const cartRef = useRef<HTMLDivElement>(null);
 
   const total = (arr: CartItem[]) => {
@@ -49,7 +49,7 @@ const Cart: React.FC<CartProps> = ({
   const handleCheckOut = async () => {
     handleCloseCart(); // Close the cart
     navigate("/Order"); // Navigate to the "/Order" route
-  };  
+  };
 
   return (
     <div
@@ -90,7 +90,7 @@ const Cart: React.FC<CartProps> = ({
                   <p className="text-red-600 mx-2">
                     {DollarUsd.format(item.price)}
                   </p>
-                  <button onClick={() => handleAddToCart(item)}>
+                  <button onClick={() => handleAddToCart(item, 1)}>
                     <AiOutlinePlusSquare className="text-[30px] text-gray-500" />
                   </button>
                 </div>
@@ -100,7 +100,9 @@ const Cart: React.FC<CartProps> = ({
           {cart.length > 0 && <p>Total: {DollarUsd.format(total(cart))}</p>}
         </div>
         <div className="w-full h-12 bottom-0 absolute flex justify-center">
-          <button onClick={handleCheckOut} className="w-full bg-red-700 hover:bg-red-800 text-white text-sm">
+          <button
+            onClick={handleCheckOut}
+            className="w-full bg-red-700 hover:bg-red-800 text-white text-sm">
             Checkout
           </button>
         </div>

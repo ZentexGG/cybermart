@@ -10,10 +10,10 @@ import useLocalStorageState from "use-local-storage-state";
 import { CartItem } from "../../types";
 
 export const LayoutContext = createContext<{
-  handleAddToCart: (product: CartItem) => void;
+  handleAddToCart: (product: CartItem, amount: number) => void;
   handleRemoveFromCart: (id: string) => void;
   setIsFetching: (isFetching: boolean) => void;
-  userInfo : (DecodedToken | boolean)
+  userInfo: DecodedToken | boolean;
 }>({
   handleAddToCart: () => {
     console.warn("handleAddToCart wrong.");
@@ -21,12 +21,12 @@ export const LayoutContext = createContext<{
   setIsFetching: () => {
     console.warn("wrong");
   },
-  userInfo : ()=>{
-    console.warn("no user info")
+  userInfo: () => {
+    console.warn("no user info");
   },
-  handleRemoveFromCart : ()=>{
-    console.warn("Can t do that boyyy")
-  }
+  handleRemoveFromCart: () => {
+    console.warn("Can t do that boyyy");
+  },
 });
 
 export default function Layout() {
@@ -56,23 +56,27 @@ export default function Layout() {
     setIsShowCart(true);
   };
 
-  const handleAddToCart = (product: CartItem) => {
+  const handleAddToCart = (product: CartItem, amount: number) => {
     setCart((prev) => {
       const findProductInCart = prev.find((item) => item.id === product.id);
 
       if (findProductInCart) {
         setCartItems(
           prev.map((item) =>
-            item.id === product.id ? { ...item, amount: item.amount + 1 } : item
+            item.id === product.id
+              ? { ...item, amount: item.amount + amount }
+              : item
           )
         );
         return prev.map((item) =>
-          item.id === product.id ? { ...item, amount: item.amount + 1 } : item
+          item.id === product.id
+            ? { ...item, amount: item.amount + amount }
+            : item
         );
       }
-      setCartItems([...prev, { ...product, amount: 1 }]);
+      setCartItems([...prev, { ...product, amount: amount }]);
 
-      return [...prev, { ...product, amount: 1 }];
+      return [...prev, { ...product, amount: amount }];
     });
   };
 
@@ -96,7 +100,13 @@ export default function Layout() {
   return isFetching ? (
     <Loader />
   ) : (
-    <LayoutContext.Provider value={{ handleAddToCart, setIsFetching, userInfo,handleRemoveFromCart }}>
+    <LayoutContext.Provider
+      value={{
+        handleAddToCart,
+        setIsFetching,
+        userInfo,
+        handleRemoveFromCart,
+      }}>
       <div className="flex flex-col h-screen">
         <div className="flex-grow">
           <NavbarComponent
