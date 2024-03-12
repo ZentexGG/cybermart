@@ -28,11 +28,11 @@ export default function LoginFormComponent() {
       setLoading(true);
       setIncorrectCredentials(false);
       await axios.post("/Auth/Login", data);
-      navigate("/");
     } catch (error) {
       setIncorrectCredentials(true);
     } finally {
       setLoading(false);
+      navigate("/");
     }
   };
 
