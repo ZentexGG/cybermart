@@ -128,10 +128,11 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin", builder =>
     {
-        builder.WithOrigins("http://localhost:3000")
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
+        if (frontendUrl != null)
+            builder.WithOrigins(frontendUrl)
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
     });
     options.AddPolicy("AllowAnyOrigin", builder =>
     {
@@ -151,7 +152,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowAnyOrigin");
+app.UseCors("AllowSpecificOrigin");
 app.UseCookiePolicy();
 //app.UseHttpsRedirection();
 app.UseRouting();
