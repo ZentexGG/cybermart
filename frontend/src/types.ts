@@ -59,6 +59,10 @@ export interface Product {
   photos: ProductPhoto[] | null;
 }
 
+export interface ProductCountResponse {
+  products: number;
+}
+
 export interface ProductPhoto {
   Id: number;
   FileName: string;

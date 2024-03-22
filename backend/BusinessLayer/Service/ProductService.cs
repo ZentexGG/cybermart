@@ -45,13 +45,13 @@ public class ProductService : IProductService
     public async Task<IEnumerable<ProductDto>> GetProductsAsync(int page = 1, int limit = 20)
     {
         var offset = (page - 1) * limit;
-        var products = await _context.Products.Include(p=>p.Photos)
-            .Include(p=>p.Category)
+        var products = await _context.Products.Include(p => p.Photos)
+            .Include(p => p.Category)
             .OrderBy(p => p.ID)
             .Skip(offset)
             .Take(limit)
             .ToListAsync();
-        
+
         var productDtos = products.Select(product => new ProductDto
         {
             ID = product.ID,
@@ -60,7 +60,7 @@ public class ProductService : IProductService
             Description = product.Description,
             CategoryId = product.CategoryId,
             CategoryName = product.Category.Name,
-            Photos = product.Photos.Select(photo => new ProductPhotoDto
+            Photos = product.Photos.Take(1).Select(photo => new ProductPhotoDto
             {
                 Id = photo.Id,
                 FileName = photo.FileName,
@@ -71,6 +71,7 @@ public class ProductService : IProductService
 
         return productDtos;
     }
+
 
     public async Task<IEnumerable<ProductDto>> GetAllAsync()
     {
@@ -229,5 +230,17 @@ public class ProductService : IProductService
         }
         _context.Products.Remove(productToDelete);
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<int> GetProductCountAsync()
+    {
+        try
+        {
+            return await _context.Products.CountAsync();
+        }
+        catch (Exception e)
+        {
+            throw new InvalidDataException(e.Message);
+        }
     }
 }

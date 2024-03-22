@@ -18,11 +18,11 @@ public class ProductController : ControllerBase
     }
 
     [HttpGet("page/{page}")]
-    public async Task<IActionResult> GetProducts(int page)
+    public async Task<IActionResult> GetProducts(int page, int limit = 20)
     {
         try
         {
-            var products= await _service.GetProductsAsync(page);
+            var products= await _service.GetProductsAsync(page, limit);
             Console.WriteLine(products.Count());
             return Ok(products);
         }
@@ -104,6 +104,13 @@ public class ProductController : ControllerBase
     {
         await _service.DeleteAsync(id);
         return Ok(new {message = $"Successfully deleted product with ID: {id}"});
+    }
+
+    [HttpGet("count")]
+    public async Task<IActionResult> GetProductCount()
+    {
+        var count = await _service.GetProductCountAsync();
+        return Ok(new {products = count});
     }
 
 }

@@ -2,49 +2,50 @@ import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import ProductCardComponent from "../../Components/ProductCard/ProductCardComponent";
 import PaginationComponent from "../../Components/Pagination/PaginationComponent";
-import { ProductDto } from "../../types";
+import { ProductCountResponse, ProductDto } from "../../types";
 import { LayoutContext } from "../Layout/Layout";
 import Loader from "../Loader/Loader";
 import { AiFillCheckSquare } from "react-icons/ai";
+import AlertSuccess from "../../Components/AlertSuccess/AlertSuccess";
 
 export default function ProductsPage() {
+  // Change this to have more products per page : 20 is the default
+  const productsPerPageLimit: number = 20;
   const [num, setNum] = useState(1);
   const [products, setProducts] = useState<ProductDto[]>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [showAlert, setShowAlert] = useState<boolean>(false);
+  const [totalProductsCount, setTotalProductsCount] = useState<number>(0);
 
   const { handleAddToCart } = useContext(LayoutContext);
-
-  
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get(`/api/products/page/${num}`);
-        setProducts(response.data);
+        const productCountResp = await axios.get<ProductCountResponse>(
+          "/api/products/count"
+        );
+        const productsResp = await axios.get(
+          `/api/products/page/${num}?limit=${productsPerPageLimit}`
+        );
+        setTotalProductsCount(productCountResp.data.products);
+        setProducts(productsResp.data);
       } catch (error) {
-        console.error("Error fetching products:", error);
+        console.error(error);
       } finally {
         setIsLoading(false);
       }
     };
     fetchProducts();
   }, [num]);
+
   return isLoading ? (
     <Loader />
   ) : (
     <>
       {showAlert && (
-        <div className="fixed left-1/2 transform -translate-x-1/2">
-          <div
-            className="flex items-center bg-green-500 text-white text-sm font-bold px-4 py-3 animate-fade-in-down-out w-96"
-            role="alert"
-          >
-            <AiFillCheckSquare size={30} color="light-green" className="" />
-            <p className="ml-12">Successfully added product to cart!</p>
-          </div>
-        </div>
+        <AlertSuccess message="Successfully added product to cart!" />
       )}
       <div className="grid max-w-screen justify-center items-center place-items-center sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 my-5">
         {products?.map((product: ProductDto) => (
@@ -56,7 +57,14 @@ export default function ProductsPage() {
           />
         ))}
       </div>
-      <PaginationComponent num={num} setNum={setNum} />
+      <div className="my-4">
+        <PaginationComponent
+          num={num}
+          setNum={setNum}
+          totalProducts={totalProductsCount}
+          productsPerPageLimit={productsPerPageLimit}
+        />
+      </div>
     </>
   );
 }
