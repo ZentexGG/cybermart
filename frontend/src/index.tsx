@@ -15,6 +15,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import UserOrdersPage from "./Pages/UserOrdersPage/UserOrdersPage";
 import EditProductPage from "./Pages/EditProductPage/EditProductPage";
 import NotFoundPage from "./Pages/NotFoundPage/NotFoundPage";
+import NotFoundRedirect from "./Components/NotFoundRedirect/NotFoundRedirect";
 
 const stripePromise = loadStripe(
   "pk_test_51NU9A1E7blOkcXvgDUiJx1JqdDeJIc6WvY9stEMjNxzTJW60w50hxvJNjjSoQbnwNhQNRjskhfnnHDbfRTyJz9tX00q8g4aLCb"
@@ -214,7 +215,7 @@ const router = createBrowserRouter([
         path: "*",
         element: (
           <Suspense fallback={<Loader />}>
-            <NotFoundPage />
+            <NotFoundRedirect />
           </Suspense>
         ),
       },
