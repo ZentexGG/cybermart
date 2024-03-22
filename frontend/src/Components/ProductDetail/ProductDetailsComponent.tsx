@@ -5,12 +5,14 @@ import { CartItem, ProductDto, ProductPhotoDto } from "../../types";
 import Loader from "../../Pages/Loader/Loader";
 import { LayoutContext } from "../../Pages/Layout/Layout";
 import { checkAuth } from "../../authChecker";
+import AlertSuccess from "../AlertSuccess/AlertSuccess";
 
 const ProductDetailsComponent = () => {
   const { handleAddToCart } = useContext(LayoutContext);
 
   const [product, setProduct] = useState<ProductDto>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [showAlert, setShowAlert] = useState<boolean>(false);
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -73,6 +75,10 @@ const ProductDetailsComponent = () => {
       amount: 1,
     };
     handleAddToCart(cartProduct, 1);
+    setShowAlert(true);
+    setTimeout(() => {
+      setShowAlert(false);
+    }, 3000);
   };
 
   return (
@@ -81,6 +87,9 @@ const ProductDetailsComponent = () => {
         <Loader />
       ) : (
         <>
+          {showAlert && (
+            <AlertSuccess message="Successfully added product to cart!" />
+          )}
           <div className="flex flex-col lg:flex-row gap-8">
             <div className="flex flex-col w-full lg:w-1/2 border-black mt-10 items-center">
               <div className="relative w-full h-96 aspect-square rounded-xl overflow-hidden bg-white">
@@ -98,14 +107,16 @@ const ProductDetailsComponent = () => {
                 ))}
                 <button
                   className="w-8 h-8 bg-gray-200 rounded-full absolute top-1/2 transform -translate-y-4 left-4"
-                  onClick={handlePrevImage}>
+                  onClick={handlePrevImage}
+                >
                   {/* Add left arrow icon */}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
-                    className="w-4 h-4 mx-auto">
+                    className="w-4 h-4 mx-auto"
+                  >
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -116,14 +127,16 @@ const ProductDetailsComponent = () => {
                 </button>
                 <button
                   className="w-8 h-8 bg-gray-200 rounded-full absolute top-1/2 transform -translate-y-4 right-4"
-                  onClick={handleNextImage}>
+                  onClick={handleNextImage}
+                >
                   {/* Add right arrow icon */}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
-                    className="w-4 h-4 mx-auto">
+                    className="w-4 h-4 mx-auto"
+                  >
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -179,7 +192,8 @@ const ProductDetailsComponent = () => {
                 <div className="flex flex-row items-center">
                   <button
                     className="bg-blue-200 py-2 px-5 rounded-lg text-red-800 text-3xl"
-                    onClick={() => setAmount((prev) => Math.max(prev - 1, 1))}>
+                    onClick={() => setAmount((prev) => Math.max(prev - 1, 1))}
+                  >
                     -
                   </button>
                   <span className="py-4 px-6 font-bold text-2xl rounded-lg">
@@ -187,13 +201,15 @@ const ProductDetailsComponent = () => {
                   </span>
                   <button
                     className="bg-blue-200 py-2 px-4 rounded-lg text-red-800 text-3xl"
-                    onClick={() => setAmount((prev) => prev + 1)}>
+                    onClick={() => setAmount((prev) => prev + 1)}
+                  >
                     +
                   </button>
                 </div>
                 <button
                   onClick={addToCart}
-                  className="bg-blue-200 text-red-800 font-semibold py-3 px-16 rounded-xl h-full">
+                  className="bg-blue-200 text-red-800 font-semibold py-3 px-16 rounded-xl h-full"
+                >
                   Add to Cart
                 </button>
               </div>
@@ -217,7 +233,8 @@ const ProductDetailsComponent = () => {
                   {product?.specifications.map((spec, index) => (
                     <tr
                       key={index}
-                      className={index % 2 === 0 ? "" : "bg-blue-100"}>
+                      className={index % 2 === 0 ? "" : "bg-blue-100"}
+                    >
                       <td className="w-1/2 px-4 py-2">
                         {spec.specificationTypeName}
                       </td>
