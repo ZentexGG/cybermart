@@ -15,4 +15,5 @@ public interface IProductService
         List<SpecificationDto> specifications, List<IFormFile> photos);
     Task UpdateAsync(int id, Product product);
     Task DeleteAsync(int id);
+    Task<int> GetProductCountAsync();
 }
