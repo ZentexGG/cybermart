@@ -45,9 +45,7 @@ export default function ProductsPage() {
   ) : (
     <>
       {showAlert && (
-        <AlertSuccess
-          message="Successfully added product to cart!"
-        />
+        <AlertSuccess message="Successfully added product to cart!" />
       )}
       <div className="grid max-w-screen justify-center items-center place-items-center sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 my-5">
         {products?.map((product: ProductDto) => (
@@ -59,12 +57,14 @@ export default function ProductsPage() {
           />
         ))}
       </div>
-      <PaginationComponent
-        num={num}
-        setNum={setNum}
-        totalProducts={totalProductsCount}
-        productsPerPageLimit={productsPerPageLimit}
-      />
+      <div className="my-4">
+        <PaginationComponent
+          num={num}
+          setNum={setNum}
+          totalProducts={totalProductsCount}
+          productsPerPageLimit={productsPerPageLimit}
+        />
+      </div>
     </>
   );
 }
