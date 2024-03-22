@@ -3,6 +3,7 @@ import { BsCartCheckFill } from "react-icons/bs";
 import { DecodedToken, UserDto } from "../../types";
 import SignoutButton from "../SignoutButton/SignoutButton";
 import axios from "axios";
+import AdminDropdown from "../AdminDropdown/AdminDropdown";
 
 export default function LoggedInUserDropdown({
   handleShowCart,
@@ -78,6 +79,9 @@ export default function LoggedInUserDropdown({
             </a>
           </li>
           <SignoutButton />
+          {userInfo.role === "Admin" && (
+            <AdminDropdown />
+          )}
         </ul>
       </div>
       <div className="ml-3">
