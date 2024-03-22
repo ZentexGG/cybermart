@@ -41,7 +41,7 @@ const PaginationComponent: React.FC<PaginationComponentProps> = ({
       <button
         onClick={handleBack}
         disabled={num === 1}
-        className="p-2 rounded-full bg-indigo-600 text-white hover:bg-indigo-700 disabled:bg-gray-300 disabled:text-gray-500 disabled:pointer-events-none"
+        className="p-2 rounded-full bg-red-600 text-white hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500 disabled:pointer-events-none"
       >
         <FaChevronLeft className="w-4 h-4" />
       </button>
@@ -51,7 +51,7 @@ const PaginationComponent: React.FC<PaginationComponentProps> = ({
             key={1}
             onClick={() => handlePageClick(1)}
             className={`px-3 py-1 rounded-md ${
-              num === 1 ? "bg-indigo-600 text-white" : "hover:bg-indigo-200"
+              num === 1 ? "bg-red-600 text-white" : "hover:bg-red-200"
             }`}
           >
             1
@@ -66,7 +66,7 @@ const PaginationComponent: React.FC<PaginationComponentProps> = ({
             key={page}
             onClick={() => handlePageClick(page)}
             className={`px-3 py-1 rounded-md ${
-              num === page ? "bg-indigo-600 text-white" : "hover:bg-indigo-200"
+              num === page ? "bg-red-600 text-white" : "hover:bg-red-200"
             }`}
           >
             {page}
@@ -81,8 +81,8 @@ const PaginationComponent: React.FC<PaginationComponentProps> = ({
             onClick={() => handlePageClick(totalPages)}
             className={`px-3 py-1 rounded-md ${
               num === totalPages
-                ? "bg-indigo-600 text-white"
-                : "hover:bg-indigo-200"
+                ? "bg-red-600 text-white"
+                : "hover:bg-red-200"
             }`}
           >
             {totalPages}
@@ -92,7 +92,7 @@ const PaginationComponent: React.FC<PaginationComponentProps> = ({
       <button
         onClick={handleNext}
         disabled={num === totalPages}
-        className="p-2 rounded-full bg-indigo-600 text-white hover:bg-indigo-700 disabled:bg-gray-300 disabled:text-gray-500 disabled:pointer-events-none"
+        className="p-2 rounded-full bg-red-600 text-white hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500 disabled:pointer-events-none"
       >
         <FaChevronRight className="w-4 h-4" />
       </button>
