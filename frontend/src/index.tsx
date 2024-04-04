@@ -204,6 +204,14 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "/edit-product",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <EditProductPage />
+          </Suspense>
+        )
+      },
+      {
         path: "/not-found",
         element: (
           <Suspense fallback={<Loader />}>
