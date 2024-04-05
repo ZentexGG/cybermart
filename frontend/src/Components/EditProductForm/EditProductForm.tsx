@@ -5,7 +5,6 @@ import {
   Specification,
   SpecificationType,
 } from "../../types";
-import CategoriesSelect from "../CategoriesSelect/CategoriesSelect";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { getCookie } from "../../authChecker";
