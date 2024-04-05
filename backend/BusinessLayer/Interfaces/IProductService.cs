@@ -13,6 +13,9 @@ public interface IProductService
 
     Task<Product> CreateAsync(int ID, string Name, double Price, string Description, int CategoryId,
         List<SpecificationDto> specifications, List<IFormFile> photos);
+
+    Task<Product> PutAsync(int ID, string Name, double Price, string Description, int CategoryId,
+        List<SpecificationDto> specifications, List<IFormFile> photos);
     Task UpdateAsync(int id, Product product);
     Task DeleteAsync(int id);
     Task<int> GetProductCountAsync();
