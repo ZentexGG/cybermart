@@ -52,7 +52,7 @@ public class SpecificationController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
         }
     }
-
+    [Authorize(Roles = "Admin")]
     [HttpPut("{productId}")]
     public async Task<IActionResult> UpdateSpecsForProduct(int productId, List<SpecificationDto> newSpecs)
     {
