@@ -30,6 +30,7 @@ export default function CreateProductForm({
   let newProductId: number = 0;
 
  const onSubmit = async (data: FormData) => {
+   const userToken = getCookie("token");
    const formData = new FormData();
    formData.append("ID", data.ID.toString());
    formData.append("Name", data.Name);
@@ -42,7 +43,6 @@ export default function CreateProductForm({
    }
 
    try {
-     const userToken = getCookie("token");
      const response = await axios.post("/api/products", formData, {
        headers: {
          "Content-Type": "multipart/form-data",
@@ -55,7 +55,11 @@ export default function CreateProductForm({
    }
 
    try {
-     await axios.post(`/api/specifications/${newProductId}`, data.specifications)
+     await axios.post(`/api/specifications/${newProductId}`, data.specifications, {
+       headers: {
+         "Authorization": `Bearer ${userToken}`
+       }
+     })
    } catch (error) {
      console.log(error);
    }
