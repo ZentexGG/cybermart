@@ -3,6 +3,7 @@ import {
   Category,
   ProductDto,
   Specification,
+  SpecificationDto,
   SpecificationType,
 } from "../../types";
 import { useEffect, useState } from "react";
@@ -36,6 +37,7 @@ export default function EditProductForm({
 
   const [categorySpecifications, setCategorySpecifications] =
     useState<SpecificationType[]>();
+  const [categorySpecValues, setCategorySpecValues] = useState<SpecificationDto[]>(existingData?.specifications);
 
   useEffect(() => {
     setValue("ID", existingData?.id);
@@ -154,7 +156,7 @@ export default function EditProductForm({
                   />
                   <input
                     type="text"
-                    defaultValue={existingData?.specifications[index].value}
+                    defaultValue={currentSelectedCategory === existingData?.categoryId ? existingData?.specifications[index].value : ""}
                     {...register(`specifications.${index}.value`)}
                     className="form-input w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                   />

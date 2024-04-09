@@ -200,9 +200,16 @@ public class ProductService : IProductService
         productToModify.Name = Name;
         productToModify.Price = Price;
         productToModify.Description = Description;
-        productToModify.CategoryId = CategoryId;
+        // If the product category changes, all current specs are deleted
+        // since they are redundant and to make room for the new specs
+        if (productToModify.CategoryId != CategoryId)
+        {
+            productToModify.CategoryId = CategoryId;
+            var specsToRemove =
+                await _context.Specifications.Where(s => s.ProductId == productToModify.ID).ToListAsync();
+            _context.Specifications.RemoveRange(specsToRemove);
+        }
         await _context.SaveChangesAsync();
-
         return productToModify;
     }
 
