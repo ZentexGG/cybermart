@@ -37,6 +37,28 @@ public class SpecificationService : ISpecificationService
 
     }
 
+
+    public async Task ModifySpecsForProduct(int productId, List<SpecificationDto> newSpecs)
+    {
+        var productExists = await _context.Products.FirstOrDefaultAsync(p => p.ID == productId) != null;
+        if (!productExists)
+        {
+            throw new KeyNotFoundException("The specified ID was not found!");
+        }
+
+        var specsToChange = _context.Specifications.Where(s => s.ProductId == productId).ToList();
+        foreach (var spec in specsToChange)
+        {
+            var newSpecToChange = newSpecs.Find(s => s.SpecificationTypeId == spec.SpecificationTypeId);
+            if (newSpecToChange != null)
+            {
+                spec.Value = newSpecToChange.Value;
+            }
+
+        }
+        await _context.SaveChangesAsync();
+    }
+
     public async Task<IEnumerable<SpecificationDto>> GetSpecsForProduct(int productId)
     {
         var productExists = await _context.Specifications.FirstOrDefaultAsync(s => s.ProductId == productId) != null;
