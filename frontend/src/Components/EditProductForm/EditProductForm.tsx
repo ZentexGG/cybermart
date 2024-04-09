@@ -64,14 +64,20 @@ export default function EditProductForm({
   }, [currentSelectedCategory]);
 
   const onSubmit = async (data: FormData) => {
+    console.log(data.specifications);
     try {
       const userToken = getCookie("token");
-      let res = await axios.put(`/api/products/${existingData?.id}`, data, {
+      let productPut = await axios.put(`/api/products/${existingData?.id}`, data, {
         headers: {
           "Content-Type": "multipart/form-data",
           "Authorization": `Bearer ${userToken}`,
         },
       });
+      let specsPut = await axios.put(`/api/specifications/${existingData?.id}`, data.specifications, {
+        headers: {
+          "Authorization": `Bearer ${userToken}`
+        }
+      })
     } catch (err) {
       console.error(err);
     }
