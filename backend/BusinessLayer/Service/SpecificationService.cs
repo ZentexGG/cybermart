@@ -47,6 +47,12 @@ public class SpecificationService : ISpecificationService
         }
 
         var specsToChange = _context.Specifications.Where(s => s.ProductId == productId).ToList();
+        if (specsToChange.Count == 0)
+        {
+            await AddSpecsForProduct(productId, newSpecs);
+            return;
+        }
+        
         foreach (var spec in specsToChange)
         {
             var newSpecToChange = newSpecs.Find(s => s.SpecificationTypeId == spec.SpecificationTypeId);
