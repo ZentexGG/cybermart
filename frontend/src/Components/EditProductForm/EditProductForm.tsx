@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import {
   Category,
   ProductDto,
+  ProductPhotoDto,
   Specification,
   SpecificationDto,
   SpecificationType,
@@ -11,6 +12,7 @@ import axios from "axios";
 import { getCookie } from "../../authChecker";
 import LoadingBtn from "../LoadingBtn/LoadingBtn";
 import DbImage from "../DbImage/DbImage";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 interface FormData {
   ID: number;
@@ -19,7 +21,7 @@ interface FormData {
   Description: string;
   CategoryId: number;
   specifications: Specification[];
-  photos: FileList;
+  photos: ProductPhotoDto[];
 }
 
 export default function EditProductForm({
@@ -40,6 +42,8 @@ export default function EditProductForm({
   const [categorySpecifications, setCategorySpecifications] =
     useState<SpecificationType[]>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [hoveredId, setHoveredId] = useState<number | null>(null);
+  // const [photos, setPhotos] = useState<ProductPhotoDto[]>(existingData?.photos)
 
   useEffect(() => {
     setValue("ID", existingData?.id);
@@ -47,11 +51,14 @@ export default function EditProductForm({
     setValue("CategoryId", existingData?.categoryId);
     setValue("Description", existingData?.description);
     setValue("Price", existingData?.price);
+    setValue("photos", existingData?.photos);
   }, [setValue, existingData]);
 
   const currentSelectedCategory = watch("CategoryId");
+  const currentPhotos = watch("photos");
   useEffect(() => {
     const fetchInitialCategory = async () => {
+      console.log(existingData?.photos);
       try {
         setLoading(true);
         let res = await axios.get<SpecificationType[]>(
@@ -70,7 +77,13 @@ export default function EditProductForm({
     }
   }, [currentSelectedCategory]);
 
+  const imageClick = (imgId: number) => {
+    document.getElementById(`img_${imgId}`)?.click();
+  };
+  const deleteImage = (imgId: number) => {};
+
   const onSubmit = async (data: FormData) => {
+    console.log(currentPhotos);
     setLoading(true);
     const dataToSubmit = {
       ID: data.ID,
@@ -82,26 +95,26 @@ export default function EditProductForm({
     };
     try {
       const userToken = getCookie("token");
-      let productPut = await axios.put<FormData>(
-        `/api/products/${existingData?.id}`,
-        dataToSubmit,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${userToken}`,
-          },
-        }
-      );
-      console.log(productPut.config);
-      let specsPut = await axios.put(
-        `/api/specifications/${existingData?.id}`,
-        data.specifications,
-        {
-          headers: {
-            Authorization: `Bearer ${userToken}`,
-          },
-        }
-      );
+      // let productPut = await axios.put<FormData>(
+      //   `/api/products/${existingData?.id}`,
+      //   dataToSubmit,
+      //   {
+      //     headers: {
+      //       "Content-Type": "multipart/form-data",
+      //       Authorization: `Bearer ${userToken}`,
+      //     },
+      //   }
+      // );
+      // console.log(productPut.config);
+      // let specsPut = await axios.put(
+      //   `/api/specifications/${existingData?.id}`,
+      //   data.specifications,
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${userToken}`,
+      //     },
+      //   }
+      // );
     } catch (err) {
       console.error(err);
     } finally {
@@ -225,10 +238,41 @@ export default function EditProductForm({
             className="form-input w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
           />
         </div>
-        <div>
-          {/* Photos Section */}
-          {existingData?.photos.map((p) => (
-            <DbImage key={p.Id} imageData={p.imageData} />
+        <div className="flex">
+          {existingData?.photos.map((photo, index) => (
+            <div
+              key={photo.id}
+              className="relative mr-4"
+              onMouseEnter={() => setHoveredId(photo.id)}
+              onMouseLeave={() => setHoveredId(null)}
+            >
+              <DbImage key={photo.id} imageData={photo.imageData} />
+              <input
+                id={`img_${photo.id}`}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                {...register(`photos.${index}`)}
+              />
+
+              {/* Conditional rendering of overlay for the hovered image */}
+              {hoveredId === photo.id && (
+                <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
+                  <button
+                    className="text-white mr-2"
+                    onClick={() => imageClick(photo.id)}
+                  >
+                    <FaEdit />
+                  </button>
+                  <button
+                    className="text-white"
+                    onClick={() => deleteImage(photo.id)}
+                  >
+                    <FaTrash />
+                  </button>
+                </div>
+              )}
+            </div>
           ))}
         </div>
         <div>
