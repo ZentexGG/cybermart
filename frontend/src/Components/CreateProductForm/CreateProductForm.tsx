@@ -1,8 +1,14 @@
 import { useForm } from "react-hook-form";
-import { Category, ProductDto, Specification, SpecificationType } from "../../types";
+import {
+  Category,
+  ProductDto,
+  Specification,
+  SpecificationType,
+} from "../../types";
 import axios from "axios";
 import { useState } from "react";
 import { getCookie } from "../../authChecker";
+import LoadingBtn from "../LoadingBtn/LoadingBtn";
 
 interface FormData {
   ID: number;
@@ -15,9 +21,9 @@ interface FormData {
 }
 
 export default function CreateProductForm({
-  categories
+  categories,
 }: {
-    categories: Category[];
+  categories: Category[];
 }) {
   const {
     register,
@@ -26,62 +32,69 @@ export default function CreateProductForm({
     watch,
   } = useForm<FormData>({ mode: "onChange" });
 
-  const [categorySpecifications, setCategorySpecifications] = useState<SpecificationType[]>();
+  const [categorySpecifications, setCategorySpecifications] =
+    useState<SpecificationType[]>();
+  const [loading, setLoading] = useState<boolean>(false);
   let newProductId: number = 0;
 
- const onSubmit = async (data: FormData) => {
-   const userToken = getCookie("token");
-   const formData = new FormData();
-   formData.append("ID", data.ID.toString());
-   formData.append("Name", data.Name);
-   formData.append("Price", data.Price.toString().replace(".", ","));
-   formData.append("Description", data.Description);
-   formData.append("CategoryId", data.CategoryId.toString());
+  const onSubmit = async (data: FormData) => {
+    setLoading(true)
+    const userToken = getCookie("token");
+    const formData = new FormData();
+    formData.append("ID", data.ID.toString());
+    formData.append("Name", data.Name);
+    formData.append("Price", data.Price.toString().replace(".", ","));
+    formData.append("Description", data.Description);
+    formData.append("CategoryId", data.CategoryId.toString());
 
-   for (let i = 0; i < data.photos.length; i++) {
-     formData.append("photos", data.photos[i]);
-   }
+    for (let i = 0; i < data.photos.length; i++) {
+      formData.append("photos", data.photos[i]);
+    }
 
-   try {
-     const response = await axios.post("/api/products", formData, {
-       headers: {
-         "Content-Type": "multipart/form-data",
-         "Authorization": `Bearer ${userToken}`
-       },
-     });
-     newProductId = response.data.id
+    try {
+      const response = await axios.post("/api/products", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${userToken}`,
+        },
+      });
+      newProductId = response.data.id;
     } catch (error) {
-     console.log(error)
-   }
+      console.log(error);
+    } 
 
-   try {
-     await axios.post(`/api/specifications/${newProductId}`, data.specifications, {
-       headers: {
-         "Authorization": `Bearer ${userToken}`
-       }
-     })
-   } catch (error) {
-     console.log(error);
-   }
-
- };
+    try {
+      await axios.post(
+        `/api/specifications/${newProductId}`,
+        data.specifications,
+        {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false)
+  };
 
   const handleCategoryChange = async (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const categoryId = event.target.value;
     console.log(categoryId);
-    
+
     try {
-      const res = await axios.get<SpecificationType[]>(`/api/specification-types/${categoryId}`)
+      const res = await axios.get<SpecificationType[]>(
+        `/api/specification-types/${categoryId}`
+      );
       setCategorySpecifications(res.data);
-      
     } catch (error) {
       console.log(error);
     }
   };
 
-  
   return (
     <div className="max-w-lg mx-auto mt-8 px-4 py-6 bg-white shadow-md rounded-lg">
       <h2 className="text-2xl font-bold mb-4">Create Product</h2>
@@ -202,14 +215,19 @@ export default function CreateProductForm({
           />
         </div>
         {/* Render input fields for specifications */}
-
-        <button
-          type="submit"
-          disabled={!isValid}
-          className="w-full py-3 mt-4 rounded-lg font-semibold text-white bg-red-500 hover:bg-red-600"
-        >
-          Submit
-        </button>
+        <div>
+          <button
+            type="submit"
+            disabled={!isValid || loading}
+            className="w-full py-3 mt-4 rounded-lg font-semibold text-white bg-red-500 hover:bg-red-600"
+          >
+            {loading ? (
+              <LoadingBtn />
+            ) : (
+                <span>Submit</span>
+            )}
+          </button>
+        </div>
       </form>
     </div>
   );

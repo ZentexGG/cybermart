@@ -9,6 +9,8 @@ import {
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { getCookie } from "../../authChecker";
+import LoadingBtn from "../LoadingBtn/LoadingBtn";
+import DbImage from "../DbImage/DbImage";
 
 interface FormData {
   ID: number;
@@ -37,9 +39,7 @@ export default function EditProductForm({
 
   const [categorySpecifications, setCategorySpecifications] =
     useState<SpecificationType[]>();
-  const [categorySpecValues, setCategorySpecValues] = useState<
-    SpecificationDto[]
-  >(existingData?.specifications);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     setValue("ID", existingData?.id);
@@ -50,16 +50,18 @@ export default function EditProductForm({
   }, [setValue, existingData]);
 
   const currentSelectedCategory = watch("CategoryId");
-  const currentPrice = watch("Price");
   useEffect(() => {
     const fetchInitialCategory = async () => {
       try {
+        setLoading(true);
         let res = await axios.get<SpecificationType[]>(
           `/api/specification-types/${currentSelectedCategory}`
         );
         setCategorySpecifications(res.data);
       } catch (err) {
         console.error(err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -69,14 +71,15 @@ export default function EditProductForm({
   }, [currentSelectedCategory]);
 
   const onSubmit = async (data: FormData) => {
+    setLoading(true);
     const dataToSubmit = {
       ID: data.ID,
       Name: data.Name,
       Description: data.Description,
       Price: data.Price.toString().replace(".", ","),
       CategoryId: data.CategoryId,
-      Specifications: data.specifications
-    }
+      Specifications: data.specifications,
+    };
     try {
       const userToken = getCookie("token");
       let productPut = await axios.put<FormData>(
@@ -85,11 +88,11 @@ export default function EditProductForm({
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            "Authorization": `Bearer ${userToken}`,
+            Authorization: `Bearer ${userToken}`,
           },
         }
       );
-      console.log(productPut.config)
+      console.log(productPut.config);
       let specsPut = await axios.put(
         `/api/specifications/${existingData?.id}`,
         data.specifications,
@@ -101,6 +104,8 @@ export default function EditProductForm({
       );
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -220,7 +225,21 @@ export default function EditProductForm({
             className="form-input w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
           />
         </div>
-        <button type="submit">Submit</button>
+        <div>
+          {/* Photos Section */}
+          {existingData?.photos.map((p) => (
+            <DbImage key={p.Id} imageData={p.imageData} />
+          ))}
+        </div>
+        <div>
+          <button
+            className="w-full py-2 px-4 bg-red-700 hover:bg-red-800 rounded-md text-white text-sm"
+            type="submit"
+            disabled={loading}
+          >
+            {loading ? <LoadingBtn /> : <span>Submit</span>}
+          </button>
+        </div>
       </form>
     </>
   );
