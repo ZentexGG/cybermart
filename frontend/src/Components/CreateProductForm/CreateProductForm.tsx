@@ -34,7 +34,7 @@ export default function CreateProductForm({
    const formData = new FormData();
    formData.append("ID", data.ID.toString());
    formData.append("Name", data.Name);
-   formData.append("Price", data.Price.toString());
+   formData.append("Price", data.Price.toString().replace(".", ","));
    formData.append("Description", data.Description);
    formData.append("CategoryId", data.CategoryId.toString());
 

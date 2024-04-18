@@ -37,7 +37,9 @@ export default function EditProductForm({
 
   const [categorySpecifications, setCategorySpecifications] =
     useState<SpecificationType[]>();
-  const [categorySpecValues, setCategorySpecValues] = useState<SpecificationDto[]>(existingData?.specifications);
+  const [categorySpecValues, setCategorySpecValues] = useState<
+    SpecificationDto[]
+  >(existingData?.specifications);
 
   useEffect(() => {
     setValue("ID", existingData?.id);
@@ -48,6 +50,7 @@ export default function EditProductForm({
   }, [setValue, existingData]);
 
   const currentSelectedCategory = watch("CategoryId");
+  const currentPrice = watch("Price");
   useEffect(() => {
     const fetchInitialCategory = async () => {
       try {
@@ -66,20 +69,36 @@ export default function EditProductForm({
   }, [currentSelectedCategory]);
 
   const onSubmit = async (data: FormData) => {
-    console.log(data.specifications);
+    const dataToSubmit = {
+      ID: data.ID,
+      Name: data.Name,
+      Description: data.Description,
+      Price: data.Price.toString().replace(".", ","),
+      CategoryId: data.CategoryId,
+      Specifications: data.specifications
+    }
     try {
       const userToken = getCookie("token");
-      let productPut = await axios.put(`/api/products/${existingData?.id}`, data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          "Authorization": `Bearer ${userToken}`,
-        },
-      });
-      let specsPut = await axios.put(`/api/specifications/${existingData?.id}`, data.specifications, {
-        headers: {
-          "Authorization": `Bearer ${userToken}`
+      let productPut = await axios.put<FormData>(
+        `/api/products/${existingData?.id}`,
+        dataToSubmit,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            "Authorization": `Bearer ${userToken}`,
+          },
         }
-      })
+      );
+      console.log(productPut.config)
+      let specsPut = await axios.put(
+        `/api/specifications/${existingData?.id}`,
+        data.specifications,
+        {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        }
+      );
     } catch (err) {
       console.error(err);
     }
@@ -156,7 +175,12 @@ export default function EditProductForm({
                   />
                   <input
                     type="text"
-                    defaultValue={currentSelectedCategory === existingData?.categoryId ? existingData?.specifications[index].value : ""}
+                    defaultValue={
+                      currentSelectedCategory === existingData?.categoryId &&
+                      existingData?.specifications.length > 0
+                        ? existingData?.specifications[index].value
+                        : ""
+                    }
                     {...register(`specifications.${index}.value`)}
                     className="form-input w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                   />
