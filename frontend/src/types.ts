@@ -19,7 +19,7 @@ export interface ProductDto {
 }
 
 export interface ProductPhotoDto {
-  Id: number;
+  id: number;
   FileName: string;
   imageData: ArrayBuffer;
   UploadDate: Date;
@@ -81,9 +81,9 @@ export interface UserDto {
 }
 
 export interface SpecificationType {
-  id: number,
-  name: string,
-  categoryId: number
+  id: number;
+  name: string;
+  categoryId: number;
 }
 
 export interface CartItem {
@@ -96,9 +96,9 @@ export interface CartItem {
 
 export interface Order {
   id: number;
-  firstName:string;
-  lastName:string;
-  cardPayment:boolean;
+  firstName: string;
+  lastName: string;
+  cardPayment: boolean;
   orderProducts: {
     productId: number;
     product?: Product;
@@ -112,4 +112,3 @@ export interface Order {
   country: string;
   phoneNumber: string;
 }
-
