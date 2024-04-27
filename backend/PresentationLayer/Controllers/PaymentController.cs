@@ -20,12 +20,6 @@ namespace PresentationLayer.Controllers
             _stripeApiKey = stripeApiKey;
         }
 
-        [HttpGet]
-        public IActionResult TestApiKey()
-        {
-            return Ok(_stripeApiKey);
-        }
-
         [HttpPost]
         public async Task<IActionResult> ProcessPayment([FromBody] PaymentRequest paymentRequest)
         {
