@@ -106,6 +106,27 @@ public class ProductController : ControllerBase
         return Ok(new {message = $"Successfully deleted product with ID: {id}"});
     }
 
+    [Authorize(Roles = "Admin")]
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateProduct(int id, [FromForm] string Name, [FromForm] double Price, [FromForm] string Description, [FromForm] int CategoryId, [FromForm] List<SpecificationDto> specifications, [FromForm] List<IFormFile> photos)
+    {
+        try
+        {
+            var modifiedProduct =
+                await _service.PutAsync(id, Name, Price, Description, CategoryId, specifications, photos);
+            return CreatedAtAction(nameof(GetById), new { id = modifiedProduct.ID },
+                new
+                {
+                    id = modifiedProduct.ID, name = modifiedProduct.Name, categoryId = modifiedProduct.CategoryId,
+                    specifications = modifiedProduct.Specifications
+                });
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new { message = $"Internal server error: {e.Message}" });
+        }
+    }
+
     [HttpGet("count")]
     public async Task<IActionResult> GetProductCount()
     {

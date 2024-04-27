@@ -153,7 +153,6 @@ public class ProductService : IProductService
 
     public async Task<Product> CreateAsync(int ID, string Name, double Price, string Description, int CategoryId, List<SpecificationDto> specifications, List<IFormFile> photos)
     {
-        Console.WriteLine(photos.Count);
         try
         {
             var product = new Product
@@ -192,6 +191,26 @@ public class ProductService : IProductService
         {
             throw new ApplicationException("Failed to save due to a database error.", e);
         }
+    }
+
+    public async Task<Product> PutAsync(int ID, string Name, double Price, string Description, int CategoryId,
+        List<SpecificationDto> specifications, List<IFormFile> photos)
+    {
+        var productToModify = await _context.Products.FirstAsync(p => p.ID == ID);
+        productToModify.Name = Name;
+        productToModify.Price = Price;
+        productToModify.Description = Description;
+        // If the product category changes, all current specs are deleted
+        // since they are redundant and to make room for the new specs
+        if (productToModify.CategoryId != CategoryId)
+        {
+            productToModify.CategoryId = CategoryId;
+            var specsToRemove =
+                await _context.Specifications.Where(s => s.ProductId == productToModify.ID).ToListAsync();
+            _context.Specifications.RemoveRange(specsToRemove);
+        }
+        await _context.SaveChangesAsync();
+        return productToModify;
     }
 
 

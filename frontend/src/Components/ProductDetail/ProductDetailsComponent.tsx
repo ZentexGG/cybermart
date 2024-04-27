@@ -1,13 +1,22 @@
 import axios from "axios";
 import { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { CartItem, ProductDto, ProductPhotoDto } from "../../types";
+import {
+  CartItem,
+  DecodedToken,
+  ProductDto,
+  ProductPhotoDto,
+} from "../../types";
 import Loader from "../../Pages/Loader/Loader";
 import { LayoutContext } from "../../Pages/Layout/Layout";
 import { checkAuth } from "../../authChecker";
 import AlertSuccess from "../AlertSuccess/AlertSuccess";
 
-const ProductDetailsComponent = () => {
+const ProductDetailsComponent = ({
+  loggedInUser,
+}: {
+  loggedInUser: boolean | DecodedToken;
+}) => {
   const { handleAddToCart } = useContext(LayoutContext);
 
   const [product, setProduct] = useState<ProductDto>();
@@ -95,7 +104,7 @@ const ProductDetailsComponent = () => {
               <div className="relative w-full h-96 aspect-square rounded-xl overflow-hidden bg-white">
                 {product?.photos.map((photo, index) => (
                   <img
-                    key={photo.Id}
+                    key={photo.id}
                     src={`data:image/jpeg;base64,${photo.imageData}`}
                     alt=""
                     className={`absolute w-full h-full object-contain transition-opacity ${
@@ -149,7 +158,7 @@ const ProductDetailsComponent = () => {
               <div className="lg:hidden flex flex-row h-24 mt-4 overflow-x-auto">
                 {product?.photos.map((image: ProductPhotoDto) => (
                   <div
-                    key={image.Id}
+                    key={image.id}
                     className="w-8 h-8 rounded-full mx-1"
                     style={{
                       backgroundImage: `url(data:image/jpeg;base64,${image.imageData})`,
@@ -163,7 +172,7 @@ const ProductDetailsComponent = () => {
                 {product?.photos.map(
                   (image: ProductPhotoDto, index: number) => (
                     <img
-                      key={image.Id}
+                      key={image.id}
                       src={`data:image/jpeg;base64,${image.imageData}`}
                       alt=""
                       className={`w-12 h-12 cursor-pointer ${
@@ -212,6 +221,16 @@ const ProductDetailsComponent = () => {
                 >
                   Add to Cart
                 </button>
+
+                {loggedInUser &&
+                (loggedInUser as DecodedToken).role === "Admin" ? (
+                  <a
+                    href={`/edit-product/${id}`}
+                    className="bg-blue-200 text-red-800 font-semibold py-3 px-16 rounded-xl h-full"
+                  >
+                    EDIT PRODUCT
+                  </a>
+                ) : null}
               </div>
             </div>
           </div>

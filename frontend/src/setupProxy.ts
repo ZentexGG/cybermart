@@ -4,7 +4,7 @@ module.exports = function (app: any) {
   app.use(
     "/api",
     createProxyMiddleware({
-      target: "https://ec2-18-199-33-90.eu-central-1.compute.amazonaws.com",
+      target: process.env.API_URL,
       changeOrigin: true,
       pathRewrite: {
         "^/api": "",
@@ -15,7 +15,7 @@ module.exports = function (app: any) {
   app.use(
     "/Auth",
     createProxyMiddleware({
-      target: "https://ec2-18-199-33-90.eu-central-1.compute.amazonaws.com",
+      target: process.env.API_URL,
       changeOrigin: true,
       pathRewrite: {
         "^/Auth": "",

@@ -92,6 +92,9 @@ builder.Services.AddSingleton(emailConfig);
 builder.Services.Configure<DataProtectionTokenProviderOptions>(
     options => options.TokenLifespan = TimeSpan.FromDays(1));
 
+var connectionString = builder.Configuration.GetConnectionString("CybermartDb");
+var frontendUrl = builder.Configuration.GetConnectionString("CybermartFrontend");
+var stripeApiKey = builder.Configuration.GetConnectionString("StripeApiKey");
 // Add services to the container.
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
@@ -101,17 +104,18 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ISpecificationTypeService, SpecificationTypeService>();
 builder.Services.AddScoped<ISpecificationService, SpecificationService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IProductPhotoService, ProductPhotoService>();
+builder.Services.AddSingleton(provider => stripeApiKey);
+
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var connectionString = builder.Configuration.GetConnectionString("CybermartDb");
-var frontendUrl = builder.Configuration.GetConnectionString("CybermartFrontend");
+
 
 // Update the CybermartContext class to derive from IdentityDbContext<IdentityUser, IdentityRole, string>
 builder.Services.AddDbContext<CybermartContext>(options =>

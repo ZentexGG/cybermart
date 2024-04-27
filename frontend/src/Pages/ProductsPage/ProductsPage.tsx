@@ -5,7 +5,6 @@ import PaginationComponent from "../../Components/Pagination/PaginationComponent
 import { ProductCountResponse, ProductDto } from "../../types";
 import { LayoutContext } from "../Layout/Layout";
 import Loader from "../Loader/Loader";
-import { AiFillCheckSquare } from "react-icons/ai";
 import AlertSuccess from "../../Components/AlertSuccess/AlertSuccess";
 
 export default function ProductsPage() {
