@@ -25,12 +25,9 @@ namespace PresentationLayer.Controllers
         {
             var paymentResult = await _paymentService.ProcessPaymentAsync(paymentRequest);
 
-            if (paymentResult.IsSuccess)
-            {
-                return Ok(new { message = paymentResult.Message });
-            }
-
-            return StatusCode(500, new { message = paymentResult.Message });
+            return paymentResult.IsSuccess
+                ? Ok(new { message = paymentResult.Message })
+                : StatusCode(500, new { message = paymentResult.Message });
         }
         
         [HttpPost("create-payment-method")]

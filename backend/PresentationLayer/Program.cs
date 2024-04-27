@@ -104,6 +104,7 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ISpecificationTypeService, SpecificationTypeService>();
 builder.Services.AddScoped<ISpecificationService, SpecificationService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IProductPhotoService, ProductPhotoService>();
 builder.Services.AddSingleton(provider => stripeApiKey);
 
 builder.Services.AddControllers().AddJsonOptions(options =>

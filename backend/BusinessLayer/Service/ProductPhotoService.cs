@@ -14,7 +14,7 @@ public class ProductPhotoService : IProductPhotoService
     {
         _context = context;
     }
-    public async Task Modify(int imgId, IFormFile newPhoto)
+    public async Task<ProductPhotoDto> Modify(int imgId, IFormFile newPhoto)
     {
         var photoToModify = await _context.ProductPhotos.FirstOrDefaultAsync(p => p.Id == imgId);
         if (photoToModify == null)
@@ -32,6 +32,13 @@ public class ProductPhotoService : IProductPhotoService
             photoToModify.UploadDate = DateTime.UtcNow;
             
             await _context.SaveChangesAsync();
+            return new ProductPhotoDto
+            {
+                FileName = photoToModify.FileName,
+                Id = photoToModify.Id,
+                ImageData = photoToModify.ImageData,
+                UploadDate = photoToModify.UploadDate
+            };
         }
         catch (Exception e)
         {

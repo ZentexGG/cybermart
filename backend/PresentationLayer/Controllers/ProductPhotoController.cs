@@ -17,12 +17,12 @@ public class ProductPhotoController : ControllerBase
 
     [Authorize(Roles = "Admin")]
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutAsync(int id, [FromForm] IFormFile photo)
+    public async Task<IActionResult> PutAsync(int id, IFormFile photo)
     {
         try
         {
-            await _service.Modify(id, photo);
-            return Ok("Successfully modified photo!");
+            var response = await _service.Modify(id, photo);
+            return Ok(response);
         }
         catch (KeyNotFoundException e)
         {

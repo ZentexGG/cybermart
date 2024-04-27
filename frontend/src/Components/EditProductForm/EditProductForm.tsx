@@ -43,7 +43,9 @@ export default function EditProductForm({
     useState<SpecificationType[]>();
   const [loading, setLoading] = useState<boolean>(false);
   const [hoveredId, setHoveredId] = useState<number | null>(null);
-  // const [photos, setPhotos] = useState<ProductPhotoDto[]>(existingData?.photos)
+  const [photos, setPhotos] = useState<ProductPhotoDto[]>(existingData?.photos);
+  const userToken = getCookie("token");
+
 
   useEffect(() => {
     setValue("ID", existingData?.id);
@@ -52,6 +54,7 @@ export default function EditProductForm({
     setValue("Description", existingData?.description);
     setValue("Price", existingData?.price);
     setValue("photos", existingData?.photos);
+    setPhotos(existingData?.photos);
   }, [setValue, existingData]);
 
   const currentSelectedCategory = watch("CategoryId");
@@ -78,8 +81,37 @@ export default function EditProductForm({
   }, [currentSelectedCategory]);
 
   const imageClick = (imgId: number) => {
-    document.getElementById(`img_${imgId}`)?.click();
+    let res = document.getElementById(`img_${imgId}`)?.click();
+    console.log(res);
   };
+
+  const changeImg = async (e: React.ChangeEvent<HTMLInputElement>, imgIndex: number, imgId: number) => {
+    let currentPhotos : ProductPhotoDto[] = photos
+    const file = e.target.files?.[0]
+    if (file !== undefined) {
+      try {
+        setLoading(true);
+        const formData = new FormData()
+        formData.append("photo", file)
+        let res = await axios.put(`/api/product-photos/${imgId}`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${userToken}`
+          }
+        })
+        const newPhoto: ProductPhotoDto = res.data;
+        currentPhotos[imgIndex] = newPhoto;
+        setPhotos(currentPhotos)
+
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+      
+    }
+      
+  }
   const deleteImage = (imgId: number) => {};
 
   const onSubmit = async (data: FormData) => {
@@ -94,7 +126,6 @@ export default function EditProductForm({
       Specifications: data.specifications,
     };
     try {
-      const userToken = getCookie("token");
       // let productPut = await axios.put<FormData>(
       //   `/api/products/${existingData?.id}`,
       //   dataToSubmit,
@@ -239,7 +270,7 @@ export default function EditProductForm({
           />
         </div>
         <div className="flex">
-          {existingData?.photos.map((photo, index) => (
+          {photos?.map((photo, index) => (
             <div
               key={photo.id}
               className="relative mr-4"
@@ -252,7 +283,7 @@ export default function EditProductForm({
                 type="file"
                 accept="image/*"
                 className="hidden"
-                {...register(`photos.${index}`)}
+                onChange={(e) => changeImg(e, index, photo.id)}
               />
 
               {/* Conditional rendering of overlay for the hovered image */}
