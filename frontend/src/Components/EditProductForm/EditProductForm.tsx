@@ -12,7 +12,7 @@ import axios from "axios";
 import { getCookie } from "../../authChecker";
 import LoadingBtn from "../LoadingBtn/LoadingBtn";
 import DbImage from "../DbImage/DbImage";
-import { FaEdit, FaTrash } from "react-icons/fa";
+import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
 
 interface FormData {
   ID: number;
@@ -112,7 +112,48 @@ export default function EditProductForm({
     }
       
   }
-  const deleteImage = (imgId: number) => {};
+  const deleteImage = async (imgId: number, imgIndex: number) => {
+    let currentPhotos: ProductPhotoDto[] = photos;
+    try {
+      setLoading(true)
+      let res = await axios.delete(`/api/product-photos/${imgId}`, {
+        headers: {
+          Authorization: `Bearer ${userToken}`
+        }
+      })
+      currentPhotos.splice(imgIndex, 1)
+      setPhotos(currentPhotos);
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const addImg = async (e: React.ChangeEvent<HTMLInputElement>, productId: number) => {
+    let currentPhotos: ProductPhotoDto[] = photos;
+    const file = e.target.files?.[0];
+    if (file !== undefined) {
+      try {
+        setLoading(true);
+        const formData = new FormData();
+        formData.append("photo", file);
+        let res = await axios.post<ProductPhotoDto>(`/api/product-photos/${productId}`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${userToken}`
+          }
+        })
+        currentPhotos.push(res.data)
+        setPhotos(currentPhotos);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+
+    }
+  }
 
   const onSubmit = async (data: FormData) => {
     console.log(currentPhotos);
@@ -126,26 +167,25 @@ export default function EditProductForm({
       Specifications: data.specifications,
     };
     try {
-      // let productPut = await axios.put<FormData>(
-      //   `/api/products/${existingData?.id}`,
-      //   dataToSubmit,
-      //   {
-      //     headers: {
-      //       "Content-Type": "multipart/form-data",
-      //       Authorization: `Bearer ${userToken}`,
-      //     },
-      //   }
-      // );
-      // console.log(productPut.config);
-      // let specsPut = await axios.put(
-      //   `/api/specifications/${existingData?.id}`,
-      //   data.specifications,
-      //   {
-      //     headers: {
-      //       Authorization: `Bearer ${userToken}`,
-      //     },
-      //   }
-      // );
+      await axios.put<FormData>(
+        `/api/products/${existingData?.id}`,
+        dataToSubmit,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${userToken}`,
+          },
+        }
+      );
+      await axios.put(
+        `/api/specifications/${existingData?.id}`,
+        data.specifications,
+        {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        }
+      );
     } catch (err) {
       console.error(err);
     } finally {
@@ -273,7 +313,7 @@ export default function EditProductForm({
           {photos?.map((photo, index) => (
             <div
               key={photo.id}
-              className="relative mr-4"
+              className="relative mr-4 w-40 h-40"
               onMouseEnter={() => setHoveredId(photo.id)}
               onMouseLeave={() => setHoveredId(null)}
             >
@@ -297,7 +337,7 @@ export default function EditProductForm({
                   </button>
                   <button
                     className="text-white"
-                    onClick={() => deleteImage(photo.id)}
+                    onClick={() => deleteImage(photo.id, index)}
                   >
                     <FaTrash />
                   </button>
@@ -305,6 +345,24 @@ export default function EditProductForm({
               )}
             </div>
           ))}
+          <div className="relative mr-4 w-40 h-40">
+            <label
+              htmlFor="addImageInput"
+              className="cursor-pointer block w-full h-full border-dashed border-4 border-gray-400 rounded-lg flex items-center justify-center"
+            >
+              <div className="flex items-center justify-center w-20 h-20 border border-dashed border-gray-400 rounded-lg">
+                <FaPlus className="text-gray-500 text-3xl" />
+              </div>
+              {/* TODO: Add file input handling */}
+              <input
+                id="addImageInput"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => addImg(e, existingData?.id)}
+              />
+            </label>
+          </div>
         </div>
         <div>
           <button

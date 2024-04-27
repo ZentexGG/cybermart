@@ -33,4 +33,43 @@ public class ProductPhotoController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
         }
     }
+
+    [Authorize(Roles = "Admin")]
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteAsync(int id)
+    {
+        try
+        {
+            await _service.Delete(id);
+            return Ok($"Succesfully deleted photo: {id}");
+        }
+        catch (KeyNotFoundException e)
+        {
+            return BadRequest(new { message = e.Message });
+        }
+        catch (ApplicationException e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+        }
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPost("{productId}")]
+    public async Task<IActionResult> PostSingleAsync(int productId, IFormFile photo)
+    {
+        try
+        {
+            var res = await _service.AddSingle(productId, photo);
+            return Ok(res);
+        }
+        catch (KeyNotFoundException e)
+        {
+            return BadRequest(new { message = e.Message });
+        }
+        catch (ApplicationException e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+        }
+    }
+    
 }

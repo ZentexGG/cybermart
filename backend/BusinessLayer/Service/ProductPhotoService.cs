@@ -1,6 +1,7 @@
 ﻿using BusinessLayer.Interfaces;
 using BusinessLayer.Model;
 using DataLayer.ContextInterface;
+using DataLayer.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -46,13 +47,56 @@ public class ProductPhotoService : IProductPhotoService
         }
     }
 
-    public async Task Add(int productId, ProductPhotoDto newPhoto)
+    public async Task<ProductPhotoDto> AddSingle(int productId, IFormFile newPhoto)
     {
-        throw new NotImplementedException();
+        var productIdExists = await _context.Products.FirstOrDefaultAsync(p => p.ID == productId) != null;
+        if (!productIdExists)
+        {
+            throw new KeyNotFoundException("The specified product ID was not found!");
+        }
+
+        try
+        {
+            using var stream = new MemoryStream();
+            await newPhoto.CopyToAsync(stream);
+            var newImg = new ProductPhoto
+            {
+                FileName = newPhoto.FileName,
+                ImageData = stream.ToArray(),
+                UploadDate = DateTime.UtcNow,
+                ProductId = productId
+            };
+            await _context.ProductPhotos.AddAsync(newImg);
+            await _context.SaveChangesAsync();
+            return new ProductPhotoDto
+            {
+                FileName = newImg.FileName,
+                Id = newImg.Id,
+                UploadDate = newImg.UploadDate,
+                ImageData = newImg.ImageData
+            };
+        }
+        catch (Exception e)
+        {
+            throw new ApplicationException("Failed to save due to a database error ", e);
+        }
     }
 
     public async Task Delete(int imgId)
     {
-        throw new NotImplementedException();
+        var photoToDelete = await _context.ProductPhotos.FirstOrDefaultAsync(p => p.Id == imgId);
+        if (photoToDelete == null)
+        {
+            throw new KeyNotFoundException("The specified ID was not found!");
+        }
+
+        try
+        {
+            _context.ProductPhotos.Remove(photoToDelete);
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception e)
+        {
+            throw new ApplicationException("Failed to save due to a database error", e);
+        }}
     }
-}
